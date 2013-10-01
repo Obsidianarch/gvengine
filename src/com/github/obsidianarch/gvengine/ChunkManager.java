@@ -84,19 +84,18 @@ public class ChunkManager implements ChunkProvider {
     // Static
     //
     
-    private static final ConcurrentHashMap< Long, ChunkManager > chunkManagers = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap< String, ChunkManager > chunkManagers = new ConcurrentHashMap<>();
     
     /**
      * Gets the chunk manager with the provided id.
      * 
      * @param id
-     *            The id specific to the chunk provider, as provided by
-     *            {@link #createChunkManager(ChunkProvider)}.
+     *            The id specific to the chunk provider, given when it was created.
      * @return {@code null} if the id wasn't bound to a chunk manager, otherwise the chunk
      *         manager for the id.
-     * @see #createChunkManager(ChunkProvider)
+     * @see #createChunkManager(String, ChunkProvider)
      */
-    public static synchronized ChunkManager getChunkManager( long id ) {
+    public static synchronized ChunkManager getChunkManager( String id ) {
         return chunkManagers.get( id );
     }
     
@@ -106,19 +105,16 @@ public class ChunkManager implements ChunkProvider {
      * 
      * @param provider
      *            The {@code ChunkProvider} to bind to a new {@code ChunkManager}.
-     * @return The id for the newly created {@code ChunkManager}, as provided by
-     *         {@code System.nanoTime()}.
+     * @return The newly created {@code ChunkManager}.
      */
-    public static long createChunkManager( ChunkProvider provider ) {
+    public static ChunkManager createChunkManager( String name, ChunkProvider provider ) {
         ChunkManager manager = new ChunkManager( provider ); // a new chunk manager instance
-        
-        long id = System.nanoTime(); // id specific to this chunk manager
         
         // no ConcurrentModificationExceptions for us!
         synchronized ( chunkManagers ) {
-            chunkManagers.put( id, manager ); // add the manager to the HashMap
+            chunkManagers.put( name, manager ); // add the manager to the HashMap
         }
         
-        return id;
+        return manager;
     }
 }

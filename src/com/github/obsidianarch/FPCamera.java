@@ -1,4 +1,4 @@
-package com.yahoo.obsidianarch;
+package com.github.obsidianarch;
 
 import static org.lwjgl.opengl.GL11.*;
 

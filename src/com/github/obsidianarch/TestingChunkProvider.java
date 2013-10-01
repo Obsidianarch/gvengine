@@ -1,4 +1,4 @@
-package com.yahoo.obsidianarch;
+package com.github.obsidianarch;
 
 import java.util.ArrayList;
 import java.util.List;

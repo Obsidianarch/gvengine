@@ -1,4 +1,4 @@
-package com.yahoo.obsidianarch;
+package com.github.obsidianarch;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
@@ -109,6 +109,7 @@ public class TestingClass {
         
         Voxel.setVoxelSize( 1f ); // set the voxel size to 1 unit (meter in this case)
         Voxel.createVoxelList( 10 ); // creates the voxel list with a capacity for 10 voxels
+        
         new Voxel( 0, new AirVoxelType() ); // create a new voxel with the type air
         new Voxel( 1, new DirtVoxelType() ); // create a new voxel with the type dirt
         
@@ -187,14 +188,12 @@ public class TestingClass {
     // Static
     //
     
-    private static final String       TITLE     = "GVEngine";
-    private static final long         managerID = ChunkManager.createChunkManager( new TestingChunkProvider() );
-    private static final ChunkManager manager   = ChunkManager.getChunkManager( managerID );
+    private static final String       TITLE   = "GVEngine";
+    private static final ChunkManager manager = ChunkManager.createChunkManager( "testingChunkProvider", new TestingChunkProvider() );
     
-    private static int                fpsCap    = 60;
+    private static int                fpsCap  = 60;
     
     public static void main( String[] args ) {
-        
         boolean useLWJGLSwitch = true; // if we need to use the hidden LWJGL switch for natives (if we're running via Eclipse)
         
         // parse the argument(s)
@@ -222,7 +221,7 @@ public class TestingClass {
     // Nested classes
     //
     
-    private class AirVoxelType implements VoxelType {
+    private static class AirVoxelType implements VoxelType {
         
         @Override
         public boolean isActive() {

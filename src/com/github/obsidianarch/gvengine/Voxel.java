@@ -73,6 +73,10 @@ public class Voxel {
         }
     }
     
+    public static void createVoxel( int voxelID, VoxelType voxelType ) {
+        new Voxel( voxelID, voxelType );
+    }
+    
     /**
      * After the list has been completely populated, calling this will trim the list to
      * the size that it currently is, for memory purposes.
