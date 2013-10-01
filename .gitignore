@@ -4,3 +4,14 @@
 *.jar
 *.war
 *.ear
+
+# Exporting (ANT) #
+*.xml
+
+# Eclipse #
+*.classpath
+*.project
+
+# Directories #
+bin/
+.settings/
