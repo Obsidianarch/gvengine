@@ -2,7 +2,6 @@ package com.github.obsidianarch.gvengine;
 
 import static com.github.obsidianarch.gvengine.Chunk.*;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 /**
@@ -13,12 +12,8 @@ import java.util.ArrayList;
  */
 public class VoxelCollection extends ArrayList< Integer > {
     
-    private final Chunk      chunk;            // the chunk whose data this contains
-    private VoxelInformation info;             // the rendering information of a currently bound voxel
-    private int              boundIndex   = -1; // the index of the currently bound voxel
-                                                
-    private int              currentIndex = -1;
-    
+    private final Chunk chunk;          // the chunk whose data this contains
+                               
     /**
      * Creates a new VoxelCollection to store data in a chunk. Has a capacity of
      * {@code CHUNK_SIZE_CUBED}, which cannot be exceeded.
@@ -90,55 +85,6 @@ public class VoxelCollection extends ArrayList< Integer > {
      */
     public VoxelType getVoxelType( int x, int y, int z ) {
         return Voxel.getVoxelType( get( x, y, z ) );
-    }
-    
-    /**
-     * Generates and binds the voxel information. Must be called before getting vertices
-     * or vertex colors.
-     * 
-     * @param x
-     *            The x coordinate of the voxel.
-     * @param y
-     *            The y coordinate of the voxel.
-     * @param z
-     *            The z coordiante of the voxel.
-     * @see VoxelInformation
-     * @see #getVertices(int, int, int)
-     * @see #getVertexColors(int, int, int)
-     */
-    public void bindVoxelInformation( int x, int y, int z ) {
-        info = VoxelInformation.createVoxelInformation( chunk, this, x, y, z );
-        boundIndex = MathHelper.getIndex( x, y, z, Chunk.CHUNK_SIZE );
-    }
-    
-    /**
-     * Gets the color vertices to render for the currently bound voxel.
-     * 
-     * @return The color data to render for the currently bound voxel.
-     * @see #bindVoxelInformation(int, int, int)
-     */
-    public FloatBuffer getVertexColors() {
-        return info.getColors( Voxel.getVoxelType( get( boundIndex ) ) );
-    }
-    
-    /**
-     * Gets the vertices to render for the currently bound voxel.
-     * 
-     * @return The vertices to render for the currently bound voxel.
-     * @see #bindVoxelInformation(int, int, int)
-     */
-    public FloatBuffer getVertices() {
-        return info.getVertices();
-    }
-    
-    /**
-     * Checks if the currently bound voxel is visible.
-     * 
-     * @return {@code false} if the voxel will not be rendered at all, otherwise true.
-     * @see #bindVoxelInformation(int, int, int)
-     */
-    public boolean isVoxelVisible() {
-        return info.isVisible();
     }
     
     //

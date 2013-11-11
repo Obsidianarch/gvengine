@@ -1,6 +1,5 @@
 package com.github.obsidianarch.gvengine;
 
-import static com.github.obsidianarch.gvengine.Voxel.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 
@@ -68,13 +67,10 @@ public class Chunk {
      * positions. If a rebuild is required, it will be performed before rendering.
      */
     public synchronized void render() {
-        if ( eclipsed ) return; // if we can't see the chunk at all, then don't even try
+        if ( eclipsed ) return; // don't bother rendering zero vertices, it wastes time
             
         // if a rebuild is required then we'll rebuild the mesh before rendering
-        if ( rebuildRequired ) {
-            rebuildMesh();
-            rebuildRequired = false;
-        }
+        if ( rebuildRequired ) rebuildMesh();
         
         glPushMatrix();
         
@@ -108,8 +104,11 @@ public class Chunk {
      *            The new voxel id.
      */
     public void setVoxelAt( int x, int y, int z, int voxelID ) {
+        int previous = getVoxelAt( x, y, z );
+        if ( voxelID == previous ) return; // no point in wasting time replace a voxel with the same one
+            
         voxels.set( x, y, z, voxelID );
-        rebuildRequired = true;
+        rebuildRequired = true; // out mesh is outdated for our new set of data, we must rebuild.
     }
     
     /**
@@ -136,6 +135,8 @@ public class Chunk {
      * required, as this can become a very large processing hog.
      */
     public void rebuildMesh() {
+        if ( !provider.isRebuildAllowed() ) return; // if we aren't allowed to rebuild, then don't
+            
         // clean up after ourselves
         glDeleteBuffers( vertexHandle );
         glDeleteBuffers( colorHandle );
@@ -148,29 +149,27 @@ public class Chunk {
         FloatBuffer colorData = BufferUtils.createFloatBuffer( VOXEL_CAPACITY * 108 ); // create a color data buffer
         
         // populate the buffers with information
-        for ( int x = 0; x < CHUNK_SIZE; x++ ) {
-            for ( int y = 0; y < CHUNK_SIZE; y++ ) {
-                for ( int z = 0; z < CHUNK_SIZE; z++ ) {
-                    int voxelID = voxels.get( x, y, z );
-                    VoxelType voxelType = getVoxelType( voxelID );
-                    if ( !voxelType.isActive() ) continue; // skip inactive blocks
-                        
-                    voxels.bindVoxelInformation( x, y, z );
-                    
-                    if ( !voxels.isVoxelVisible() ) continue; // if the voxel won't be rendered, skip it
-                        
-                    vertexData.put( voxels.getVertices() ); // add the vertices to the buffer
-                    colorData.put( voxels.getVertexColors() ); // add the vertex colors to the buffer
-                }
-            }
-        }
+        //        for ( int x = 0; x < CHUNK_SIZE; x++ ) {
+        //            for ( int y = 0; y < CHUNK_SIZE; y++ ) {
+        //                for ( int z = 0; z < CHUNK_SIZE; z++ ) {
+        //                    int voxelID = voxels.get( x, y, z );
+        //                    VoxelType voxelType = getVoxelType( voxelID );
+        //                    if ( !voxelType.isActive() ) continue; // skip inactive blocks
+        //                        
+        //                    if ( !voxels.isVoxelVisible() ) continue; // if the voxel won't be rendered, skip it
+        //                        
+        //                    vertexData.put( voxels.getVertices() ); // add the vertices to the buffer
+        //                    colorData.put( voxels.getVertexColors() ); // add the vertex colors to the buffer
+        //                }
+        //            }
+        //        }
         
         // flip the buffers (so they can be read)
         vertexData.flip();
         colorData.flip();
         
         vertexCount = vertexData.limit();
-        eclipsed = vertexCount == 0; // there are zero vertices being rendered
+        eclipsed = ( vertexCount == 0 ); // should we even bother rendering?
         
         // bind the data to the vertex handle
         glBindBuffer( GL_ARRAY_BUFFER, vertexHandle );
@@ -181,6 +180,8 @@ public class Chunk {
         glBufferData( GL_ARRAY_BUFFER, colorData, GL_STATIC_DRAW );
         
         glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffer
+        
+        rebuildRequired = false; // if we've been rebuilt, it's no longer required
     }
     
     //

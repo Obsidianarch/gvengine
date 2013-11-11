@@ -51,4 +51,14 @@ public interface ChunkProvider {
      */
     public Chunk createChunk( int x, int y, int z );
     
+    /**
+     * When a chunk's {@link Chunk#rebuildMesh()} method is invoked, it will first check
+     * to see if a chunk rebuild is allowed by it's {@code ChunkProvider}. This can be
+     * used to set an artifical limit for chunk mesh rebuilds per frame.
+     * 
+     * @return {@code true} if a chunk is allowed to rebuild its mesh, otherwise
+     *         {@code false}.
+     */
+    public boolean isRebuildAllowed();
+    
 }
