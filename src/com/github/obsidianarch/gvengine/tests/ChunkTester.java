@@ -15,6 +15,7 @@ import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
+import com.github.obsidianarch.gvengine.core.options.OptionFinder;
 
 /**
  * Tests the Voxel and Chunk Management systems.
@@ -23,7 +24,17 @@ import com.github.obsidianarch.gvengine.core.Controller;
  */
 public class ChunkTester {
     
+    /**
+     * Starts and runs the test.
+     * 
+     * @param s
+     *            Command line arguments.
+     * @throws Exception
+     *             If something went wrong.
+     */
     public static void main( String... s ) throws Exception {
+        OptionFinder.loadOptions();
+        
         create(); // create the display
         
         Chunk c = new Chunk( 0, 0, 0 ); // the chunk we're testing

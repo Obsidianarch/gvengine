@@ -128,6 +128,13 @@ public class VertexBufferObject {
     //
     
     /**
+     * {@code glDeleteBuffers( binding )}
+     */
+    public void delete() {
+        glDeleteBuffers( glBinding );
+    }
+    
+    /**
      * Validates the data in the VBO, and rebinds it to OpenGL.
      */
     public void validate() {
@@ -175,34 +182,58 @@ public class VertexBufferObject {
     }
     
     //
-    // Adders TODO add some javadoc
+    // Adders
     //
     
+    /**
+     * @param array
+     *            The coordiantes to add.
+     */
     public void addCoordinates( float... array ) {
         coordinates.put( array );
         dataValid = false;
     }
     
+    /**
+     * @param array
+     *            The expanding array containing the new coordinates.
+     */
     public void addCoordinates( ExpandingArray array ) {
         coordinates.put( array );
         dataValid = false;
     }
     
+    /**
+     * @param array
+     *            The channels to add.
+     */
     public void addChannels( float... array ) {
         channels.put( array );
         dataValid = false;
     }
     
+    /**
+     * @param array
+     *            The expanding array containing the new channels.
+     */
     public void addChannels( ExpandingArray array ) {
         channels.put( array );
         dataValid = false;
     }
     
+    /**
+     * @param array
+     *            The normals to add.
+     */
     public void addNormals( float... array ) {
         normalCoordinates.put( array );
         dataValid = false;
     }
     
+    /**
+     * @param array
+     *            The expanding array containing the new normals.
+     */
     public void addNormals( ExpandingArray array ) {
         normalCoordinates.put( array );
         dataValid = false;

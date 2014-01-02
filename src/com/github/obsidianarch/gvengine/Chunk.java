@@ -34,8 +34,11 @@ public class Chunk {
     /** The position of this chunk on the chunk grid. */
     public final int           z;
     
+    /** If the chunk has been loaded yet. */
+    private boolean            loaded = false;
+    
     /** The VBO for this chunk. */
-    private VertexBufferObject vbo;
+    private VertexBufferObject vbo    = null;
     
     //
     // Constructors
@@ -58,7 +61,35 @@ public class Chunk {
     }
     
     //
-    // Actions
+    // Load/Unload
+    //
+    
+    /**
+     * Loads the voxel data of this chunk.
+     */
+    public void load() {
+        // TODO load the voxel data of this chunk
+        loaded = true;
+    }
+    
+    /**
+     * Unloads a chunk from OpenGL by deleting the VertexBufferObject, however the chunk
+     * data (coordinates and voxel data) will remain in memory.
+     */
+    public void unload() {
+        if ( vbo != null ) vbo.delete();
+        loaded = false;
+    }
+    
+    /**
+     * Saves the chunk as a file.
+     */
+    public void save() {
+        throw new UnsupportedOperationException( "This will be implemented one of these days" );
+    }
+    
+    //
+    // OpenGL
     //
     
     /**
@@ -130,6 +161,13 @@ public class Chunk {
      */
     public int getVertexCount() {
         return vbo.getCoordinates().getLength();
+    }
+    
+    /**
+     * @return If the chunk has been loaded or not.
+     */
+    public boolean isLoaded() {
+        return loaded;
     }
     
     /**

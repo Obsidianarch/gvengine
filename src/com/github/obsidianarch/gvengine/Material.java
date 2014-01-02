@@ -19,7 +19,7 @@ public class Material {
     // Constants
     //
     
-    /** Used to represent nothing, is not written to the save file at all. */
+    /** Used to represent nothing, written as {@code 00000000} */
     public static final Material    AIR       = new Material( new Color( 255, 255, 255, 0 ), false, 0 );
     
     /** The stone material, written as {@code 0000001}. */
