@@ -1,136 +1,129 @@
 package com.github.obsidianarch.gvengine;
 
-import java.util.Vector;
+import com.github.obsidianarch.gvengine.core.ExpandingArray;
+import com.github.obsidianarch.gvengine.core.Face;
+import com.github.obsidianarch.gvengine.core.RepeatingArray;
 
 /**
- * A single point in the world.
+ * Everything involved with the creation of individual voxels.
  * 
  * @author Austin
- * @see VoxelType
  */
 public class Voxel {
     
-    //
-    // Fields
-    //
-    
-    /** The id for this type of voxel, also the index in the voxel list. */
-    public final int       voxelID;
-    
-    /** General information about a voxel. */
-    public final VoxelType voxelType;
-    
-    //
-    // Constructors
-    //
-    
     /**
-     * Creates a new voxel and inserts it into the list at the given voxel id.
+     * Creates a voxel with only the needed faces.
      * 
-     * @param voxelID
-     *            The voxel id for this voxel (also the index in the voxel list).
-     * @param voxelType
-     *            General information about a voxel.
-     * @throws NullPointerException
-     *             If {@code Voxel.createVoxelList( int )} has not yet been invoked, or if
-     *             voxelType is null.
-     * @throws ArrayIndexOutOfBoundsException
-     *             If the voxel list's capacity was not large enough for this voxel id.
-     * @see #createVoxelList(int)
+     * @param positions
+     *            The positioning array the voxel will be appended to.
+     * @param colors
+     *            The color array the voxel's colors will be appended to.
+     * @param c
+     *            The chunk the voxel is a part of.
+     * @param x
+     *            The local x coordinate of the voxel.
+     * @param y
+     *            The local y coordinate of the voxel.
+     * @param z
+     *            The local z coordinate of the voxel.
      */
-    public Voxel(int voxelID, VoxelType voxelType) throws NullPointerException, ArrayIndexOutOfBoundsException {
-        if ( voxelType == null ) throw new NullPointerException( "voxelType cannot be null!" );
+    public static final void createVoxel( ExpandingArray positions, ExpandingArray colors, Chunk c, int x, int y, int z ) {
+        Material material = c.getMaterialAt( x, y, z );
+        if ( !material.active ) return;
         
-        this.voxelID = voxelID;
-        this.voxelType = voxelType;
+        float[] colorSource = { material.color.getRed() / 255f, material.color.getGreen() / 255f, material.color.getBlue() / 255f };
+        RepeatingArray repeatingColors = new RepeatingArray( colorSource );
+        float[] repeatedColors = repeatingColors.createArray( 18 );
         
-        voxels.set( voxelID, this );
-    }
-    
-    //
-    // Static
-    //
-    
-    private static Vector< Voxel > voxels;       // stores all of the voxels at their voxelIDs
-    private static float           voxelSize = 1; // the size of a voxel (for rendering)      
-                                                  
-    /**
-     * Creates the {@code Vector< Voxel >} with the initial capacity prescribed. The
-     * initial capacity <i>must</i> be larger than the largest {@code voxelID}, because
-     * the constructor for a Voxel uses the {@code set( voxelID, this )} method when
-     * adding itself to this list.<BR>
-     * This method must be invoked before a voxel is created.
-     * 
-     * @param initialCapacity
-     *            The initial capacity for the vector.
-     */
-    public static void createVoxelList( int initialCapacity ) {
-        voxels = new Vector< Voxel >( initialCapacity, 1 ); // creates the voxel list with the initial capacity
+        float gX = Chunk.toGlobalPosition( c.x, x );
+        float gY = Chunk.toGlobalPosition( c.y, y );
+        float gZ = Chunk.toGlobalPosition( c.z, z );
         
-        // adds null to the vector until the initial capacity is reached (this allows for the set method to work)
-        for ( int i = 0; i < initialCapacity; i++ ) {
-            voxels.add( null );
+        //
+        // X-Faces
+        //
+        
+        if ( !c.getMaterialAt( x - 1, y, z ).active ) {
+            positions.put( createFace( Face.LEFT, gX, gY, gZ ) );
+            colors.put( repeatedColors );
+        }
+        
+        if ( !c.getMaterialAt( x + 1, y, z ).active ) {
+            positions.put( createFace( Face.RIGHT, gX, gY, gZ ) );
+            colors.put( repeatedColors );
+        }
+        
+        //
+        // Y-Faces
+        //
+        
+        if ( !c.getMaterialAt( x, y - 1, z ).active ) {
+            positions.put( createFace( Face.BOTTOM, gX, gY, gZ ) );
+            colors.put( repeatedColors );
+        }
+        
+        if ( !c.getMaterialAt( x, y + 1, z ).active ) {
+            positions.put( createFace( Face.TOP, gX, gY, gZ ) );
+            colors.put( repeatedColors );
+        }
+        
+        //
+        // Z-Faces
+        //
+        
+        if ( !c.getMaterialAt( x, y, z - 1 ).active ) {
+            positions.put( createFace( Face.FRONT, gX, gY, gZ ) );
+            colors.put( repeatedColors );
+        }
+        
+        if ( !c.getMaterialAt( x, y, z + 1 ).active ) {
+            positions.put( createFace( Face.BACK, gX, gY, gZ ) );
+            colors.put( repeatedColors );
         }
     }
     
-    public static void createVoxel( int voxelID, VoxelType voxelType ) {
-        new Voxel( voxelID, voxelType );
-    }
-    
     /**
-     * After the list has been completely populated, calling this will trim the list to
-     * the size that it currently is, for memory purposes.
-     */
-    public static void trimVoxelList() {
-        voxels.trimToSize();
-    }
-    
-    /**
-     * @param index
-     *            The index from which to get a voxel.
-     * @return The voxel at the given index in the voxel list.
-     */
-    public static Voxel getVoxel( int index ) {
-        return voxels.get( index );
-    }
-    
-    /**
-     * Simplified method of {@code getVoxel( index ).voxelType}.
+     * Creates a float array for the positioning of a voxel face.
      * 
-     * @param index
-     *            The index from which to get a voxel's type.
-     * @return The VoxelType for the voxel at the given index.
+     * @param direction
+     *            The face.
+     * @param x
+     *            The global x coordinate of the face.
+     * @param y
+     *            The global y coordinate of the face.
+     * @param z
+     *            The global z coordinate of the face.
+     * @return The face's position data.
      */
-    public static VoxelType getVoxelType( int index ) {
-        return getVoxel( index ).voxelType;
+    public static final float[] createFace( Face direction, float x, float y, float z ) {
+        float[] points = null;
+        
+        switch ( direction ) {
+        case LEFT: // LBF-RBF-LTF | RTF-RBF-LTF
+            points = new float[ ] { x, y, z, x, y + 1, z, x, y, z + 1, x, y + 1, z + 1, x, y + 1, z, x, y, z + 1 };
+            break;
+        
+        case BOTTOM: // LBF-RBF-LBB | RBB-RBF-LBB
+            points = new float[ ] { x, y, z, x + 1, y, z, x, y, z + 1, x + 1, y, z + 1, x + 1, y, z, x, y, z + 1 };
+            break;
+        
+        case FRONT: // LBF-RBF-LTF | RTF-RBF-LTF
+            points = new float[ ] { x, y, z, x + 1, y, z, x, y + 1, z, x + 1, y + 1, z, x + 1, y, z, x, y + 1, z };
+            break;
+        
+        case RIGHT: // same as left, but x is shifted
+            points = new float[ ] { x + 1, y, z, x + 1, y + 1, z, x + 1, y, z + 1, x + 1, y + 1, z + 1, x + 1, y + 1, z, x + 1, y, z + 1 };
+            break;
+        
+        case TOP: // same as bottom, but y is shifted
+            points = new float[ ] { x, y + 1, z, x + 1, y + 1, z, x, y + 1, z + 1, x + 1, y + 1, z + 1, x + 1, y + 1, z, x, y + 1, z + 1 };
+            break;
+        
+        case BACK: // same as front, but z is shifted
+            points = new float[ ] { x, y, z + 1, x + 1, y, z + 1, x, y + 1, z + 1, x + 1, y + 1, z + 1, x + 1, y, z + 1, x, y + 1, z + 1 };
+            break;
+        }
+        
+        return points;
     }
-    
-    /**
-     * This returns a copy of the entire voxel list. This should not be used very often,
-     * if at all.
-     * 
-     * @return A copy of the entire voxel list.
-     */
-    public static Vector< Voxel > getVoxelList() {
-        return new Vector< Voxel >( voxels );
-    }
-    
-    /**
-     * @param size
-     *            The voxel size (for rendering).
-     * @throws IllegalArgumentException
-     *             If the new size is less than or equal to (<=) zero (0).
-     */
-    public static void setVoxelSize( float size ) throws IllegalArgumentException {
-        if ( size <= 0 ) throw new IllegalArgumentException( "size cannot be less than or equal to zero (size <= 0)!" );
-        voxelSize = size;
-    }
-    
-    /**
-     * @return The voxel size (for rendering).
-     */
-    public static float getVoxelSize() {
-        return voxelSize;
-    }
-    
 }

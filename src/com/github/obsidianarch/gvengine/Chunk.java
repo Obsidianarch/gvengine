@@ -1,187 +1,124 @@
 package com.github.obsidianarch.gvengine;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
+import static com.github.obsidianarch.gvengine.MathHelper.*;
 
-import java.nio.FloatBuffer;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
-import org.lwjgl.BufferUtils;
+import com.github.obsidianarch.gvengine.core.ColorSystem;
+import com.github.obsidianarch.gvengine.core.ExpandingArray;
+import com.github.obsidianarch.gvengine.core.NormalSystem;
+import com.github.obsidianarch.gvengine.core.PositionSystem;
+import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
+/**
+ * A container for a 16x16x16 selection of voxels.
+ * 
+ * @author Austin
+ */
 public class Chunk {
     
     //
     // Fields
     //
     
-    private final VoxelCollection voxels;                 // used for voxel storage
-                                                           
-    /** The x coordinate of the chunk in the chunk grid system. */
-    public final int              x;
+    /** The voxels in this chunk. */
+    private final byte[]       voxels = new byte[ 4096 ];
     
-    /** The y coordinate of the chunk in the chunk grid system. */
-    public final int              y;
+    /** The position of this chunk on the chunk grid. */
+    public final int           x;
     
-    /** The z coordinate of the chunk in the chunk grid system. */
-    public final int              z;
+    /** The position of this chunk on the chunk grid. */
+    public final int           y;
     
-    /** The chunk provider which created this chunk. */
-    public final ChunkProvider    provider;
+    /** The position of this chunk on the chunk grid. */
+    public final int           z;
     
-    private int                   colorHandle;            // OpenGL color buffer handle
-    private int                   vertexHandle;           // OpenGL vertex buffer handle
-                                                           
-    private int                   vertexCount     = 0;    // number of vertices (debug info)
-                                                           
-    private boolean               rebuildRequired = false; // do we need to rebuild the mesh?
-    private boolean               eclipsed        = false; // true if there are no vertices to render
-                                                           
+    /** The VBO for this chunk. */
+    private VertexBufferObject vbo;
+    
     //
     // Constructors
     //
     
     /**
-     * Creates a new chunk with the given chunk coordinates.
-     * 
-     * @param cx
-     *            The x coordinate of the chunk in the chunk grid system.
-     * @param cy
-     *            The y coordinate of the chunk in the chunk grid system.
-     * @param cz
-     *            The z coordinate of the chunk in the chunk grid system.
-     */
-    public Chunk(int cx, int cy, int cz, ChunkProvider cp) {
-        x = cx;
-        y = cy;
-        z = cz;
-        provider = cp;
-        
-        voxels = new VoxelCollection( this ); // the chunk data will be provided by the ChunkProvider who created this
-    }
-    
-    //
-    // Rendering
-    //
-    
-    /**
-     * Performs the required OpenGL calls to render the vertices and colors at the correct
-     * positions. If a rebuild is required, it will be performed before rendering.
-     */
-    public synchronized void render() {
-        if ( eclipsed ) return; // don't bother rendering zero vertices, it wastes time
-            
-        // if a rebuild is required then we'll rebuild the mesh before rendering
-        if ( rebuildRequired ) rebuildMesh();
-        
-        glPushMatrix();
-        
-        glBindBuffer( GL_ARRAY_BUFFER, vertexHandle ); // bind the vertex buffer
-        glVertexPointer( 3, GL_FLOAT, 0, 0L );
-        
-        glBindBuffer( GL_ARRAY_BUFFER, colorHandle ); // bind the color buffer
-        glColorPointer( 3, GL_FLOAT, 0, 0L );
-        
-        glDrawArrays( glMode, 0, VOXEL_CAPACITY * 36 ); // draw the arrays
-        
-        glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffers
-        
-        glPopMatrix();
-    }
-    
-    //
-    // VoxelData
-    //
-    
-    /**
-     * Changes the voxel id at the given position.
+     * Creates a chunk at the given chunk coordiantes.
      * 
      * @param x
-     *            The x coordinate of the voxel.
+     *            The chunk's x coordinate.
      * @param y
-     *            The y coordinate of the voxel.
+     *            The chunk's y coordinate.
      * @param z
-     *            The z coordinate of the voxel.
-     * @param voxelID
-     *            The new voxel id.
+     *            The chunk's z coordinate.
      */
-    public void setVoxelAt( int x, int y, int z, int voxelID ) {
-        int previous = getVoxelAt( x, y, z );
-        if ( voxelID == previous ) return; // no point in wasting time replace a voxel with the same one
+    public Chunk(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    
+    //
+    // Actions
+    //
+    
+    /**
+     * Builds the mesh for the chunk.
+     */
+    public void buildMesh() {
+        ExpandingArray positions = new ExpandingArray( 221184 );
+        ExpandingArray colors = new ExpandingArray( 221184 );
+        
+        for ( int i = 0; i < 4096; i++ ) {
+            // get the local positions from i
+            int x = i % 16;
+            int y = ( i / 16 ) % 16;
+            int z = ( i - x - ( 16 * y ) ) / 256;
             
-        voxels.set( x, y, z, voxelID );
-        rebuildRequired = true; // out mesh is outdated for our new set of data, we must rebuild.
+            Voxel.createVoxel( positions, colors, this, x, y, z );
+        }
+        
+        vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
+        
+        vbo.validate(); // manually validate the VBO
     }
     
     /**
-     * Gets the voxel id at the given position.
+     * Renders the VertexBufferObject for this chunk.
+     */
+    public void render() {
+        
+        // TODO REMOVE THESE AFTER TESTING
+        if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
+            vbo.setGLMode( GL11.GL_POINTS );
+        }
+        else if ( Keyboard.isKeyDown( Keyboard.KEY_2 ) ) {
+            vbo.setGLMode( GL11.GL_LINES );
+        }
+        else if ( Keyboard.isKeyDown( Keyboard.KEY_3 ) ) {
+            vbo.setGLMode( GL11.GL_TRIANGLES );
+        }
+        
+        vbo.render();
+    }
+    
+    //
+    // Setters
+    //
+    
+    /**
+     * Sets the voxel material at the given local position.
      * 
+     * @param mat
+     *            The new material.
      * @param x
-     *            The x coordinate of the voxel.
+     *            The local x position.
      * @param y
-     *            The y coordinate of the voxel.
+     *            The local y position.
      * @param z
-     *            The z coordinate of the voxel.
-     * @return The voxel id at the given coordinates.
+     *            The local z position.
      */
-    public int getVoxelAt( int x, int y, int z ) {
-        return voxels.get( x, y, z );
-    }
-    
-    //
-    // Mesh
-    //
-    
-    /**
-     * Rebuilds the mesh of the chunk for rendering. This should only be called when
-     * required, as this can become a very large processing hog.
-     */
-    public void rebuildMesh() {
-        if ( !provider.isRebuildAllowed() ) return; // if we aren't allowed to rebuild, then don't
-            
-        // clean up after ourselves
-        glDeleteBuffers( vertexHandle );
-        glDeleteBuffers( colorHandle );
-        
-        vertexHandle = glGenBuffers(); // get a new vertex handle
-        colorHandle = glGenBuffers(); // get a new color handle
-        
-        // 108 = 6 (points per face (2 triangles)) * 6 (faces per voxel) * 3 (values (x, y, z || r, g, b))
-        FloatBuffer vertexData = BufferUtils.createFloatBuffer( VOXEL_CAPACITY * 108 ); // create a vertex data buffer
-        FloatBuffer colorData = BufferUtils.createFloatBuffer( VOXEL_CAPACITY * 108 ); // create a color data buffer
-        
-        // populate the buffers with information
-        //        for ( int x = 0; x < CHUNK_SIZE; x++ ) {
-        //            for ( int y = 0; y < CHUNK_SIZE; y++ ) {
-        //                for ( int z = 0; z < CHUNK_SIZE; z++ ) {
-        //                    int voxelID = voxels.get( x, y, z );
-        //                    VoxelType voxelType = getVoxelType( voxelID );
-        //                    if ( !voxelType.isActive() ) continue; // skip inactive blocks
-        //                        
-        //                    if ( !voxels.isVoxelVisible() ) continue; // if the voxel won't be rendered, skip it
-        //                        
-        //                    vertexData.put( voxels.getVertices() ); // add the vertices to the buffer
-        //                    colorData.put( voxels.getVertexColors() ); // add the vertex colors to the buffer
-        //                }
-        //            }
-        //        }
-        
-        // flip the buffers (so they can be read)
-        vertexData.flip();
-        colorData.flip();
-        
-        vertexCount = vertexData.limit();
-        eclipsed = ( vertexCount == 0 ); // should we even bother rendering?
-        
-        // bind the data to the vertex handle
-        glBindBuffer( GL_ARRAY_BUFFER, vertexHandle );
-        glBufferData( GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW );
-        
-        // bind the data to the color handle
-        glBindBuffer( GL_ARRAY_BUFFER, colorHandle );
-        glBufferData( GL_ARRAY_BUFFER, colorData, GL_STATIC_DRAW );
-        
-        glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffer
-        
-        rebuildRequired = false; // if we've been rebuilt, it's no longer required
+    public void setMaterialAt( Material mat, int x, int y, int z ) {
+        voxels[ x + ( y * 16 ) + ( z * 256 ) ] = mat.byteID;
     }
     
     //
@@ -189,55 +126,78 @@ public class Chunk {
     //
     
     /**
-     * @return The number of vertices in the mesh.
+     * @return The number of vertices in the chunk.
      */
     public int getVertexCount() {
-        return vertexCount;
+        return vbo.getCoordinates().getLength();
     }
     
-    //
-    // Overrides
-    //
+    /**
+     * Gets the material at the given <b>global</b> position.
+     * 
+     * @param x
+     *            The global x position.
+     * @param y
+     *            The global y position.
+     * @param z
+     *            The global z position.
+     * @return The material at the global position.
+     */
+    public Material getMaterialAt( float x, float y, float z ) {
+        // convert the global positions to the local chunk positions
+        int localX = toLocalPosition( this.x, x );
+        int localY = toLocalPosition( this.y, y );
+        int localZ = toLocalPosition( this.z, z );
+        
+        return getMaterialAt( localX, localY, localZ ); // return the materials at the local chunk position
+    }
     
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(); // efficient way of appending long strings
+    /**
+     * Gets the material at the given <b>local</b> position.
+     * 
+     * @param x
+     *            The local x position.
+     * @param y
+     *            The local y position.
+     * @param z
+     *            The local z position.
+     * @return The material at the local position.
+     */
+    public Material getMaterialAt( int x, int y, int z ) {
+        if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
+            return Material.AIR;
+        }
         
-        sb.append( "Chunk @(" ).append( x ).append( ", " ); // add the start tag and x coordinate
-        sb.append( y ).append( ", " ); // add the y coordinate
-        sb.append( z ).append( ") " ); // add the z coordinate
-        sb.append( voxels.toString() ); // add the voxel data
-        
-        return sb.toString();
+        return Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] );
     }
     
     //
     // Static
     //
     
-    /** The length, width, and height of a chunk. */
-    public static final int CHUNK_SIZE     = 16;
-    
-    /** The number of voxels any given chunk can contain. (CHUNK_SIZE cubed) */
-    public static final int VOXEL_CAPACITY = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-    
-    private static int      glMode         = GL_TRIANGLES;                        // the OpenGL mode used while rendering
-                                                                                   
-    //
-    // Methods
-    //
-    
     /**
-     * Changes the way that OpenGL will render the vertices of the chunks.
+     * Converts a local chunk coordinate to the global coordinate.
      * 
-     * @param glMode
-     *            The new method for rendering vertices of a chunk. The only ones that
-     *            should actually be used are {@code GL_POINTS} (for viewing all
-     *            vertices), {@code GL_LINES} (for viewing something similar to a
-     *            wireframe), or {@code GL_TRIANGLES} (for viewing the actual data).
+     * @param chunkCoordinate
+     *            The chunk's coordiante on the plane.
+     * @param localPosition
+     *            The local position.
+     * @return The global coordinate.
      */
-    public static void setGLMode( int glMode ) {
-        Chunk.glMode = glMode;
+    public static float toGlobalPosition( int chunkCoordinate, int localPosition ) {
+        return localPosition + ( chunkCoordinate * 16 );
     }
     
+    /**
+     * Converts a global coordinate to a local chunk coordinate.
+     * 
+     * @param chunkCoordinate
+     *            The chunk's coordinate on the plane.
+     * @param globalPosition
+     *            The global position.
+     * @return The local coordinate.
+     */
+    public static int toLocalPosition( int chunkCoordinate, float globalPosition ) {
+        return ( int ) Math.floor( globalPosition - ( chunkCoordinate * 16 ) );
+    }
 }
