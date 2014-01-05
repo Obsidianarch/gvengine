@@ -54,7 +54,7 @@ public class Chunk {
      * @param z
      *            The chunk's z coordinate.
      */
-    public Chunk(int x, int y, int z) {
+    public Chunk( int x, int y, int z ) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -96,6 +96,10 @@ public class Chunk {
      * Builds the mesh for the chunk.
      */
     public void buildMesh() {
+        if ( vbo != null ) {
+            vbo.delete(); // remove the previous VBO
+        }
+        
         ExpandingArray positions = new ExpandingArray( 221184 );
         ExpandingArray colors = new ExpandingArray( 221184 );
         
@@ -137,6 +141,31 @@ public class Chunk {
     //
     
     /**
+     * Sets the voxel material at the given index.
+     * 
+     * @param mat
+     *            The new material.
+     * @param index
+     *            The index in the array.
+     */
+    
+    public void setMaterialAt( Material mat, int index ) {
+        voxels[ index ] = mat.byteID;
+    }
+    
+    /**
+     * Sets the voxel material at the given index by the material's byte id.
+     * 
+     * @param b
+     *            The byte id of the material.
+     * @param index
+     *            The index in the array.
+     */
+    public void setMaterialAt( byte b, int index ) {
+        voxels[ index ] = b;
+    }
+    
+    /**
      * Sets the voxel material at the given local position.
      * 
      * @param mat
@@ -150,6 +179,22 @@ public class Chunk {
      */
     public void setMaterialAt( Material mat, int x, int y, int z ) {
         voxels[ x + ( y * 16 ) + ( z * 256 ) ] = mat.byteID;
+    }
+    
+    /**
+     * Sets the voxel material at the given local position by the material's byte id.
+     * 
+     * @param b
+     *            The byte id of the material.
+     * @param x
+     *            The local x position.
+     * @param y
+     *            The local y position.
+     * @param z
+     *            The local z position.
+     */
+    public void setMaterialAt( byte b, int x, int y, int z ) {
+        voxels[ x + ( y * 16 ) + ( z * 256 ) ] = b;
     }
     
     //
@@ -206,7 +251,8 @@ public class Chunk {
             return Material.AIR;
         }
         
-        return Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] );
+        Material mat = Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] ); // get the material
+        return mat == null ? Material.AIR : mat; // return AIR if the material could not be found, otherwise the material
     }
     
     //

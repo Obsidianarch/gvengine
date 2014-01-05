@@ -8,8 +8,6 @@ package com.github.obsidianarch.gvengine.core;
  * NPC's "eyes."
  * 
  * @author Austin
- * @since 1.0.0.1
- * @version 1.0
  * @see Camera
  */
 public class Controller {
@@ -17,13 +15,17 @@ public class Controller {
     /** The camera to which this controller is bound. */
     private Camera camera;
     
+    //
+    // Constructors
+    //
+    
     /**
      * Creates a new controller, bound the given camera.
      * 
      * @param camera
      *            The camera to bind the controller to.
      */
-    public Controller(Camera camera) {
+    public Controller( Camera camera ) {
         setCamera( camera );
     }
     
@@ -34,8 +36,6 @@ public class Controller {
     /**
      * Binds the controller to a new camera.
      * 
-     * @since 1.0.0.1
-     * @version 1.0
      * @param camera
      *            The camera to which the controller will the bound.
      * @throws NullPointerException
@@ -51,8 +51,6 @@ public class Controller {
     //
     
     /**
-     * @since 1.0.0.1
-     * @version 1.0
      * @return The camera to which the controller is currently bound.
      */
     public Camera getCamera() {
@@ -66,8 +64,6 @@ public class Controller {
     /**
      * Moves the camera forward, in the direction it is currently looking.
      * 
-     * @since 1.0.0.1
-     * @version 1.0
      * @param distance
      *            The distance to move forward.
      * @see #moveBackward(float)
@@ -85,8 +81,6 @@ public class Controller {
      * will call {@code moveForward} with the negative distance.<BR>
      * {@code moveForward( -distance );}
      * 
-     * @since 1.0.0.1
-     * @version 1.0
      * @param distance
      *            The distance to move backward.
      * @see #moveForward(float)
@@ -101,8 +95,6 @@ public class Controller {
      * Moves the camera to the right, relative to the direction the camera is currently
      * looking.
      * 
-     * @since 1.0.0.1
-     * @version 1.0
      * @param distance
      *            The distance to move right.
      * @see #moveForward(float)
@@ -119,8 +111,6 @@ public class Controller {
      * looking. This will call {@code moveRight} with the negative distance.<BR>
      * {@code moveRight( -distance );}
      * 
-     * @since 1.0.0.1
-     * @version 1.0
      * @param distance
      *            The distance to move left.
      * @see #moveForward(float)

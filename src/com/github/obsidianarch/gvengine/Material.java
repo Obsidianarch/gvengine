@@ -25,6 +25,12 @@ public class Material {
     /** The stone material, written as {@code 0000001}. */
     public static final Material    STONE     = new Material( Color.LTGREY, true, 1 );
     
+    /** The grass material, written as {@code 0000010}. */
+    public static final Material    GRASS     = new Material( Color.GREEN, true, 2 );
+    
+    /** The dirt material, written as {@code 0000011}. */
+    public static final Material    DIRT      = new Material( Color.ORANGE, true, 3 );
+    
     //
     // Final Fields
     //
@@ -53,7 +59,7 @@ public class Material {
      * @param active
      *            If a voxel with this material should be rendered or not.
      */
-    public Material(ReadableColor color, boolean active, int byteID) {
+    public Material( ReadableColor color, boolean active, int byteID ) {
         this.color = color;
         this.active = active;
         this.byteID = ( byte ) byteID;

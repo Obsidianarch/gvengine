@@ -96,7 +96,7 @@ public class Voxel {
      * @return The face's position data.
      */
     public static final float[] createFace( Face direction, float x, float y, float z ) {
-        float[] points = null;
+        float[] points = null; // the point's we'll send back
         
         switch ( direction ) {
         case LEFT: // LBF-RBF-LTF | RTF-RBF-LTF

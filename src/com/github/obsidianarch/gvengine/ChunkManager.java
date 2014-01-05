@@ -24,10 +24,10 @@ public class ChunkManager {
         description = "Chunk limit",
         screenName = "",
         x = -1,
-        y = -1)
+        y = -1 )
     @SliderOption(
         minimum = 1,
-        maximum = 500)
+        maximum = 500 )
     public static int      ChunkLimit   = 9;
     
     //
@@ -63,13 +63,12 @@ public class ChunkManager {
         
         loadChunks(); // load the chunks that need to be
         
-        rebuildChunks();
+        rebuildChunks(); // rebuild chunks
         
-        unloadChunks();
+        unloadChunks(); // unload chunks
         
         // the player has moved or oriented, so something may now be invisible
         if ( !this.camera.equals( camera ) ) {
-            
             this.camera = camera;
         }
     }

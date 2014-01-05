@@ -3,8 +3,6 @@ package com.github.obsidianarch.gvengine.tests;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 
-import java.util.Random;
-
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -12,9 +10,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import com.github.obsidianarch.gvengine.Chunk;
-import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
+import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.options.OptionFinder;
 
 /**
@@ -42,6 +40,8 @@ public class ChunkTester {
         
         Camera camera = new Camera(); // the camera of hte player
         Controller controller = new Controller( camera ); // the controller of the camera
+        
+        Input.initialize(); // initialize the input bindings
         
         long lastTime = Sys.getTime(); // the last time the frame was drawn
         
@@ -78,13 +78,13 @@ public class ChunkTester {
      */
     private static void movePlayer( float delta, Camera camera, Controller controller ) {
         float movementSpeed = 0.01f * delta;
-        if ( Keyboard.isKeyDown( Keyboard.KEY_LSHIFT ) ) movementSpeed *= 2;
+        if ( Input.isBindingActive( Input.MOVE_SPRINT ) ) movementSpeed *= 2;
         
-        if ( Keyboard.isKeyDown( Keyboard.KEY_W ) ) controller.moveForward( movementSpeed );
-        if ( Keyboard.isKeyDown( Keyboard.KEY_S ) ) controller.moveBackward( movementSpeed );
+        if ( Input.isBindingActive( Input.MOVE_FORWARD ) ) controller.moveForward( movementSpeed );
+        if ( Input.isBindingActive( Input.MOVE_BACKWARD ) ) controller.moveBackward( movementSpeed );
         
-        if ( Keyboard.isKeyDown( Keyboard.KEY_D ) ) controller.moveRight( movementSpeed );
-        if ( Keyboard.isKeyDown( Keyboard.KEY_A ) ) controller.moveLeft( movementSpeed );
+        if ( Input.isBindingActive( Input.MOVE_LEFT ) ) controller.moveLeft( movementSpeed );
+        if ( Input.isBindingActive( Input.MOVE_RIGHT ) ) controller.moveRight( movementSpeed );
         
         camera.setYaw( camera.getYaw() + ( Mouse.getDX() * .05f ) );
         camera.setPitch( camera.getPitch() - ( Mouse.getDY() * .05f ) );
@@ -100,8 +100,7 @@ public class ChunkTester {
         for ( int x = 0; x < 16; x++ ) {
             for ( int y = 0; y < 16; y++ ) {
                 for ( int z = 0; z < 16; z++ ) {
-                    if ( new Random().nextBoolean() ) c.setMaterialAt( Material.STONE, x, y, z );
-                    else c.setMaterialAt( Material.AIR, x, y, z );
+                    c.setMaterialAt( ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 ), x, y, z );
                 }
             }
         }
@@ -127,12 +126,14 @@ public class ChunkTester {
     private static void create() throws Exception {
         Display.setTitle( "Voxel Testing" );
         Display.setDisplayMode( new DisplayMode( 640, 480 ) );
+        Display.setVSyncEnabled( true );
         Display.create();
         
+        glShadeModel( GL_SMOOTH );
         glClearColor( 0, 0, 0, 0 ); // sets the background color
         glClearDepth( 1 ); // depth value to use when the depth buffer is cleared
         
-        glEnable( GL_DEPTH ); // enable depth
+        glEnable( GL_DEPTH_TEST ); // enable depth <-- this is the working statement!
         glDepthFunc( GL_LEQUAL );
         
         glEnable( GL_BLEND ); // enable blending

@@ -63,7 +63,7 @@ public class VertexBufferObject {
      * @param ns
      *            The normal system.
      */
-    public VertexBufferObject(PositionSystem ps, ColorSystem cs, NormalSystem ns) {
+    public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns ) {
         this( ps, cs, ns, 0, 0, 0 );
     }
     
@@ -85,7 +85,7 @@ public class VertexBufferObject {
      * @param ncap
      *            The initial capacity on normal data.
      */
-    public VertexBufferObject(PositionSystem ps, ColorSystem cs, NormalSystem ns, int pcap, int ccap, int ncap) {
+    public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, int pcap, int ccap, int ncap ) {
         this( ps, cs, ns, new ExpandingArray( pcap ), new ExpandingArray( ccap ), new ExpandingArray( ncap ) );
     }
     
@@ -106,8 +106,8 @@ public class VertexBufferObject {
      * @param normalCoordinates
      *            The initial normal values.
      */
-    public VertexBufferObject(PositionSystem ps, ColorSystem cs, NormalSystem ns, ExpandingArray coordinates, ExpandingArray channels,
-        ExpandingArray normalCoordinates) {
+    public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, ExpandingArray coordinates, ExpandingArray channels,
+        ExpandingArray normalCoordinates ) {
         this.ps = ps;
         this.cs = cs;
         this.ns = ns;
@@ -149,7 +149,7 @@ public class VertexBufferObject {
         normalCoordinates.addToBuffer( interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels );
         
         glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind the buffer to OpenGL
-        glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_COPY ); // bind the buffer data
+        glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW ); // bind the buffer data
         
         int stride = ( ps.coordinates + cs.channels + ns.coordinates ) * 4;
         
@@ -157,7 +157,7 @@ public class VertexBufferObject {
         glColorPointer( cs.channels, GL_FLOAT, stride, ps.coordinates * 4 ); // tell OpenGL where our colors are
         
         if ( ns.coordinates != 0 ) { // if we have normals enabled...
-            glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // tell OpenGL where our normals are
+            glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // ...tell OpenGL where our normals are
         }
         
         glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffer
@@ -175,9 +175,11 @@ public class VertexBufferObject {
         }
         
         glPushMatrix(); // start editing our matrix
-        glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind our buffer
-        glDrawArrays( glMode, 0, coordinates.getLength() + channels.getLength() + normalCoordinates.getLength() ); // draw the arrays
-        glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind our buffer
+        {
+            glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind our buffer
+            glDrawArrays( glMode, 0, coordinates.getLength() + channels.getLength() + normalCoordinates.getLength() ); // draw the arrays
+            glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind our buffer
+        }
         glPopMatrix(); // stop editing our matrix
     }
     
