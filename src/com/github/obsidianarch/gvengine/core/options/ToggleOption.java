@@ -5,13 +5,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Retention( RetentionPolicy.RUNTIME )
+@Target( ElementType.FIELD )
 public @interface ToggleOption {
     
     /**
      * @return The enum for the possible options.
      */
-    Class< ? extends Enum< ? > > options();
+    String[] options();
+    
+    /**
+     * @return The descriptions for each item, if this is empty then the options will be
+     *         used.
+     */
+    String[] descriptions() default {};
     
 }
