@@ -11,6 +11,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkManager;
+import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
@@ -98,6 +99,8 @@ public class ChunkTester {
                 Display.setTitle( "Voxel Testing [" + fps + "]" );
                 fps = 0;
                 lastFPS += 1000;
+                
+                removeBlocks( c ); // remove some blocks as well
             }
             fps++;
             
@@ -108,6 +111,15 @@ public class ChunkTester {
         }
         
         Display.destroy();
+    }
+    
+    private static void removeBlocks( Chunk c ) {
+        for ( int i = 0; i < 4096; i++ ) {
+            // if a random number 0-99 is less than 10
+            if ( Math.round( Math.random() * 100 ) < 10 ) {
+                c.setMaterialAt( Material.AIR, i );
+            }
+        }
     }
     
     /**

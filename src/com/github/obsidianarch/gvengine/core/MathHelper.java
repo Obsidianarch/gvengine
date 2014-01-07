@@ -1,4 +1,4 @@
-package com.github.obsidianarch.gvengine;
+package com.github.obsidianarch.gvengine.core;
 
 /**
  * @author Austin

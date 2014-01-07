@@ -1,6 +1,6 @@
 package com.github.obsidianarch.gvengine;
 
-import static com.github.obsidianarch.gvengine.MathHelper.*;
+import static com.github.obsidianarch.gvengine.core.MathHelper.*;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -23,7 +23,7 @@ public class Chunk {
     //
     
     /** The voxels in this chunk. */
-    private final byte[]       voxels = new byte[ 4096 ];
+    private final byte[]       voxels       = new byte[ 4096 ];
     
     /** The position of this chunk on the chunk grid. */
     public final int           x;
@@ -35,10 +35,13 @@ public class Chunk {
     public final int           z;
     
     /** If the chunk has been loaded yet. */
-    private boolean            loaded = false;
+    private boolean            loaded       = false;
+    
+    /** If this chunks needs to be rebuilt. */
+    private boolean            needsRebuild = false;
     
     /** The VBO for this chunk. */
-    private VertexBufferObject vbo    = null;
+    private VertexBufferObject vbo          = null;
     
     //
     // Constructors
@@ -121,6 +124,11 @@ public class Chunk {
      * Renders the VertexBufferObject for this chunk.
      */
     public void render() {
+        // rebuild the mesh if it needs to be
+        if ( needsRebuild ) {
+            buildMesh();
+            needsRebuild = false;
+        }
         
         // TODO REMOVE THESE AFTER TESTING
         if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
@@ -150,7 +158,7 @@ public class Chunk {
      */
     
     public void setMaterialAt( Material mat, int index ) {
-        voxels[ index ] = mat.byteID;
+        setMaterialAt( mat.byteID, index );
     }
     
     /**
@@ -162,6 +170,8 @@ public class Chunk {
      *            The index in the array.
      */
     public void setMaterialAt( byte b, int index ) {
+        byte previous = voxels[ index ];
+        if ( previous != b ) needsRebuild = true;
         voxels[ index ] = b;
     }
     
@@ -178,7 +188,7 @@ public class Chunk {
      *            The local z position.
      */
     public void setMaterialAt( Material mat, int x, int y, int z ) {
-        voxels[ x + ( y * 16 ) + ( z * 256 ) ] = mat.byteID;
+        setMaterialAt( mat.byteID, x, y, z );
     }
     
     /**
@@ -194,7 +204,7 @@ public class Chunk {
      *            The local z position.
      */
     public void setMaterialAt( byte b, int x, int y, int z ) {
-        voxels[ x + ( y * 16 ) + ( z * 256 ) ] = b;
+        setMaterialAt( b, x + ( y * 16 ) + ( z * 256 ) );
     }
     
     //
