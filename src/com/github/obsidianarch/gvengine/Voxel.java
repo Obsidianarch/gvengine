@@ -98,29 +98,34 @@ public class Voxel {
     public static final float[] createFace( Face direction, float x, float y, float z ) {
         float[] points = null; // the point's we'll send back
         
+        // these make the positive spaces easier to reach
+        float xp = x + 1;
+        float yp = y + 1;
+        float zp = z + 1;
+        
         switch ( direction ) {
         case LEFT: // LBF-RBF-LTF | RTF-RBF-LTF
-            points = new float[ ] { x, y, z, x, y + 1, z, x, y, z + 1, x, y + 1, z + 1, x, y + 1, z, x, y, z + 1 };
+            points = new float[ ] { x, yp, z, x, y, z, x, y, zp, x, yp, z, x, y, zp, x, yp, zp };
             break;
         
         case BOTTOM: // LBF-RBF-LBB | RBB-RBF-LBB
-            points = new float[ ] { x, y, z, x + 1, y, z, x, y, z + 1, x + 1, y, z + 1, x + 1, y, z, x, y, z + 1 };
+            points = new float[ ] { x, y, zp, x, y, z, xp, y, zp, x, y, z, xp, y, z, xp, y, zp };
             break;
         
         case FRONT: // LBF-RBF-LTF | RTF-RBF-LTF
-            points = new float[ ] { x, y, z, x + 1, y, z, x, y + 1, z, x + 1, y + 1, z, x + 1, y, z, x, y + 1, z };
+            points = new float[ ] { xp, yp, z, xp, y, z, x, y, z, xp, yp, z, x, y, z, x, yp, z };
             break;
         
         case RIGHT: // same as left, but x is shifted
-            points = new float[ ] { x + 1, y, z, x + 1, y + 1, z, x + 1, y, z + 1, x + 1, y + 1, z + 1, x + 1, y + 1, z, x + 1, y, z + 1 };
+            points = new float[ ] { xp, yp, zp, xp, y, zp, xp, y, z, xp, yp, zp, xp, y, z, xp, yp, z };
             break;
         
         case TOP: // same as bottom, but y is shifted
-            points = new float[ ] { x, y + 1, z, x + 1, y + 1, z, x, y + 1, z + 1, x + 1, y + 1, z + 1, x + 1, y + 1, z, x, y + 1, z + 1 };
+            points = new float[ ] { xp, yp, zp, x, yp, z, x, yp, zp, xp, yp, zp, xp, yp, z, x, yp, z };
             break;
         
         case BACK: // same as front, but z is shifted
-            points = new float[ ] { x, y, z + 1, x + 1, y, z + 1, x, y + 1, z + 1, x + 1, y + 1, z + 1, x + 1, y, z + 1, x, y + 1, z + 1 };
+            points = new float[ ] { x, y, zp, xp, y, zp, xp, yp, zp, x, yp, zp, x, y, zp, xp, yp, zp };
             break;
         }
         
