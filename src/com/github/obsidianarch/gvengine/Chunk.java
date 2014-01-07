@@ -48,7 +48,7 @@ public class Chunk {
     //
     
     /**
-     * Creates a chunk at the given chunk coordiantes.
+     * Creates a chunk at the given chunk coordinates.
      * 
      * @param x
      *            The chunk's x coordinate.
@@ -128,6 +128,7 @@ public class Chunk {
         if ( needsRebuild ) {
             buildMesh();
             needsRebuild = false;
+            
         }
         
         // TODO REMOVE THESE AFTER TESTING
