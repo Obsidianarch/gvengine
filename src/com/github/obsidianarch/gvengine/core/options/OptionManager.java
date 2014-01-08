@@ -190,7 +190,7 @@ public class OptionManager {
             System.out.println( clazz.getName() + "." + method.getName() + "()" ); // start our log
             
             OptionListener listener = method.getAnnotation( OptionListener.class ); // get the option listener class
-            String[] fieldNames = listener.fields(); // get the names of the fields it will be listening for a property change to
+            String[] fieldNames = listener.value(); // get the names of the fields it will be listening for a property change to
             
             for ( String s : fieldNames ) { // iterate over every Option description the listener describes
                 addOptionListener( s, method ); // and attach the OptionListener to each
@@ -250,7 +250,7 @@ public class OptionManager {
             System.out.println( clazz.getName() + "." + method.getName() + "()" ); // start our log
             
             OptionListener listener = method.getAnnotation( OptionListener.class ); // get the option listener class
-            String[] fieldNames = listener.fields(); // get the names of the fields it will be listening for a property change to
+            String[] fieldNames = listener.value(); // get the names of the fields it will be listening for a property change to
             
             for ( String s : fieldNames ) { // iterate over every Option description the listener describes
                 addOptionListener( s, method ); // and attach the OptionListener to each

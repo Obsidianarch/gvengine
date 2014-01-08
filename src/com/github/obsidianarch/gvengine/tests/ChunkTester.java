@@ -1,13 +1,10 @@
 package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkManager;
@@ -44,7 +41,7 @@ public class ChunkTester {
     // OptionListeners
     //
     
-    @OptionListener( fields = { OptionManager.VSYNC_ENABLED } )
+    @OptionListener( { OptionManager.VSYNC_ENABLED } )
     public static void onVSyncToggle() {
         Display.setVSyncEnabled( VSyncEnabled );
     }
@@ -66,7 +63,8 @@ public class ChunkTester {
         OptionManager.registerClass( ChunkManager.class );
         System.out.println();
         
-        create(); // create the display
+        TestingHelper.createDisplay();
+        TestingHelper.setupGL();
         
         Chunk c = new Chunk( 0, 0, 0 ); // the chunk we're testing
         buildChunk( c ); // build the chunk
@@ -76,71 +74,75 @@ public class ChunkTester {
         
         Input.initialize(); // initialize the input bindings
         
-        long lastTime = Sys.getTime(); // the last time the frame was drawn
-        long lastFPS = getTime(); // the last time the fps was updated
-        int fps = 0;
-        
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
             
-            if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) { // rebuild the chunk
-                buildChunk( c );
-            }
-            
-            float delta = ( Sys.getTime() - lastTime ); // the difference between this frame and the previous
-            movePlayer( delta, camera, controller ); // move and orient the player
-            
-            glLoadIdentity(); // remove the previous transformation
-            camera.transform(); // transform the camera
-            c.render(); // render the chunk 
-            
-            // update the fps
-            if ( ( getTime() - lastFPS ) > 1000 ) {
-                Display.setTitle( "Voxel Testing [" + fps + "]" );
-                fps = 0;
-                lastFPS += 1000;
-                
-                removeBlocks( c ); // remove some blocks as well
-            }
-            fps++;
-            
-            lastTime = Sys.getTime(); // change the last time
-            Display.update(); // update the screen
-            
-            if ( FPSCap != -1 ) Display.sync( FPSCap ); // sync to the FPS cap, if there is one
+            processInput( camera, controller, c ); // move and orient the player
+            renderScene( camera, c );
+            updateDisplay();
         }
         
         Display.destroy();
     }
     
+    /**
+     * Removes blocks from the chunk, stress tests rebuild time and voxel removal.
+     * 
+     * @param c
+     *            The chunk that will have voxels removed from it.
+     */
     private static void removeBlocks( Chunk c ) {
         for ( int i = 0; i < 4096; i++ ) {
-            // if a random number 0-99 is less than 10
-            if ( Math.round( Math.random() * 100 ) < 10 ) {
+            // if a random number 0-9999 is less than 10 (0.1% chance)
+            if ( Math.round( Math.random() * 10000 ) < 10 ) {
                 c.setMaterialAt( Material.AIR, i );
             }
         }
     }
     
     /**
-     * @return The current time in milliseconds.
+     * Updates (and syncs if needed) the Display.
      */
-    private static long getTime() {
-        return ( Sys.getTime() * 1000 ) / Sys.getTimerResolution();
+    private static void updateDisplay() {
+        Display.setTitle( "Voxel Testing [" + TestingHelper.getFPS() + "]" );
+        Display.update(); // update the screen
+        if ( FPSCap != -1 ) Display.sync( FPSCap ); // sync to the FPS cap, if there is one
+    }
+    
+    /**
+     * Renders the scene to OpenGL.
+     * 
+     * @param camera
+     *            The player's camera.
+     * @param c
+     *            The chunk.
+     */
+    private static void renderScene( Camera camera, Chunk c ) {
+        glLoadIdentity(); // remove the previous transformation
+        camera.lookThrough(); // transform the camera
+        c.render(); // render the chunk 
     }
     
     /**
      * Moves the player and updates the camera.
      * 
-     * @param delta
-     *            The time since the last frame.
      * @param camera
      *            The player's camera.
      * @param controller
      *            The player's controller.
+     * @param c
+     *            The chunk that is being tested.
      */
-    private static void movePlayer( float delta, Camera camera, Controller controller ) {
-        float movementSpeed = 0.01f * delta;
+    private static void processInput( Camera camera, Controller controller, Chunk c ) {
+        if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) { // rebuild the chunk
+            buildChunk( c );
+        }
+        
+        if ( Keyboard.isKeyDown( Keyboard.KEY_E ) ) {
+            removeBlocks( c );
+        }
+        
+        float movementSpeed = 0.01f * TestingHelper.getDelta();
         if ( Input.isBindingActive( Input.MOVE_SPRINT ) ) movementSpeed *= 2;
         
         if ( Input.isBindingActive( Input.MOVE_FORWARD ) ) controller.moveForward( movementSpeed );
@@ -169,56 +171,7 @@ public class ChunkTester {
             }
         }
         
-        // count how long it takes to build the mesh
-        long start = System.nanoTime();
         c.buildMesh();
-        long end = System.nanoTime();
-        
-        // print rebuild stats, useful to make sure everything is working as fast as possible
-        System.out.println( "Chunk rebuild stats:" );
-        System.out.println( " Nanoseconds:  " + ( end - start ) );
-        System.out.println( " Milliseconds: " + ( ( end - start ) / 1000000.0 ) );
-        System.out.println( " Seconds:      " + ( ( end - start ) / 1000000000.0 ) );
-        System.out.println( " Vertices:     " + c.getVertexCount() );
-        System.out.println();
-    }
-    
-    /**
-     * Creates the display and initializes OpenGL.
-     * 
-     * @throws Exception
-     *             If there was a problem.
-     */
-    private static void create() throws Exception {
-        Display.setTitle( "Voxel Testing" );
-        Display.setDisplayMode( new DisplayMode( 640, 480 ) ); // the window will be 640 x 480
-        Display.create(); // create the display
-        
-        glShadeModel( GL_SMOOTH ); // supposedly smooths things out
-        glClearColor( 0, 0, 0, 0 ); // sets the background color when we clear (black with no alpha channel)
-        glClearDepth( 1 ); // depth value to use when the depth buffer is cleared
-        
-        glEnable( GL_DEPTH_TEST ); // enable depth, testing if a vertex is behind others
-        glDepthFunc( GL_LEQUAL ); // I got no idea what this does, but anything other than LESS or LEQUAL breaks the rendering
-        
-        glEnable( GL_CULL_FACE ); // culls triangles that aren't visible
-        
-        glEnable( GL_BLEND ); // enable blending
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); // allow for the alpha channel, granted I may never use it, but it's still nice to have.
-        
-        glEnableClientState( GL_VERTEX_ARRAY ); // enable vertex arrays
-        glEnableClientState( GL_COLOR_ARRAY ); // enable color arrays
-        
-        glMatrixMode( GL_PROJECTION ); // sets the projection matrix to be altered
-        glLoadIdentity(); // reset the projection matrix
-        
-        // fovy, aspect ratio (x:y), zNear, zFar
-        gluPerspective( 45f, ( ( float ) Display.getWidth() / ( float ) Display.getHeight() ), 0.0001f, 1000.0f ); // the perspective of the person
-        
-        glMatrixMode( GL_MODELVIEW ); // sets the modelview matrix to be altered
-        glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST ); // supposedly makes everything look nicer
-        
-        Mouse.setGrabbed( true ); // grab the mouse
     }
     
 }

@@ -99,6 +99,8 @@ public class Chunk {
      * Builds the mesh for the chunk.
      */
     public void buildMesh() {
+        long start = System.nanoTime(); // TODO remove this
+        
         if ( vbo != null ) {
             vbo.delete(); // remove the previous VBO
         }
@@ -118,6 +120,15 @@ public class Chunk {
         vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
         
         vbo.validate(); // manually validate the VBO
+        
+        long end = System.nanoTime(); // TODO remove this
+        
+        System.out.println( "Nanoseconds:  " + ( end - start ) );
+        System.out.println( "Milliseconds: " + ( ( end - start ) / 1000000.0 ) );
+        System.out.println( "Seconds:      " + ( ( end - start ) / 1000000000.0 ) );
+        System.out.println( "Vertices:     " + getVertexCount() );
+        System.out.println( "Triangles:    " + ( getVertexCount() / 3 ) );
+        System.out.println();
     }
     
     /**

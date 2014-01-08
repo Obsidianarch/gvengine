@@ -151,7 +151,7 @@ public class Camera {
      * Rotates and translates the viewport of OpenGL to the camera's rotation and
      * position.
      */
-    public void transform() {
+    public void lookThrough() {
         glRotatef( pitch, 1, 0, 0 ); // set the pitch
         glRotatef( yaw, 0, 1, 0 ); // set the yaw
         glRotatef( roll, 0, 0, 1 ); // set the roll

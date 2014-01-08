@@ -4,10 +4,13 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.github.obsidianarch.gvengine.core.Camera;
+import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.options.Option;
 import com.github.obsidianarch.gvengine.core.options.SliderOption;
 
 /**
+ * Manages the loading, rebuilding, and unloading of Chunks.
+ * 
  * @author Austin
  */
 public class ChunkManager {
@@ -20,14 +23,8 @@ public class ChunkManager {
      * The artificial limit to the number of chunks that can have an action done to them
      * in a single frame.
      */
-    @Option(
-        description = "Chunk limit",
-        screenName = "",
-        x = -1,
-        y = -1 )
-    @SliderOption(
-        minimum = 1,
-        maximum = 500 )
+    @Option( description = "Chunk limit", screenName = "", x = -1, y = -1 )
+    @SliderOption( minimum = 1, maximum = 500 )
     public static int      ChunkLimit   = 9;
     
     //
@@ -59,7 +56,9 @@ public class ChunkManager {
      * @param camera
      *            The player's camera.
      */
-    public void update( Camera camera ) {
+    public void update( World world, Camera camera ) {
+        
+        updateQueues( world, camera ); // updates all of the queues
         
         loadChunks(); // load the chunks that need to be
         
@@ -68,8 +67,22 @@ public class ChunkManager {
         unloadChunks(); // unload chunks
         
         // the player has moved or oriented, so something may now be invisible
-        if ( !this.camera.equals( camera ) ) {
+        if ( !camera.equals( this.camera ) ) {
             this.camera = camera;
+        }
+    }
+    
+    public void updateQueues( World world, Camera camera ) {
+        int x = MathHelper.getChunkCoordinate( camera.getX() );
+        int y = MathHelper.getChunkCoordinate( camera.getY() );
+        int z = MathHelper.getChunkCoordinate( camera.getZ() );
+        
+        for ( int offX = -1; offX < 2; offX++ ) {
+            for ( int offY = -1; offY < 2; offY++ ) {
+                for ( int offZ = -1; offZ < 2; offZ++ ) {
+                    markForLoad( world.getChunkAt( x + offX, y + offY, z + offZ ) );
+                }
+            }
         }
     }
     
