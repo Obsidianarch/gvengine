@@ -12,6 +12,7 @@ import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
+import com.github.obsidianarch.gvengine.core.input.InputBindingMode;
 import com.github.obsidianarch.gvengine.core.options.Option;
 import com.github.obsidianarch.gvengine.core.options.OptionListener;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
@@ -54,7 +55,7 @@ public class ChunkTester {
      * Starts and runs the test.
      * 
      * @param s
-     *            Command line arguments.
+     *            Command line arguments (ignored completely).
      * @throws Exception
      *             If something went wrong.
      */
@@ -73,6 +74,13 @@ public class ChunkTester {
         Controller controller = new Controller( camera ); // the controller of the camera
         
         Input.initialize(); // initialize the input bindings
+        {
+            Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
+            Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
+            Input.setBinding( "back", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
+            Input.setBinding( "right", InputBindingMode.KEYBOARD, Keyboard.KEY_D );
+            Input.setBinding( "sprint", InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
+        }
         
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
@@ -143,13 +151,13 @@ public class ChunkTester {
         }
         
         float movementSpeed = 0.01f * TestingHelper.getDelta();
-        if ( Input.isBindingActive( Input.MOVE_SPRINT ) ) movementSpeed *= 2;
+        if ( Input.isBindingActive( "sprint" ) ) movementSpeed *= 2;
         
-        if ( Input.isBindingActive( Input.MOVE_FORWARD ) ) controller.moveForward( movementSpeed );
-        if ( Input.isBindingActive( Input.MOVE_BACKWARD ) ) controller.moveBackward( movementSpeed );
+        if ( Input.isBindingActive( "forward" ) ) controller.moveForward( movementSpeed );
+        if ( Input.isBindingActive( "backward" ) ) controller.moveBackward( movementSpeed );
         
-        if ( Input.isBindingActive( Input.MOVE_LEFT ) ) controller.moveLeft( movementSpeed );
-        if ( Input.isBindingActive( Input.MOVE_RIGHT ) ) controller.moveRight( movementSpeed );
+        if ( Input.isBindingActive( "left" ) ) controller.moveLeft( movementSpeed );
+        if ( Input.isBindingActive( "right" ) ) controller.moveRight( movementSpeed );
         
         camera.setYaw( camera.getYaw() + ( Mouse.getDX() * .05f ) );
         camera.setPitch( camera.getPitch() - ( Mouse.getDY() * .05f ) );

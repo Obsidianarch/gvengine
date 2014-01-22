@@ -14,24 +14,10 @@ import org.lwjgl.input.Mouse;
 public final class Input {
     
     //
-    // Constants
-    //
-    
-    public static final String                       MOVE_FORWARD  = "move.forward";
-    
-    public static final String                       MOVE_BACKWARD = "move.backward";
-    
-    public static final String                       MOVE_LEFT     = "move.left";
-    
-    public static final String                       MOVE_RIGHT    = "move.right";
-    
-    public static final String                       MOVE_SPRINT   = "move.spring";
-    
-    //
     // Fields
     //
     
-    private static final Map< String, InputBinding > bindings      = new HashMap<>();
+    private static final Map< String, InputBinding > bindings = new HashMap<>();
     
     //
     // Actions
@@ -49,13 +35,6 @@ public final class Input {
         }
         
         // TODO load this from a file eventually
-        
-        // set the defaults
-        setBinding( MOVE_FORWARD, InputBindingMode.KEYBOARD, Keyboard.KEY_W );
-        setBinding( MOVE_LEFT, InputBindingMode.KEYBOARD, Keyboard.KEY_A );
-        setBinding( MOVE_BACKWARD, InputBindingMode.KEYBOARD, Keyboard.KEY_S );
-        setBinding( MOVE_RIGHT, InputBindingMode.KEYBOARD, Keyboard.KEY_D );
-        setBinding( MOVE_SPRINT, InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
     }
     
     /**
@@ -83,7 +62,7 @@ public final class Input {
      */
     public static void setBinding( String action, InputBindingMode mode, int button ) {
         InputBinding binding = new InputBinding( mode, button ); // create the input binding
-        bindings.put( action, binding );
+        bindings.put( action.toLowerCase(), binding );
     }
     
     //
@@ -98,7 +77,7 @@ public final class Input {
      * @return If the action has been triggered.
      */
     public static boolean isBindingActive( String action ) {
-        InputBinding binding = bindings.get( action ); // get the binding from the map
+        InputBinding binding = bindings.get( action.toLowerCase() ); // get the binding from the map
         
         if ( binding == null ) {
             return false; // the action isn't actually bound to any InputBinding
