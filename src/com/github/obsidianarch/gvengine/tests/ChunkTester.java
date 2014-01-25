@@ -7,7 +7,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
-import com.github.obsidianarch.gvengine.ChunkManager;
 import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
@@ -61,7 +60,6 @@ public class ChunkTester {
      */
     public static void main( String... s ) throws Exception {
         OptionManager.registerClass( ChunkTester.class );
-        OptionManager.registerClass( ChunkManager.class );
         System.out.println();
         
         TestingHelper.createDisplay();
@@ -77,7 +75,7 @@ public class ChunkTester {
         {
             Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
             Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
-            Input.setBinding( "back", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
+            Input.setBinding( "backward", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
             Input.setBinding( "right", InputBindingMode.KEYBOARD, Keyboard.KEY_D );
             Input.setBinding( "sprint", InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
         }
@@ -174,12 +172,12 @@ public class ChunkTester {
         for ( int x = 0; x < 16; x++ ) {
             for ( int y = 0; y < 16; y++ ) {
                 for ( int z = 0; z < 16; z++ ) {
-                    c.setMaterialAt( ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 ), x, y, z );
+                    byte materialID = ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 );
+                    c.setMaterialAt( materialID, x, y, z );
                 }
             }
         }
         
         c.buildMesh();
     }
-    
 }

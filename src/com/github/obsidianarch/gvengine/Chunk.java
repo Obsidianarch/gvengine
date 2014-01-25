@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.github.obsidianarch.gvengine.core.ColorSystem;
 import com.github.obsidianarch.gvengine.core.ExpandingArray;
+import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
@@ -136,7 +137,7 @@ public class Chunk {
      */
     public void render() {
         // rebuild the mesh if it needs to be
-        if ( needsRebuild ) {
+        if ( ( vbo == null ) || needsRebuild ) {
             buildMesh();
             needsRebuild = false;
             
@@ -250,9 +251,9 @@ public class Chunk {
      */
     public Material getMaterialAt( float x, float y, float z ) {
         // convert the global positions to the local chunk positions
-        int localX = toLocalPosition( this.x, x );
-        int localY = toLocalPosition( this.y, y );
-        int localZ = toLocalPosition( this.z, z );
+        int localX = MathHelper.getChunkPosition( x );
+        int localY = MathHelper.getChunkPosition( y );
+        int localZ = MathHelper.getChunkPosition( z );
         
         return getMaterialAt( localX, localY, localZ ); // return the materials at the local chunk position
     }
@@ -278,32 +279,21 @@ public class Chunk {
     }
     
     //
-    // Static
+    // Overrides
     //
     
-    /**
-     * Converts a local chunk coordinate to the global coordinate.
-     * 
-     * @param chunkCoordinate
-     *            The chunk's coordiante on the plane.
-     * @param localPosition
-     *            The local position.
-     * @return The global coordinate.
-     */
-    public static float toGlobalPosition( int chunkCoordinate, int localPosition ) {
-        return localPosition + ( chunkCoordinate * 16 );
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "CHUNK@(" + x + ", " + y + ", " + z + ") = { " );
+        
+        for ( byte b : voxels ) {
+            sb.append( b ).append( " " );
+        }
+        
+        sb.append( "}" );
+        
+        return sb.toString();
     }
     
-    /**
-     * Converts a global coordinate to a local chunk coordinate.
-     * 
-     * @param chunkCoordinate
-     *            The chunk's coordinate on the plane.
-     * @param globalPosition
-     *            The global position.
-     * @return The local coordinate.
-     */
-    public static int toLocalPosition( int chunkCoordinate, float globalPosition ) {
-        return ( int ) Math.floor( globalPosition - ( chunkCoordinate * 16 ) );
-    }
 }

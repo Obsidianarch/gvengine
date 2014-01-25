@@ -5,10 +5,11 @@ import java.util.Map;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.entities.Player;
 
 /**
+ * The world of chunks.
+ * 
  * @author Austin
  */
 public class World {
@@ -17,8 +18,8 @@ public class World {
     // Fields
     //
     
-    /** Manages the chunks in this world. */
-    private final ChunkManager           manager;
+    /** Provides chunks to the world. */
+    private final ChunkProvider          provider;
     
     /** A list of all chunks with their chunk positions as their key. */
     private final Map< Vector3f, Chunk > allChunks = new IdentityHashMap<>();
@@ -33,11 +34,22 @@ public class World {
     /**
      * Creates a World.
      * 
-     * @param manager
-     *            The ChunkManager for this world.
+     * @param provider
+     *            Provides chunks to this world.
      */
-    public World( ChunkManager manager ) {
-        this.manager = manager;
+    public World( ChunkProvider provider ) {
+        this.provider = provider;
+        player.camera.setPosition( 0, 48, 0 );
+        player.camera.setRotation( 90, 0, 0 );
+        
+        // TODO change this to load better
+        for ( int x = -2; x <= 2; x++ ) {
+            for ( int y = -2; y <= 2; y++ ) {
+                for ( int z = -2; z <= 2; z++ ) {
+                    allChunks.put( new Vector3f( x, y, z ), provider.createChunk( x, y, z ) );
+                }
+            }
+        }
     }
     
     //
@@ -51,8 +63,6 @@ public class World {
      *            The time since the last frame.
      */
     public void update( float dt ) {
-        manager.update( this, player.camera ); // update the chunk manager
-        
         player.update( dt ); // allow the player to move
     }
     
@@ -62,70 +72,22 @@ public class World {
     public void render() {
         player.camera.lookThrough(); // look through the camera before rendering
         
+        for ( Chunk c : allChunks.values() ) {
+            if ( c == null ) continue;
+            c.render();
+        }
+        
         // TODO render only visible chunks
         
         player.render(); // render the player
     }
     
     //
-    // Getters
+    // Setters
     //
     
-    /**
-     * Returns the chunk at the given chunk coordinates. If the chunk does not exist, then
-     * the chunk will be generated.
-     * 
-     * @param x
-     * @param y
-     * @param z
-     * @return The chunk at the given chunk coordiantes.
-     */
-    public Chunk getChunkAt( int x, int y, int z ) {
-        Vector3f pos = new Vector3f( x, y, z );
-        Chunk c = allChunks.get( pos );
-        
-        if ( c == null ) {
-            c = createChunk( x, y, z );
-            allChunks.put( pos, c );
-        }
-        
-        return c;
-    }
-    
-    /**
-     * Creates a chunk at the given chunk locations.
-     * 
-     * @param cX
-     * @param cY
-     * @param cZ
-     * @return The created chunk.
-     */
-    public Chunk createChunk( int cX, int cY, int cZ ) {
-        Chunk c = new Chunk( cX, cY, cZ );
-        
-        for ( int x = 0; x < 16; x++ ) {
-            for ( int y = 0; y < 16; y++ ) {
-                for ( int z = 0; z < 16; z++ ) {
-                    
-                    // TODO externalize this code later, and make it better
-                    
-                    if ( cY > 0 ) {
-                        c.setMaterialAt( Material.AIR, x, y, z );
-                    }
-                    else {
-                        float globalY = MathHelper.getGlobalPosition( cY, y );
-                        if ( globalY > 20 ) {
-                            c.setMaterialAt( Material.GRASS, x, y, z );
-                        }
-                        else {
-                            c.setMaterialAt( Material.STONE, x, y, z );
-                        }
-                    }
-                }
-            }
-        }
-        
-        return c;
-    }
+    //
+    // Getters
+    //
     
 }

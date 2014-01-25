@@ -68,6 +68,22 @@ public class Camera {
     }
     
     /**
+     * Sets the position of the camera.
+     * 
+     * @param x
+     *            The new x position of the camera.
+     * @param y
+     *            The new y position of the camera.
+     * @param z
+     *            The new z position of the camera.
+     */
+    public void setPosition( float x, float y, float z ) {
+        setX( x );
+        setY( y );
+        setZ( z );
+    }
+    
+    /**
      * Sets the pitch of the camera.
      * 
      * @param pitch
@@ -95,6 +111,22 @@ public class Camera {
      */
     public void setRoll( float roll ) {
         this.roll = roll;
+    }
+    
+    /**
+     * Sets the rotation of the camera.
+     * 
+     * @param pitch
+     *            The rotation around the x axis.
+     * @param yaw
+     *            The rotation around the y axis.
+     * @param roll
+     *            The rotation around the z axis.
+     */
+    public void setRotation( float pitch, float yaw, float roll ) {
+        setPitch( pitch );
+        setYaw( yaw );
+        setRoll( roll );
     }
     
     //

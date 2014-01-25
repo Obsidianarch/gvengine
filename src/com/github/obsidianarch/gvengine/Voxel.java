@@ -2,6 +2,7 @@ package com.github.obsidianarch.gvengine;
 
 import com.github.obsidianarch.gvengine.core.ExpandingArray;
 import com.github.obsidianarch.gvengine.core.Face;
+import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.RepeatingArray;
 
 /**
@@ -35,9 +36,9 @@ public class Voxel {
         RepeatingArray repeatingColors = new RepeatingArray( colorSource );
         float[] repeatedColors = repeatingColors.createArray( 18 );
         
-        float gX = Chunk.toGlobalPosition( c.x, x );
-        float gY = Chunk.toGlobalPosition( c.y, y );
-        float gZ = Chunk.toGlobalPosition( c.z, z );
+        float gX = MathHelper.getGlobalPosition( c.x, x );
+        float gY = MathHelper.getGlobalPosition( c.y, y );
+        float gZ = MathHelper.getGlobalPosition( c.z, z );
         
         //
         // X-Faces
