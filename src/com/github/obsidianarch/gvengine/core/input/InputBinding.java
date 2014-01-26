@@ -35,6 +35,20 @@ public class InputBinding {
         this.button = button;
     }
     
+    /**
+     * Creates an InputBinding from a string.
+     * 
+     * @param binding
+     *            The string value of an InputBinding.
+     */
+    public InputBinding( String s ) {
+        // get the input binding mode whose ordinal returns the first digit of the string
+        mode = InputBindingMode.values()[ Integer.valueOf( Character.toString( s.charAt( 0 ) ) ) ];
+        
+        s = s.substring( 1 ); // remove the first character
+        button = Integer.valueOf( s ); // convert the remaining digits to the button value
+    }
+    
     //
     // Getters
     //
@@ -56,6 +70,15 @@ public class InputBinding {
         }
         
         return false;
+    }
+    
+    //
+    // Overrides
+    //
+    
+    @Override
+    public String toString() {
+        return mode.ordinal() + "" + button;
     }
     
 }

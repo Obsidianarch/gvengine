@@ -11,3 +11,6 @@
 .settings/
 bin/
 
+# Individual Files #
+config
+

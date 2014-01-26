@@ -2,6 +2,8 @@ package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.File;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -31,11 +33,14 @@ public class ChunkTester {
     
     @Option( description = OptionManager.FPS_CAP, screenName = "", x = -1, y = -1 )
     @SliderOption( minimum = -1, maximum = 120 )
-    public static int     FPSCap       = -1;
+    public static int         FPSCap       = -1;
     
     @Option( description = OptionManager.VSYNC_ENABLED, screenName = "", x = -1, y = -1 )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Enabled", "Disabled" } )
-    public static boolean VSyncEnabled = false;
+    public static boolean     VSyncEnabled = false;
+    
+    /** The location of all the configurations. */
+    private static final File CONFIG_FILE  = new File( System.getProperty( "user.dir" ), "config" );
     
     //
     // OptionListeners
@@ -77,8 +82,11 @@ public class ChunkTester {
         camera.setMaximumPitch( 170f );
         Controller controller = new Controller( camera ); // the controller of the camera
         
-        Input.initialize(); // initialize the input bindings
-        {
+        Input.initialize(); // initialize Input
+        
+        // load the input bindings, and if it doesn't work, add the defaults
+        if ( Input.loadBindings( CONFIG_FILE ) != 10 ) {
+            
             Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
             Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
             Input.setBinding( "backward", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
@@ -91,17 +99,20 @@ public class ChunkTester {
             Input.setBinding( "unbindMouse", InputBindingMode.MOUSE, 0 );
             Input.setBinding( "bindMouse", InputBindingMode.MOUSE, 1 );
             Input.setBinding( "dbgc", InputBindingMode.MOUSE, 2 );
+            
         }
         
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
             
+            Input.poll();
             processInput( camera, controller, c ); // move and orient the player
             renderScene( camera, c );
             updateDisplay();
         }
         
         Display.destroy();
+        Input.saveBindings( CONFIG_FILE );
     }
     
     /**
