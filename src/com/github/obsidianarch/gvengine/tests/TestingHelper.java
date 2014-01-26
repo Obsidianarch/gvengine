@@ -30,6 +30,11 @@ public class TestingHelper {
     // Methods
     //
     
+    public static boolean isDeveloping() {
+        String options = System.getProperty( "gvengine.developerMode", "false" );
+        return options.equalsIgnoreCase( "true" );
+    }
+    
     /**
      * Creates the Display.
      * 

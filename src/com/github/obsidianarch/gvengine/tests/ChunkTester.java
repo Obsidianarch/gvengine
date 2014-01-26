@@ -59,6 +59,10 @@ public class ChunkTester {
      *             If something went wrong.
      */
     public static void main( String... s ) throws Exception {
+        if ( !TestingHelper.isDeveloping() ) {
+            System.setProperty( "org.lwjgl.librarypath", System.getProperty( "user.dir" ) + "/res/" );
+        }
+        
         OptionManager.registerClass( ChunkTester.class );
         System.out.println();
         
@@ -69,6 +73,8 @@ public class ChunkTester {
         buildChunk( c ); // build the chunk
         
         Camera camera = new Camera(); // the camera of hte player
+        camera.setMinimumPitch( 20f );
+        camera.setMaximumPitch( 170f );
         Controller controller = new Controller( camera ); // the controller of the camera
         
         Input.initialize(); // initialize the input bindings
@@ -78,6 +84,13 @@ public class ChunkTester {
             Input.setBinding( "backward", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
             Input.setBinding( "right", InputBindingMode.KEYBOARD, Keyboard.KEY_D );
             Input.setBinding( "sprint", InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
+            
+            Input.setBinding( "rebuildChunk", InputBindingMode.KEYBOARD, Keyboard.KEY_R );
+            Input.setBinding( "removeVoxels", InputBindingMode.KEYBOARD, Keyboard.KEY_E );
+            
+            Input.setBinding( "unbindMouse", InputBindingMode.MOUSE, 0 );
+            Input.setBinding( "bindMouse", InputBindingMode.MOUSE, 1 );
+            Input.setBinding( "dbgc", InputBindingMode.MOUSE, 2 );
         }
         
         while ( !Display.isCloseRequested() ) {
@@ -140,13 +153,12 @@ public class ChunkTester {
      *            The chunk that is being tested.
      */
     private static void processInput( Camera camera, Controller controller, Chunk c ) {
-        if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) { // rebuild the chunk
-            buildChunk( c );
-        }
+        if ( Input.isBindingActive( "unbindMouse " ) ) Mouse.setGrabbed( false );
+        if ( Input.isBindingActive( "bindMouse" ) ) Mouse.setGrabbed( true );
+        if ( Input.isBindingActive( "dbgc" ) ) System.out.println( camera.toString() );
         
-        if ( Keyboard.isKeyDown( Keyboard.KEY_E ) ) {
-            removeBlocks( c );
-        }
+        if ( Input.isBindingActive( "rebuildChunk" ) ) buildChunk( c );
+        if ( Input.isBindingActive( "removeVoxel" ) ) removeBlocks( c );
         
         float movementSpeed = 0.01f * TestingHelper.getDelta();
         if ( Input.isBindingActive( "sprint" ) ) movementSpeed *= 2;

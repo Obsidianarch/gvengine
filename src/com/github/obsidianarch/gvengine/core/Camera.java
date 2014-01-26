@@ -33,6 +33,12 @@ public class Camera {
     /** The rotation around the z axis. */
     protected float roll;
     
+    /** The maximum pitch the camera can go to. */
+    protected float maxPitch;
+    
+    /** The minimum pitch the camera can go to. */
+    protected float minPitch;
+    
     //
     // Setters
     //
@@ -90,7 +96,9 @@ public class Camera {
      *            The rotation around the x axis.
      */
     public void setPitch( float pitch ) {
-        this.pitch = pitch;
+        this.pitch = pitch % 360;
+        if ( this.pitch < minPitch ) this.pitch = minPitch;
+        if ( this.pitch > maxPitch ) this.pitch = maxPitch;
     }
     
     /**
@@ -100,7 +108,7 @@ public class Camera {
      *            The rotation around the y axis.
      */
     public void setYaw( float yaw ) {
-        this.yaw = yaw;
+        this.yaw = yaw % 360;
     }
     
     /**
@@ -110,7 +118,7 @@ public class Camera {
      *            The rotation around the z axis.
      */
     public void setRoll( float roll ) {
-        this.roll = roll;
+        this.roll = roll % 360;
     }
     
     /**
@@ -127,6 +135,26 @@ public class Camera {
         setPitch( pitch );
         setYaw( yaw );
         setRoll( roll );
+    }
+    
+    /**
+     * Sets the maximum pitch the camera can go to.
+     * 
+     * @param max
+     *            The highest pitch the camera can go to.
+     */
+    public void setMaximumPitch( float max ) {
+        maxPitch = max % 360;
+    }
+    
+    /**
+     * Sets the minimum pitch the camera can go to.
+     * 
+     * @param min
+     *            The lowest pitch the camera can go to.
+     */
+    public void setMinimumPitch( float min ) {
+        minPitch = min % 360;
     }
     
     //
