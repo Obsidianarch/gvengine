@@ -16,7 +16,7 @@ import org.lwjgl.opengl.DisplayMode;
  * 
  * @author Austin
  */
-public class ControllerTest {
+public class ControllerTester {
     
     //
     // Fields

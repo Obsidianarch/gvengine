@@ -1,8 +1,7 @@
 package com.github.obsidianarch.gvengine.core;
 
+import org.lwjgl.Sys;
 import org.lwjgl.util.vector.Vector3f;
-
-import com.github.obsidianarch.gvengine.World;
 
 /**
  * @author Austin
@@ -26,6 +25,17 @@ public final class MathHelper {
      */
     public static boolean inRange( float x, float xMin, float xMax ) {
         return ( ( x >= xMin ) && ( x <= xMax ) );
+    }
+    
+    /**
+     * Returns {@code milliseconds} in LWJGL ticks.
+     * 
+     * @param milliseconds
+     *            The number of milliseconds to convert.
+     * @return Ticks.
+     */
+    public static long toTicks( long milliseconds ) {
+        return ( milliseconds * Sys.getTimerResolution() ) / 1000;
     }
     
     //
@@ -53,23 +63,6 @@ public final class MathHelper {
         target.z -= targetDistance * ( float ) Math.cos( Math.toRadians( camera.getYaw() ) );
         
         return target;
-    }
-    
-    /**
-     * Casts a "ray" out of the view of the camera, and sees if it can connect to the
-     * target position.
-     * 
-     * @param world
-     *            The World the camera is in.
-     * @param camera
-     *            The camera shooting the ray.
-     * @param target
-     *            The target of the camera.
-     * @return If a ray could successfully be cast at the target and make it there
-     *         unadulterated.
-     */
-    public static boolean raycast( World world, Camera camera, Vector3f target ) {
-        return false;
     }
     
     //

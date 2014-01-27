@@ -1,6 +1,5 @@
 package com.github.obsidianarch.gvengine.entities;
 
-import com.github.obsidianarch.gvengine.core.Entity;
 import com.github.obsidianarch.gvengine.core.input.Input;
 
 /**

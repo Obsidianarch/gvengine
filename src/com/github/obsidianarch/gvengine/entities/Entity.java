@@ -1,4 +1,7 @@
-package com.github.obsidianarch.gvengine.core;
+package com.github.obsidianarch.gvengine.entities;
+
+import com.github.obsidianarch.gvengine.core.Camera;
+import com.github.obsidianarch.gvengine.core.Controller;
 
 /**
  * Represents an object in the game. Voxels are excluded from this, as they are considered

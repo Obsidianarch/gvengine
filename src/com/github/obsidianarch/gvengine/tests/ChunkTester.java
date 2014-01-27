@@ -2,9 +2,6 @@ package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.io.File;
-
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -12,8 +9,8 @@ import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
+import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
-import com.github.obsidianarch.gvengine.core.input.InputBindingMode;
 import com.github.obsidianarch.gvengine.core.options.Option;
 import com.github.obsidianarch.gvengine.core.options.OptionListener;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
@@ -33,14 +30,11 @@ public class ChunkTester {
     
     @Option( description = OptionManager.FPS_CAP, screenName = "", x = -1, y = -1 )
     @SliderOption( minimum = -1, maximum = 120 )
-    public static int         FPSCap       = -1;
+    public static int     FPSCap       = -1;
     
     @Option( description = OptionManager.VSYNC_ENABLED, screenName = "", x = -1, y = -1 )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Enabled", "Disabled" } )
-    public static boolean     VSyncEnabled = false;
-    
-    /** The location of all the configurations. */
-    private static final File CONFIG_FILE  = new File( System.getProperty( "user.dir" ), "config" );
+    public static boolean VSyncEnabled = false;
     
     //
     // OptionListeners
@@ -73,6 +67,7 @@ public class ChunkTester {
         
         TestingHelper.createDisplay();
         TestingHelper.setupGL();
+        TestingHelper.initInput();
         
         Chunk c = new Chunk( 0, 0, 0 ); // the chunk we're testing
         buildChunk( c ); // build the chunk
@@ -82,37 +77,17 @@ public class ChunkTester {
         camera.setMaximumPitch( 165f );
         Controller controller = new Controller( camera ); // the controller of the camera
         
-        Input.initialize(); // initialize Input
-        
-        // load the input bindings, and if it doesn't work, add the defaults
-        if ( Input.loadBindings( CONFIG_FILE ) < 10 /* we have ten key bindings */) {
-            
-            Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
-            Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
-            Input.setBinding( "backward", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
-            Input.setBinding( "right", InputBindingMode.KEYBOARD, Keyboard.KEY_D );
-            Input.setBinding( "sprint", InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
-            
-            Input.setBinding( "rebuildChunk", InputBindingMode.KEYBOARD, Keyboard.KEY_R );
-            Input.setBinding( "removeVoxels", InputBindingMode.KEYBOARD, Keyboard.KEY_E );
-            
-            Input.setBinding( "unbindMouse", InputBindingMode.MOUSE, 0 );
-            Input.setBinding( "bindMouse", InputBindingMode.MOUSE, 1 );
-            Input.setBinding( "dbgc", InputBindingMode.MOUSE, 2 );
-            
-        }
-        
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
             
-            Input.poll();
+            Input.poll(); // poll the input
             processInput( camera, controller, c ); // move and orient the player
-            renderScene( camera, c );
-            updateDisplay();
+            Scheduler.doTick(); // ticks the scheduler
+            renderScene( camera, c ); // render the scene
+            updateDisplay(); // update the display
         }
         
-        Display.destroy();
-        Input.saveBindings( CONFIG_FILE );
+        TestingHelper.destroy(); // destroys everything
     }
     
     /**
@@ -134,7 +109,7 @@ public class ChunkTester {
      * Updates (and syncs if needed) the Display.
      */
     private static void updateDisplay() {
-        Display.setTitle( "Voxel Testing [" + TestingHelper.getFPS() + "]" );
+        Display.setTitle( "Chunks Testing [" + TestingHelper.getFPS() + "]" );
         Display.update(); // update the screen
         if ( FPSCap != -1 ) Display.sync( FPSCap ); // sync to the FPS cap, if there is one
     }

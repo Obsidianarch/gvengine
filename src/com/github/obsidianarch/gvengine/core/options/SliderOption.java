@@ -1,5 +1,6 @@
 package com.github.obsidianarch.gvengine.core.options;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,8 +11,9 @@ import java.lang.annotation.Target;
  * 
  * @author Austin
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
+@Target( ElementType.FIELD )
+@Retention( RetentionPolicy.RUNTIME )
+@Documented
 public @interface SliderOption {
     
     /**

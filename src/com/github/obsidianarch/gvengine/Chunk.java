@@ -10,6 +10,7 @@ import com.github.obsidianarch.gvengine.core.ExpandingArray;
 import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
+import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
 /**
@@ -39,7 +40,7 @@ public class Chunk {
     private boolean            loaded       = false;
     
     /** If this chunks needs to be rebuilt. */
-    private boolean            needsRebuild = false;
+    private boolean            needsRebuild = true;
     
     /** The VBO for this chunk. */
     private VertexBufferObject vbo          = null;
@@ -100,8 +101,6 @@ public class Chunk {
      * Builds the mesh for the chunk.
      */
     public void buildMesh() {
-        long start = System.nanoTime(); // TODO remove this
-        
         if ( vbo != null ) {
             vbo.delete(); // remove the previous VBO
         }
@@ -121,28 +120,19 @@ public class Chunk {
         vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
         
         vbo.validate(); // manually validate the VBO
-        
-        long end = System.nanoTime(); // TODO remove this
-        
-        System.out.println( "Nanoseconds:  " + ( end - start ) );
-        System.out.println( "Milliseconds: " + ( ( end - start ) / 1000000.0 ) );
-        System.out.println( "Seconds:      " + ( ( end - start ) / 1000000000.0 ) );
-        System.out.println( "Vertices:     " + getVertexCount() );
-        System.out.println( "Triangles:    " + ( getVertexCount() / 3 ) );
-        System.out.println();
     }
     
     /**
      * Renders the VertexBufferObject for this chunk.
      */
     public void render() {
-        // rebuild the mesh if it needs to be
-        if ( ( vbo == null ) || needsRebuild ) {
-            buildMesh();
+        if ( needsRebuild ) {
+            Scheduler.scheduleEvent( "buildMesh", getClass(), this );
             needsRebuild = false;
-            
         }
         
+        if ( vbo == null ) return; // let's not get errors
+            
         // TODO REMOVE THESE AFTER TESTING
         if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
             vbo.setGLMode( GL11.GL_POINTS );
