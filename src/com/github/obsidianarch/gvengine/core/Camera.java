@@ -243,7 +243,7 @@ public class Camera {
     
     @Override
     public String toString() {
-        return "core.Camera[" + x + ", " + y + ", " + z + "; " + pitch + ", " + yaw + ", " + roll + "]\n\tpitchRange={" + minPitch + ", " + maxPitch + "}";
+        return "core.Camera[" + x + ", " + y + ", " + z + "; " + pitch + ", " + yaw + ", " + roll + "]";
     }
     
 }
