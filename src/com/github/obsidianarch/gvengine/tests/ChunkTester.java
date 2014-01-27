@@ -78,14 +78,14 @@ public class ChunkTester {
         buildChunk( c ); // build the chunk
         
         Camera camera = new Camera(); // the camera of hte player
-        camera.setMinimumPitch( 20f );
-        camera.setMaximumPitch( 170f );
+        camera.setMinimumPitch( 15f );
+        camera.setMaximumPitch( 165f );
         Controller controller = new Controller( camera ); // the controller of the camera
         
         Input.initialize(); // initialize Input
         
         // load the input bindings, and if it doesn't work, add the defaults
-        if ( Input.loadBindings( CONFIG_FILE ) != 10 ) {
+        if ( Input.loadBindings( CONFIG_FILE ) < 10 /* we have ten key bindings */) {
             
             Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
             Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
@@ -164,12 +164,12 @@ public class ChunkTester {
      *            The chunk that is being tested.
      */
     private static void processInput( Camera camera, Controller controller, Chunk c ) {
-        if ( Input.isBindingActive( "unbindMouse " ) ) Mouse.setGrabbed( false );
+        if ( Input.isBindingActive( "unbindMouse" ) ) Mouse.setGrabbed( false );
         if ( Input.isBindingActive( "bindMouse" ) ) Mouse.setGrabbed( true );
         if ( Input.isBindingActive( "dbgc" ) ) System.out.println( camera.toString() );
         
         if ( Input.isBindingActive( "rebuildChunk" ) ) buildChunk( c );
-        if ( Input.isBindingActive( "removeVoxel" ) ) removeBlocks( c );
+        if ( Input.isBindingActive( "removeVoxels" ) ) removeBlocks( c );
         
         float movementSpeed = 0.01f * TestingHelper.getDelta();
         if ( Input.isBindingActive( "sprint" ) ) movementSpeed *= 2;

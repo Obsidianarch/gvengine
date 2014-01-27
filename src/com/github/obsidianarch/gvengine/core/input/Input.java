@@ -144,7 +144,7 @@ public final class Input {
                     
                     InputBinding binding = new InputBinding( ibData );
                     
-                    bindings.put( ibAction, binding ); // add the binding to the map of bindings
+                    setBinding( ibAction, binding ); // add the binding to the map of bindings
                     readBindings++;
                 }
             }
@@ -175,7 +175,19 @@ public final class Input {
      */
     public static void setBinding( String action, InputBindingMode mode, int button ) {
         InputBinding binding = new InputBinding( mode, button ); // create the input binding
-        bindings.put( action.toLowerCase(), binding );
+        setBinding( action, binding );
+    }
+    
+    /**
+     * Sets the InputBinding that will trigger the action.
+     * 
+     * @param action
+     *            The action that will be triggered.
+     * @param binding
+     *            The binding which will fire the action.
+     */
+    public static void setBinding( String action, InputBinding binding ) {
+        bindings.put( action.toLowerCase().trim(), binding );
     }
     
     //
@@ -190,7 +202,7 @@ public final class Input {
      * @return The InputBinding bound to the action.
      */
     public static InputBinding getInputBinding( String action ) {
-        return bindings.get( action.toLowerCase() );
+        return bindings.get( action.toLowerCase().trim() );
     }
     
     /**
@@ -201,7 +213,8 @@ public final class Input {
      * @return If the action has been triggered.
      */
     public static boolean isBindingActive( String action ) {
-        InputBinding binding = bindings.get( action.toLowerCase() ); // get the binding from the map
+        InputBinding binding = bindings.get( action.toLowerCase().trim() ); // get the binding from the map
+        
         if ( binding == null ) return false; // the action doesn't exist
             
         return binding.isActive(); // return if the binding is active or not

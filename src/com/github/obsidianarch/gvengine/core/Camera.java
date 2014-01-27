@@ -96,9 +96,17 @@ public class Camera {
      *            The rotation around the x axis.
      */
     public void setPitch( float pitch ) {
-        this.pitch = pitch % 360;
-        if ( this.pitch < minPitch ) this.pitch = minPitch;
-        if ( this.pitch > maxPitch ) this.pitch = maxPitch;
+        if ( pitch < 0 ) pitch += 360f; // unnegativize(TM) the number
+        pitch %= 360; // get the number within 0-359
+        
+        // the pitch is out of range
+        if ( ( pitch > minPitch ) && ( pitch < maxPitch ) ) {
+            
+            // set the pitch to the nearest boundary
+            if ( pitch >= 180 ) pitch = maxPitch;
+            if ( pitch < 180 ) pitch = minPitch;
+        }
+        this.pitch = pitch;
     }
     
     /**
@@ -108,6 +116,7 @@ public class Camera {
      *            The rotation around the y axis.
      */
     public void setYaw( float yaw ) {
+        if ( yaw < 0 ) yaw += 360;
         this.yaw = yaw % 360;
     }
     
@@ -118,6 +127,7 @@ public class Camera {
      *            The rotation around the z axis.
      */
     public void setRoll( float roll ) {
+        if ( roll < 0 ) roll += 360;
         this.roll = roll % 360;
     }
     
@@ -138,23 +148,31 @@ public class Camera {
     }
     
     /**
-     * Sets the maximum pitch the camera can go to.
+     * Sets the maximum pitch the camera can go to, 90° is directly forward.
      * 
      * @param max
      *            The highest pitch the camera can go to.
      */
     public void setMaximumPitch( float max ) {
         maxPitch = max % 360;
+        maxPitch = 90 - maxPitch;
+        if ( maxPitch < 0 ) {
+            maxPitch += 360;
+        }
     }
     
     /**
-     * Sets the minimum pitch the camera can go to.
+     * Sets the minimum pitch the camera can go to, 90° is directly forward.
      * 
      * @param min
      *            The lowest pitch the camera can go to.
      */
     public void setMinimumPitch( float min ) {
         minPitch = min % 360;
+        minPitch = 90 - minPitch;
+        if ( minPitch < 0 ) {
+            minPitch += 360;
+        }
     }
     
     //
@@ -225,7 +243,7 @@ public class Camera {
     
     @Override
     public String toString() {
-        return "com.github.obsidianarch.gvengine.core.Camera[" + x + ", " + y + ", " + z + "; " + pitch + ", " + yaw + ", " + roll + "]";
+        return "core.Camera[" + x + ", " + y + ", " + z + "; " + pitch + ", " + yaw + ", " + roll + "]\n\tpitchRange={" + minPitch + ", " + maxPitch + "}";
     }
     
 }
