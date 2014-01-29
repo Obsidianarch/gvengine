@@ -1,7 +1,10 @@
 package com.github.obsidianarch.gvengine.core;
 
+import java.nio.FloatBuffer;
+
 import org.lwjgl.Sys;
 import org.lwjgl.util.vector.Vector3f;
+import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 /**
  * @author Austin
@@ -38,6 +41,37 @@ public final class MathHelper {
         return ( milliseconds * Sys.getTimerResolution() ) / 1000;
     }
     
+    /**
+     * Adds teh data from teh source {@code FloatGapList} into the {@code FloatBuffer}.
+     * 
+     * @param source
+     *            The source of information.
+     * @param buffer
+     *            The buffer into which items will be inserted.
+     * @param size
+     *            The number of items to add at a time.
+     * @param offset
+     *            The index in the buffer at which the first item will be inserted.
+     * @param stride
+     *            The distance between insertions.
+     */
+    public static void insertBuffer( FloatGapList source, FloatBuffer buffer, int size, int offset, int stride ) {
+        if ( size == 0 ) return;
+        
+        int bufferIndex = offset; // the index in the buffer
+        
+        // iterating over each item in the array
+        for ( int i = 0; i < source.size(); ) {
+            
+            // add the data into the buffer
+            for ( int j = 0; j < size; j++ ) {
+                buffer.put( bufferIndex + j, source.get( i++ ) );
+            }
+            
+            bufferIndex += size + stride; // we just added <size> items, and will skip to the next section
+        }
+    }
+    
     //
     // Raycasting
     //
@@ -68,6 +102,33 @@ public final class MathHelper {
     //
     // Chunk Position Math
     //
+    
+    /**
+     * @param index
+     *            The index of an item in an array of 4096 entries.
+     * @return The x coordinate.
+     */
+    public static int getXPosition( int index ) {
+        return index % 16;
+    }
+    
+    /**
+     * @param index
+     *            The index of an item in an array of 4096 entries.
+     * @return The y coordinate.
+     */
+    public static int getYPosition( int index ) {
+        return ( index / 16 ) % 16;
+    }
+    
+    /**
+     * @param index
+     *            The index of an item in an array of 4096 entries.
+     * @return The z coordinate.
+     */
+    public static int getZPosition( int index ) {
+        return ( index - getXPosition( index ) - ( 16 * getYPosition( index ) ) ) / 256;
+    }
     
     /**
      * Gets the chunk coordinate for the respective global coordinate.

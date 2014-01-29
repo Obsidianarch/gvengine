@@ -12,6 +12,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import com.github.obsidianarch.gvengine.core.Camera;
+import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputBindingMode;
 
@@ -108,6 +110,46 @@ public class TestingHelper {
             Input.setBinding( "dbgc", InputBindingMode.MOUSE, 2 );
             
         }
+    }
+    
+    /**
+     * Moves the camera and controller.
+     * 
+     * @param camera
+     *            The camera.
+     * @param Controller
+     *            The controller.
+     */
+    public static void processInput( Camera camera, Controller controller ) {
+        if ( Input.isBindingActive( "unbindMouse" ) ) Mouse.setGrabbed( false );
+        if ( Input.isBindingActive( "bindMouse" ) ) Mouse.setGrabbed( true );
+        if ( Input.isBindingActive( "dbgc" ) ) System.out.println( camera.toString() );
+        
+        float movementSpeed = 0.01f * TestingHelper.getDelta();
+        if ( Input.isBindingActive( "sprint" ) ) movementSpeed *= 2;
+        
+        if ( Input.isBindingActive( "forward" ) ) controller.moveForward( movementSpeed );
+        if ( Input.isBindingActive( "backward" ) ) controller.moveBackward( movementSpeed );
+        
+        if ( Input.isBindingActive( "left" ) ) controller.moveLeft( movementSpeed );
+        if ( Input.isBindingActive( "right" ) ) controller.moveRight( movementSpeed );
+        
+        camera.setYaw( camera.getYaw() + ( Mouse.getDX() * .05f ) );
+        camera.setPitch( camera.getPitch() - ( Mouse.getDY() * .05f ) );
+    }
+    
+    /**
+     * Updates the display.
+     * 
+     * @param name
+     *            The title.
+     * @param fpsCap
+     *            The fps cap, or -1 if there is none.
+     */
+    public static void updateDisplay( String name, int fpsCap ) {
+        Display.setTitle( name + " [" + TestingHelper.getFPS() + "]" );
+        Display.update();
+        if ( fpsCap != -1 ) Display.sync( fpsCap );
     }
     
     /**

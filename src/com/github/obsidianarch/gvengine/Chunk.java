@@ -2,15 +2,12 @@ package com.github.obsidianarch.gvengine;
 
 import static com.github.obsidianarch.gvengine.core.MathHelper.*;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
+import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 import com.github.obsidianarch.gvengine.core.ColorSystem;
-import com.github.obsidianarch.gvengine.core.ExpandingArray;
 import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
-import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
 /**
@@ -25,7 +22,7 @@ public class Chunk {
     //
     
     /** The voxels in this chunk. */
-    private final byte[]       voxels       = new byte[ 4096 ];
+    private final byte[]       voxels = new byte[ 4096 ];
     
     /** The position of this chunk on the chunk grid. */
     public final int           x;
@@ -37,13 +34,10 @@ public class Chunk {
     public final int           z;
     
     /** If the chunk has been loaded yet. */
-    private boolean            loaded       = false;
-    
-    /** If this chunks needs to be rebuilt. */
-    private boolean            needsRebuild = true;
+    private boolean            loaded = false;
     
     /** The VBO for this chunk. */
-    private VertexBufferObject vbo          = null;
+    private VertexBufferObject vbo    = null;
     
     //
     // Constructors
@@ -105,14 +99,14 @@ public class Chunk {
             vbo.delete(); // remove the previous VBO
         }
         
-        ExpandingArray positions = new ExpandingArray( 221184 );
-        ExpandingArray colors = new ExpandingArray( 221184 );
+        FloatGapList positions = new FloatGapList( 0 );
+        FloatGapList colors = new FloatGapList( 0 );
         
         for ( int i = 0; i < 4096; i++ ) {
             // get the local positions from i
-            int x = i % 16;
-            int y = ( i / 16 ) % 16;
-            int z = ( i - x - ( 16 * y ) ) / 256;
+            int x = MathHelper.getXPosition( i );
+            int y = MathHelper.getYPosition( i );
+            int z = MathHelper.getZPosition( i );
             
             Voxel.createVoxel( positions, colors, this, x, y, z );
         }
@@ -126,24 +120,8 @@ public class Chunk {
      * Renders the VertexBufferObject for this chunk.
      */
     public void render() {
-        if ( needsRebuild ) {
-            Scheduler.scheduleEvent( "buildMesh", getClass(), this );
-            needsRebuild = false;
-        }
-        
         if ( vbo == null ) return; // let's not get errors
             
-        // TODO REMOVE THESE AFTER TESTING
-        if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
-            vbo.setGLMode( GL11.GL_POINTS );
-        }
-        else if ( Keyboard.isKeyDown( Keyboard.KEY_2 ) ) {
-            vbo.setGLMode( GL11.GL_LINES );
-        }
-        else if ( Keyboard.isKeyDown( Keyboard.KEY_3 ) ) {
-            vbo.setGLMode( GL11.GL_TRIANGLES );
-        }
-        
         vbo.render();
     }
     
@@ -173,8 +151,6 @@ public class Chunk {
      *            The index in the array.
      */
     public void setMaterialAt( byte b, int index ) {
-        byte previous = voxels[ index ];
-        if ( previous != b ) needsRebuild = true;
         voxels[ index ] = b;
     }
     
@@ -218,7 +194,7 @@ public class Chunk {
      * @return The number of vertices in the chunk.
      */
     public int getVertexCount() {
-        return vbo.getCoordinates().getLength();
+        return vbo.getCoordinates().size();
     }
     
     /**

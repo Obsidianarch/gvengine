@@ -1,6 +1,7 @@
 package com.github.obsidianarch.gvengine;
 
-import com.github.obsidianarch.gvengine.core.ExpandingArray;
+import org.magicwerk.brownies.collections.primitive.FloatGapList;
+
 import com.github.obsidianarch.gvengine.core.Face;
 import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.RepeatingArray;
@@ -16,9 +17,10 @@ public class Voxel {
      * Creates a voxel with only the needed faces.
      * 
      * @param positions
-     *            The positioning array the voxel will be appended to.
+     *            The positioning array to which the voxel's face positions will be
+     *            appended.
      * @param colors
-     *            The color array the voxel's colors will be appended to.
+     *            The color array to which the voxel's colors will be appended.
      * @param c
      *            The chunk the voxel is a part of.
      * @param x
@@ -28,7 +30,7 @@ public class Voxel {
      * @param z
      *            The local z coordinate of the voxel.
      */
-    public static final void createVoxel( ExpandingArray positions, ExpandingArray colors, Chunk c, int x, int y, int z ) {
+    public static final void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z ) {
         Material material = c.getMaterialAt( x, y, z );
         if ( !material.active ) return;
         
@@ -45,13 +47,13 @@ public class Voxel {
         //
         
         if ( !c.getMaterialAt( x - 1, y, z ).active ) {
-            positions.put( createFace( Face.LEFT, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.LEFT, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
         
         if ( !c.getMaterialAt( x + 1, y, z ).active ) {
-            positions.put( createFace( Face.RIGHT, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.RIGHT, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
         
         //
@@ -59,13 +61,13 @@ public class Voxel {
         //
         
         if ( !c.getMaterialAt( x, y - 1, z ).active ) {
-            positions.put( createFace( Face.BOTTOM, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.BOTTOM, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
         
         if ( !c.getMaterialAt( x, y + 1, z ).active ) {
-            positions.put( createFace( Face.TOP, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.TOP, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
         
         //
@@ -73,13 +75,13 @@ public class Voxel {
         //
         
         if ( !c.getMaterialAt( x, y, z - 1 ).active ) {
-            positions.put( createFace( Face.FRONT, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.FRONT, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
         
         if ( !c.getMaterialAt( x, y, z + 1 ).active ) {
-            positions.put( createFace( Face.BACK, gX, gY, gZ ) );
-            colors.put( repeatedColors );
+            positions.addAll( createFace( Face.BACK, gX, gY, gZ ) );
+            colors.addAll( repeatedColors );
         }
     }
     

@@ -2,7 +2,6 @@ package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
@@ -84,7 +83,7 @@ public class ChunkTester {
             processInput( camera, controller, c ); // move and orient the player
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, c ); // render the scene
-            updateDisplay(); // update the display
+            TestingHelper.updateDisplay( "Chunk Tester", FPSCap );
         }
         
         TestingHelper.destroy(); // destroys everything
@@ -103,15 +102,6 @@ public class ChunkTester {
                 c.setMaterialAt( Material.AIR, i );
             }
         }
-    }
-    
-    /**
-     * Updates (and syncs if needed) the Display.
-     */
-    private static void updateDisplay() {
-        Display.setTitle( "Chunks Testing [" + TestingHelper.getFPS() + "]" );
-        Display.update(); // update the screen
-        if ( FPSCap != -1 ) Display.sync( FPSCap ); // sync to the FPS cap, if there is one
     }
     
     /**
@@ -139,24 +129,10 @@ public class ChunkTester {
      *            The chunk that is being tested.
      */
     private static void processInput( Camera camera, Controller controller, Chunk c ) {
-        if ( Input.isBindingActive( "unbindMouse" ) ) Mouse.setGrabbed( false );
-        if ( Input.isBindingActive( "bindMouse" ) ) Mouse.setGrabbed( true );
-        if ( Input.isBindingActive( "dbgc" ) ) System.out.println( camera.toString() );
+        TestingHelper.processInput( camera, controller );
         
         if ( Input.isBindingActive( "rebuildChunk" ) ) buildChunk( c );
         if ( Input.isBindingActive( "removeVoxels" ) ) removeBlocks( c );
-        
-        float movementSpeed = 0.01f * TestingHelper.getDelta();
-        if ( Input.isBindingActive( "sprint" ) ) movementSpeed *= 2;
-        
-        if ( Input.isBindingActive( "forward" ) ) controller.moveForward( movementSpeed );
-        if ( Input.isBindingActive( "backward" ) ) controller.moveBackward( movementSpeed );
-        
-        if ( Input.isBindingActive( "left" ) ) controller.moveLeft( movementSpeed );
-        if ( Input.isBindingActive( "right" ) ) controller.moveRight( movementSpeed );
-        
-        camera.setYaw( camera.getYaw() + ( Mouse.getDX() * .05f ) );
-        camera.setPitch( camera.getPitch() - ( Mouse.getDY() * .05f ) );
     }
     
     /**
