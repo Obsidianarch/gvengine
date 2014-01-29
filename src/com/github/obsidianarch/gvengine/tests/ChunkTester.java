@@ -152,6 +152,13 @@ public class ChunkTester {
             }
         }
         
+        long start = System.nanoTime();
+        
         c.buildMesh();
+        
+        long end = System.nanoTime();
+        long diff = end - start;
+        
+        System.out.println( "Chunk rebuilt in: " + ( diff / 1000000000.0 ) + " millis (" + diff + " nanos)" );
     }
 }
