@@ -46,6 +46,34 @@ public class OptionManager {
     /** These methods will be fired when the modified field has been changed. */
     private static Map< String, List< Method > > changeListeners = new HashMap<>();
     
+    /** The default values passed by commandline. */
+    private static Map< String, String >         defaultValues   = new HashMap<>();
+    
+    //
+    // Initializer
+    //
+    
+    /**
+     * Initializes the OptionManager, this will take parse the commandline arguments
+     * passed to the program.
+     * 
+     * @param args
+     *            The arguments passed by commandline.
+     */
+    public static void initialize( String... args ) {
+        for ( String s : args ) {
+            if ( !s.startsWith( "-O:" ) ) continue; // not a valid OptionManager flag
+                
+            String[] splitArg = s.split( ":" );
+            if ( splitArg.length != 3 ) continue; // there should be only 3 options
+                
+            String fieldName = splitArg[ 1 ]; // the name of the field this is the default value for
+            String value = splitArg[ 2 ]; // the default value for the field
+            
+            defaultValues.put( fieldName, value ); // add the default value to the manager
+        }
+    }
+    
     //
     // Setters
     //
@@ -143,78 +171,54 @@ public class OptionManager {
      * Registers an instanced class for option management. This is used when the options
      * are instance fields.
      * 
+     * @param identifier
+     *            The string identifier for the class.
      * @param o
      *            The instance of the class which contains options.
      */
-    public static void registerInstance( Object o ) {
-        Class< ? > clazz = o.getClass(); // get the class of the object
-        Field[] fields = clazz.getDeclaredFields(); // get ONLY the fields that were declared in this class
+    public static void registerInstance( String identifier, Object o ) {
+        Field[] fields = o.getClass().getDeclaredFields();
+        Method[] methods = o.getClass().getDeclaredMethods();
         
-        for ( Field field : fields ) {
-            if ( !field.isAnnotationPresent( Option.class ) ) continue; // it MUST have an option annotation
-            if ( !Modifier.isPublic( field.getModifiers() ) ) continue; // options MUST be public
-            if ( Modifier.isFinal( field.getModifiers() ) ) continue; // options CANNOT be final
-                
-            System.out.println( clazz.getName() + "." + field.getName() ); // start the option discovery log
-            
-            Option option = field.getAnnotation( Option.class ); // get the option annotation
-            System.out.println( " > " + toString( option ) ); // print the annotation's data
-            
-            // TODO later get the positioning data from the option annotation
-            // TODO actually use these annotations later
-            
-            if ( field.isAnnotationPresent( SliderOption.class ) ) {
-                
-                SliderOption sliderOption = field.getAnnotation( SliderOption.class );
-                System.out.println( " > " + toString( sliderOption ) );
-            }
-            else if ( field.isAnnotationPresent( ToggleOption.class ) ) {
-                
-                ToggleOption toggleOption = field.getAnnotation( ToggleOption.class );
-                System.out.println( " > " + toString( toggleOption ) );
-            }
-            else {
-                System.out.println( " > No other option annotations found, is the option annotation supposed to be here?" );
-            }
-            
-            optionFields.put( option.description(), field ); // add the option to the list
-        }
-        
-        Method[] methods = clazz.getDeclaredMethods(); // get ONLY the methods that were declared in this class
-        
-        for ( Method method : methods ) {
-            if ( !method.isAnnotationPresent( OptionListener.class ) ) continue; // an option listener MUST have the OptionListener annotation
-            if ( !Modifier.isPublic( method.getModifiers() ) ) continue; // an option listener MUST be public
-            if ( method.getParameterTypes().length != 0 ) continue; // an option listener MUST have zero parameters
-                
-            System.out.println( clazz.getName() + "." + method.getName() + "()" ); // start our log
-            
-            OptionListener listener = method.getAnnotation( OptionListener.class ); // get the option listener class
-            String[] fieldNames = listener.value(); // get the names of the fields it will be listening for a property change to
-            
-            for ( String s : fieldNames ) { // iterate over every Option description the listener describes
-                addOptionListener( s, method ); // and attach the OptionListener to each
-            }
-        }
+        registerFields( identifier, fields, true );
+        registerMethods( identifier, methods, true );
     }
     
     /**
      * Registers a static class for option management. This is used when the options are
      * {@code static}.
      * 
+     * @param identifier
+     *            The string identifier for the class.
      * @param clazz
      *            The class that contains static options.
      */
-    public static void registerClass( Class< ? > clazz ) {
+    public static void registerClass( String identifier, Class< ? > clazz ) {
         Field[] fields = clazz.getDeclaredFields(); // get ONLY the fields that were declared in this class
+        Method[] methods = clazz.getDeclaredMethods(); // get ONLY the methods that were declared in this class
         
+        registerFields( identifier, fields, true ); // register the static fields
+        registerMethods( identifier, methods, true ); // register the static methods 
+    }
+    
+    /**
+     * Registers fields iwth the OptionManager.
+     * 
+     * @param identifier
+     *            The string identifier for the class.
+     * @param fields
+     *            The list of fields to scan through.
+     * @param needsStatic
+     *            If the fields must be static.
+     */
+    private static void registerFields( String identifier, Field[] fields, boolean needsStatic ) {
         for ( Field field : fields ) {
             if ( !field.isAnnotationPresent( Option.class ) ) continue; // it MUST have an option annotation
             if ( !Modifier.isPublic( field.getModifiers() ) ) continue; // options MUST be public
-            if ( !Modifier.isStatic( field.getModifiers() ) ) continue; // options MUST be static
+            if ( needsStatic && !Modifier.isStatic( field.getModifiers() ) ) continue; // if required, the fields must be static
             if ( Modifier.isFinal( field.getModifiers() ) ) continue; // options CANNOT be final
                 
-            System.out.println( clazz.getName() + "." + field.getName() ); // start the option discovery log
+            System.out.println( identifier + "." + field.getName() ); // start the option discovery log
             
             Option option = field.getAnnotation( Option.class ); // get the option annotation
             System.out.println( " > " + toString( option ) ); // print the annotation's data
@@ -236,18 +240,69 @@ public class OptionManager {
                 System.out.println( " > No other option annotations found, is the option annotation supposed to be here?" );
             }
             
+            // set the default value of the field, if it was set via commandline
+            String fieldIdentifier = identifier + "." + field.getName();
+            if ( defaultValues.containsKey( fieldIdentifier ) ) {
+                String value = defaultValues.get( fieldIdentifier );
+                
+                try {
+                    Class< ? > clazz = field.getType(); // get the type of field this is
+                    
+                    if ( clazz.equals( boolean.class ) ) {
+                        field.setBoolean( null, Boolean.parseBoolean( value ) );
+                    }
+                    else if ( clazz.equals( byte.class ) ) {
+                        field.setByte( null, Byte.parseByte( value ) );
+                    }
+                    else if ( clazz.equals( short.class ) ) {
+                        field.setShort( null, Short.parseShort( value ) );
+                    }
+                    else if ( clazz.equals( int.class ) ) {
+                        field.setInt( null, Integer.parseInt( value ) );
+                    }
+                    else if ( clazz.equals( long.class ) ) {
+                        field.setLong( null, Long.parseLong( value ) );
+                    }
+                    else if ( clazz.equals( float.class ) ) {
+                        field.setFloat( null, Float.parseFloat( value ) );
+                    }
+                    else if ( clazz.equals( double.class ) ) {
+                        field.setDouble( null, Double.parseDouble( value ) );
+                    }
+                    else {
+                        field.set( null, value );
+                    }
+                    
+                    System.out.println( " > Set default value to \"" + value + "\"" );
+                }
+                catch ( IllegalArgumentException | IllegalAccessException e ) {
+                    System.err.println( "Failed to set default value for the field!  Is the field dynamic?" );
+                    e.printStackTrace();
+                }
+            }
+            
             optionFields.put( option.description(), field ); // add the option to the list
         }
-        
-        Method[] methods = clazz.getDeclaredMethods(); // get ONLY the methods that were declared in this class
-        
+    }
+    
+    /**
+     * Registers methods with the OptionManager.
+     * 
+     * @param identifier
+     *            The string identifier for the class.
+     * @param methods
+     *            The list of methods to scan through.
+     * @param needsStatic
+     *            If the methods must be static.
+     */
+    private static void registerMethods( String identifier, Method[] methods, boolean needsStatic ) {
         for ( Method method : methods ) {
             if ( !method.isAnnotationPresent( OptionListener.class ) ) continue; // an option listener MUST have the OptionListener annotation
             if ( !Modifier.isPublic( method.getModifiers() ) ) continue; // an option listener MUST be public
-            if ( !Modifier.isStatic( method.getModifiers() ) ) continue; // an option listener MUST be static
+            if ( needsStatic && !Modifier.isStatic( method.getModifiers() ) ) continue; // if required, the methods must be static
             if ( method.getParameterTypes().length != 0 ) continue; // an option listener MUST have zero parameters
                 
-            System.out.println( clazz.getName() + "." + method.getName() + "()" ); // start our log
+            System.out.println( identifier + "." + method.getName() + "()" ); // start our log
             
             OptionListener listener = method.getAnnotation( OptionListener.class ); // get the option listener class
             String[] fieldNames = listener.value(); // get the names of the fields it will be listening for a property change to

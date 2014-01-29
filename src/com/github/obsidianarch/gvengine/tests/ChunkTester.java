@@ -51,17 +51,19 @@ public class ChunkTester {
     /**
      * Starts and runs the test.
      * 
-     * @param s
-     *            Command line arguments (ignored completely).
+     * @param args
+     *            Command line arguments.
      * @throws Exception
      *             If something went wrong.
      */
-    public static void main( String... s ) throws Exception {
+    public static void main( String... args ) throws Exception {
         if ( !TestingHelper.isDeveloping() ) {
             System.setProperty( "org.lwjgl.librarypath", System.getProperty( "user.dir" ) + "/res/" );
         }
+        OptionManager.initialize( args );
         
-        OptionManager.registerClass( ChunkTester.class );
+        OptionManager.registerClass( "Tester", ChunkTester.class );
+        OptionManager.registerClass( "Scheduler", Scheduler.class );
         System.out.println();
         
         TestingHelper.createDisplay();
@@ -87,21 +89,6 @@ public class ChunkTester {
         }
         
         TestingHelper.destroy(); // destroys everything
-    }
-    
-    /**
-     * Removes blocks from the chunk, stress tests rebuild time and voxel removal.
-     * 
-     * @param c
-     *            The chunk that will have voxels removed from it.
-     */
-    private static void removeBlocks( Chunk c ) {
-        for ( int i = 0; i < 4096; i++ ) {
-            // if a random number 0-9999 is less than 10 (0.1% chance)
-            if ( Math.round( Math.random() * 10000 ) < 10 ) {
-                c.setMaterialAt( Material.AIR, i );
-            }
-        }
     }
     
     /**
@@ -136,6 +123,21 @@ public class ChunkTester {
     }
     
     /**
+     * Removes blocks from the chunk, stress tests rebuild time and voxel removal.
+     * 
+     * @param c
+     *            The chunk that will have voxels removed from it.
+     */
+    private static void removeBlocks( Chunk c ) {
+        for ( int i = 0; i < 4096; i++ ) {
+            // if a random number 0-9999 is less than 10 (0.1% chance)
+            if ( Math.round( Math.random() * 10000 ) < 10 ) {
+                c.setMaterialAt( Material.AIR, i );
+            }
+        }
+    }
+    
+    /**
      * Changes the chunk's contents and rebuilds the chunk's mesh.
      * 
      * @param c
@@ -152,13 +154,18 @@ public class ChunkTester {
             }
         }
         
-        long start = System.nanoTime();
+        for ( int i = 0; i < 64; i++ ) {
+            Scheduler.scheduleEvent( "buildMesh", c, i * 100 );
+        }
         
-        c.buildMesh();
-        
-        long end = System.nanoTime();
-        long diff = end - start;
-        
-        System.out.println( "Chunk rebuilt in: " + ( diff / 1000000000.0 ) + " millis (" + diff + " nanos)" );
+        //        
+        //        long start = System.nanoTime();
+        //        
+        //        c.buildMesh();
+        //        
+        //        long end = System.nanoTime();
+        //        long diff = end - start;
+        //        
+        //        System.out.println( "Chunk rebuilt in: " + ( diff / 1000000000.0 ) + " millis (" + diff + " nanos)" );
     }
 }

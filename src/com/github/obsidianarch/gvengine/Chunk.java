@@ -2,6 +2,8 @@ package com.github.obsidianarch.gvengine;
 
 import static com.github.obsidianarch.gvengine.core.MathHelper.*;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 import com.github.obsidianarch.gvengine.core.ColorSystem;
@@ -104,9 +106,9 @@ public class Chunk {
         
         for ( int i = 0; i < 4096; i++ ) {
             // get the local positions from i
-            int x = MathHelper.getXPosition( i );
-            int y = MathHelper.getYPosition( i );
-            int z = MathHelper.getZPosition( i );
+            int x = MathHelper.getXPosition( i, 16 );
+            int y = MathHelper.getYPosition( i, 16 );
+            int z = MathHelper.getZPosition( i, 16 );
             
             Voxel.createVoxel( positions, colors, this, x, y, z );
         }
@@ -120,8 +122,17 @@ public class Chunk {
      * Renders the VertexBufferObject for this chunk.
      */
     public void render() {
-        if ( vbo == null ) return; // let's not get errors
-            
+        if ( vbo == null ) {
+            return; // let's not get errors
+        }
+        
+        if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
+            vbo.setGLMode( GL11.GL_POINTS );
+        }
+        else {
+            vbo.setGLMode( GL11.GL_TRIANGLES );
+        }
+        
         vbo.render();
     }
     
@@ -254,7 +265,7 @@ public class Chunk {
         sb.append( "CHUNK@(" + x + ", " + y + ", " + z + ") = { " );
         
         for ( byte b : voxels ) {
-            sb.append( b ).append( " " );
+            sb.append( ( int ) b ).append( " " );
         }
         
         sb.append( "}" );

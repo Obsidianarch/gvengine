@@ -106,28 +106,34 @@ public final class MathHelper {
     /**
      * @param index
      *            The index of an item in an array of 4096 entries.
+     * @param size
+     *            The cube root of the array length.
      * @return The x coordinate.
      */
-    public static int getXPosition( int index ) {
-        return index % 16;
+    public static int getXPosition( int index, int size ) {
+        return index % size;
     }
     
     /**
      * @param index
      *            The index of an item in an array of 4096 entries.
+     * @param size
+     *            The cube root of the array length.
      * @return The y coordinate.
      */
-    public static int getYPosition( int index ) {
-        return ( index / 16 ) % 16;
+    public static int getYPosition( int index, int size ) {
+        return ( index / size ) % size;
     }
     
     /**
      * @param index
-     *            The index of an item in an array of 4096 entries.
+     *            The index of an item in an array.
+     * @param size
+     *            The cube root of the array length.
      * @return The z coordinate.
      */
-    public static int getZPosition( int index ) {
-        return ( index - getXPosition( index ) - ( 16 * getYPosition( index ) ) ) / 256;
+    public static int getZPosition( int index, int size ) {
+        return ( index - getXPosition( index, size ) - ( size * getYPosition( index, size ) ) ) / ( size * size );
     }
     
     /**

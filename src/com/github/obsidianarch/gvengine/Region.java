@@ -1,10 +1,9 @@
 package com.github.obsidianarch.gvengine;
 
-import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 
 /**
- * A 16x16x16 container of Chunks.
+ * A 4x4x4 container of Chunks.
  * 
  * @author Austin
  */
@@ -15,7 +14,16 @@ public class Region {
     //
     
     /** An array of all the chunks in this region. */
-    private Chunk[]              chunks = new Chunk[ 4096 ];
+    public Chunk[]               chunks = new Chunk[ 64 ];
+    
+    /** The region's x coordinate. */
+    public final int             x;
+    
+    /** The region's y coordinate. */
+    public final int             y;
+    
+    /** The region's z coordinate. */
+    public final int             z;
     
     /** Responsible for generating every chunk in this region. */
     private final ChunkGenerator generator;
@@ -30,11 +38,16 @@ public class Region {
      * @param generator
      *            The chunk generator used to generate this region's chunks.
      */
-    public Region( ChunkGenerator generator ) {
+    public Region( ChunkGenerator generator, int x, int y, int z ) {
         this.generator = generator;
         
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        
+        // generate the chunks in this region
         for ( int i = 0; i < chunks.length; i++ ) {
-            Chunk c = new Chunk( MathHelper.getXPosition( i ), MathHelper.getYPosition( i ), MathHelper.getZPosition( i ) ); // create the chunk
+            Chunk c = new Chunk( ( 4 * x ) + i, ( 4 * y ) + i, ( 4 * z ) + i ); // create the chunk
             generator.generateChunk( c ); // generate the chunk's voxels
             chunks[ i ] = c; // add the chunk to the region
         }
@@ -45,11 +58,20 @@ public class Region {
     //
     
     /**
+     * Regenerates all chunks based on the current seed.
+     */
+    public void regenerate() {
+        for ( Chunk c : chunks ) {
+            generator.generateChunk( c );
+        }
+    }
+    
+    /**
      * Schedules rebuilds for every chunk in this region.
      */
     public void rebuild() {
-        for ( Chunk c : chunks ) {
-            Scheduler.scheduleEvent( "buildMesh", c ); // schedules a chunk rebuild whenever we can 
+        for ( int i = 0; i < chunks.length; i++ ) {
+            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 100 ); // a chunk in this region is rebuilt every 100 milliseconds 
         }
     }
     

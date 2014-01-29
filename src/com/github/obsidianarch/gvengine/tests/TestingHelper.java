@@ -69,7 +69,7 @@ public class TestingHelper {
         glEnable( GL_DEPTH_TEST ); // enable depth, testing if a vertex is behind others
         glDepthFunc( GL_LEQUAL ); // I got no idea what this does, but anything other than LESS or LEQUAL breaks the rendering
         
-        glEnable( GL_CULL_FACE ); // culls triangles that aren't visible
+        //        glEnable( GL_CULL_FACE ); // culls triangles that aren't visible
         
         glEnable( GL_BLEND ); // enable blending
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); // allow for the alpha channel, granted I may never use it, but it's still nice to have.

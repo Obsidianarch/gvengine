@@ -140,15 +140,15 @@ public class VertexBufferObject {
      * Validates the data in the VBO, and rebinds it to OpenGL.
      */
     public void validate() {
-        if ( glBinding == -1 ) {
-            glBinding = glGenBuffers();
-        }
-        
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normalCoordinates.size() );
         
         MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0, cs.channels + ns.coordinates );
         MathHelper.insertBuffer( channels, interleavedBuffer, cs.channels, ps.coordinates, ns.coordinates + ps.coordinates );
         MathHelper.insertBuffer( normalCoordinates, interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels );
+        
+        if ( glBinding == -1 ) {
+            glBinding = glGenBuffers();
+        }
         
         glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind the buffer to OpenGL
         glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW ); // bind the buffer data
@@ -171,9 +171,8 @@ public class VertexBufferObject {
      * Renders our buffers.
      */
     public void render() {
-        // validate invalid data
         if ( !dataValid ) {
-            validate();
+            Scheduler.scheduleEvent( "validate", this ); // schedule a validation of the data
         }
         
         glPushMatrix(); // start editing our matrix
@@ -315,6 +314,13 @@ public class VertexBufferObject {
     //
     // Getters
     //
+    
+    /**
+     * @return If the data OpenGL has is valid.
+     */
+    public boolean isValid() {
+        return dataValid;
+    }
     
     /**
      * @return The coordinates.

@@ -25,13 +25,17 @@ public class Scheduler {
     
     /** The maximum number of events dispatched every tick. */
     @Option( description = "Maximum events", screenName = "Maximum events per tick", x = -1, y = -1 )
-    @SliderOption( minimum = 10, maximum = 500 )
-    public static int            MaxEvents            = 50;
+    @SliderOption( minimum = 8, maximum = 4096 )
+    public static int            MaxEvents            = 16;
     
     /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
-    @Option( description = "Timed Events Throttled", screenName = "Timed Events are restricted to the Maximum Events number", x = -1, y = -1 )
+    @Option( description = "Timed events throttled", screenName = "Timed Events Throttled", x = -1, y = -1 )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled (recommended)", "Enabled" } )
     public static boolean        TimedEventsThrottled = false;
+    
+    @Option( description = "Log scheduling output messages", screenName = "Log Scheduling Output", x = -1, y = -1 )
+    @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled", "Enabled" } )
+    public static boolean        LogOutput            = false;
     
     //
     // Fields
@@ -129,6 +133,8 @@ public class Scheduler {
                 ex.printStackTrace();
             }
             
+            System.out.println( "> Executed timed event \"" + e.action.getName() + "\"" );
+            
             it.remove(); // remove the iterated objects
         }
         
@@ -137,7 +143,7 @@ public class Scheduler {
             Event e = it.next(); // get the next event
             
             // we've reached the max number of events we can fire for now
-            if ( TimedEventsThrottled && ( firedEvents >= MaxEvents ) ) break;
+            if ( firedEvents >= MaxEvents ) break;
             
             try {
                 e.action.invoke( e.target ); // invoke the method
@@ -147,6 +153,8 @@ public class Scheduler {
                 System.err.println( "Scheduler failed to invoke \"" + e.action.getName() + "()\"" );
                 ex.printStackTrace();
             }
+            
+            System.out.println( "> Executed event \"" + e.action.getName() + "\"" );
             
             it.remove(); // remove the iterated object
         }
@@ -160,21 +168,54 @@ public class Scheduler {
      *            The event to schedule.
      */
     private static void addEvent( Event e ) {
-        // if there is not timed constraint
-        if ( e.executionTime == -1 ) {
-            events.add( e );
-            return;
-        }
-        
-        // add the timed event into the list at the correct position, based on the surronding items
-        for ( int i = 0; i < timedEvents.size(); i++ ) {
-            Event event = timedEvents.get( i ); // get the event from the list
+        try {
+            // if there is not timed constraint
+            if ( e.executionTime == -1 ) {
+                events.add( e );
+                return;
+            }
             
-            if ( event.executionTime > e.executionTime ) { // this event is scheduled later than this one
-                timedEvents.add( i, e );
-                break; // we've added it, no reason to continue doing so
+            // if there are no prescheduled timed events, then add one in
+            if ( timedEvents.size() == 0 ) {
+                timedEvents.add( e );
+                return;
+            }
+            
+            // add the timed event into the list at the correct position, based on the surronding items
+            for ( int i = 0; i < timedEvents.size(); i++ ) {
+                Event event = timedEvents.get( i ); // get the event from the list
+                
+                if ( event.executionTime > e.executionTime ) { // this event is scheduled later than this one
+                    timedEvents.add( i, e ); // insert the timed event into the list
+                    
+                    return; // we've added it, no reason to continue doing so
+                }
+            }
+            
+            timedEvents.add( e ); // add the event to the very end of the queue
+        }
+        finally {
+            if ( LogOutput ) {
+                if ( e.executionTime == -1 ) {
+                    System.out.println( "> Scheduled " + e.action.getName() );
+                }
+                else {
+                    System.out.println( "> Scheduled " + e.action.getName() + " for " + e.executionTime );
+                }
             }
         }
+    }
+    
+    //
+    // Getters
+    //
+    
+    /**
+     * @return The total number of events scheduled that need to be executed at this time
+     *         (timed and untimed).
+     */
+    public static int getEventCount() {
+        return events.size() + timedEvents.size();
     }
     
     //
