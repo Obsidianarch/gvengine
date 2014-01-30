@@ -9,7 +9,8 @@ import org.lwjgl.BufferUtils;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 /**
- * A simplified version of the OpenGL VertexBufferObject.
+ * A simplified version of the OpenGL VertexBufferObject, handles all of the low-level
+ * calls to OpenGL in single methods.
  * 
  * @author Austin
  */
@@ -142,13 +143,12 @@ public class VertexBufferObject {
     public void validate() {
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normalCoordinates.size() );
         
+        // insert data into our buffer
         MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0, cs.channels + ns.coordinates );
         MathHelper.insertBuffer( channels, interleavedBuffer, cs.channels, ps.coordinates, ns.coordinates + ps.coordinates );
         MathHelper.insertBuffer( normalCoordinates, interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels );
         
-        if ( glBinding == -1 ) {
-            glBinding = glGenBuffers();
-        }
+        if ( glBinding == -1 ) glBinding = glGenBuffers();
         
         glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind the buffer to OpenGL
         glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW ); // bind the buffer data
@@ -173,9 +173,10 @@ public class VertexBufferObject {
     public void render() {
         if ( !dataValid ) {
             Scheduler.scheduleEvent( "validate", this ); // schedule a validation of the data
+            if ( glBinding == -1 ) return;
         }
         
-        glPushMatrix(); // start editing our matrix
+        glPushMatrix();
         {
             glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind our buffer
             glDrawArrays( glMode, 0, coordinates.size() + channels.size() + normalCoordinates.size() ); // draw the arrays
@@ -341,6 +342,15 @@ public class VertexBufferObject {
      */
     public FloatGapList getNormalCoordinates() {
         return normalCoordinates;
+    }
+    
+    //
+    // Overrides
+    //
+    
+    @Override
+    public String toString() {
+        return String.format( "core.vbo{ glBinding: %1d | vertices: %2d | valid: %3b }", glBinding, coordinates.size() / ps.coordinates, isValid() );
     }
     
     //

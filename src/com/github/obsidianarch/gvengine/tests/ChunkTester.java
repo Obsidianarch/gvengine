@@ -73,6 +73,9 @@ public class ChunkTester {
         Chunk c = new Chunk( 0, 0, 0 ); // the chunk we're testing
         buildChunk( c ); // build the chunk
         
+        Chunk c2 = new Chunk( 1, 1, 1 );
+        buildChunk( c2 );
+        
         Camera camera = new Camera(); // the camera of hte player
         camera.setMinimumPitch( 15f );
         camera.setMaximumPitch( 165f );
@@ -85,6 +88,8 @@ public class ChunkTester {
             processInput( camera, controller, c ); // move and orient the player
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, c ); // render the scene
+            //            c2.render();
+            
             TestingHelper.updateDisplay( "Chunk Tester", FPSCap );
         }
         
@@ -154,9 +159,7 @@ public class ChunkTester {
             }
         }
         
-        for ( int i = 0; i < 64; i++ ) {
-            Scheduler.scheduleEvent( "buildMesh", c, i * 100 );
-        }
+        Scheduler.scheduleEvent( "buildMesh", c );
         
         //        
         //        long start = System.nanoTime();

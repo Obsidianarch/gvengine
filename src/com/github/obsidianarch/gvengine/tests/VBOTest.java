@@ -8,6 +8,7 @@ import org.lwjgl.opengl.DisplayMode;
 import com.github.obsidianarch.gvengine.core.ColorSystem;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
+import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
 /**
@@ -19,6 +20,8 @@ public class VBOTest {
     
     /** the VertexBufferObject we're testing. */
     private static VertexBufferObject vbo;
+    
+    private static VertexBufferObject vbo2;
     
     /**
      * Starts the test.
@@ -38,6 +41,10 @@ public class VBOTest {
         vbo = new VertexBufferObject( PositionSystem.XY, ColorSystem.RGB, NormalSystem.DISABLED, 6, 9, 0 );
         vbo.setCoordinates( 0, 0, 1, 0, 0, 1 );
         vbo.setChannels( 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+        
+        vbo2 = new VertexBufferObject( PositionSystem.XY, ColorSystem.RGB, NormalSystem.DISABLED, 6, 9, 0 );
+        vbo2.setCoordinates( 1, 1, 1, 0, 0, 1 );
+        vbo2.setChannels( 1, 0, 0, 1, 0, 0, 1, 0, 0 );
     }
     
     /**
@@ -48,6 +55,9 @@ public class VBOTest {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
             
             vbo.render();
+            vbo2.render();
+            
+            Scheduler.doTick();
             
             Display.update();
             Display.sync( 60 );

@@ -6,7 +6,6 @@ import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkGenerator;
-import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.Region;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
@@ -54,11 +53,11 @@ public class RegionTester extends ChunkGenerator {
         TestingHelper.setupGL();
         TestingHelper.initInput();
         
-        Chunk c = new Chunk( 0, 2, 0 );
+        Chunk c = new Chunk( 0, -2, 0 );
         new RegionTester().generateChunk( c );
         c.buildMesh();
         
-        Chunk c2 = new Chunk( 2, 0, 0 );
+        Chunk c2 = new Chunk( 0, 2, 0 );
         new RegionTester().generateChunk( c2 );
         c2.buildMesh();
         
@@ -70,6 +69,8 @@ public class RegionTester extends ChunkGenerator {
         camera.setMaximumPitch( 165f );
         Controller controller = new Controller( camera ); // the controller for the camera
         
+        Display.setVSyncEnabled( true );
+        
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
             
@@ -78,10 +79,10 @@ public class RegionTester extends ChunkGenerator {
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, null ); // render the scene
             
-            c.render();
             c2.render();
+            c.render();
             
-            TestingHelper.updateDisplay( "Chunk Tester", 60 );
+            TestingHelper.updateDisplay( "Chunk Tester", -1 );
         }
         
         TestingHelper.destroy(); // destroys everything
@@ -105,12 +106,8 @@ public class RegionTester extends ChunkGenerator {
     
     @Override
     public void generateChunk( Chunk c ) {
-        for ( int x = 0; x < 16; x++ ) {
-            for ( int y = 0; y < 16; y++ ) {
-                for ( int z = 0; z < 16; z++ ) {
-                    c.setMaterialAt( Material.DIRT, x, y, z ); // set the material
-                }
-            }
+        for ( int i = 0; i < 4096; i++ ) {
+            c.setMaterialAt( ( byte ) ( i % 4 ), i );
         }
     }
 }

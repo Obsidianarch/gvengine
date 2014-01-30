@@ -24,22 +24,22 @@ public class Chunk {
     //
     
     /** The voxels in this chunk. */
-    private final byte[]       voxels = new byte[ 4096 ];
+    private final byte[]      voxels = new byte[ 4096 ];
     
     /** The position of this chunk on the chunk grid. */
-    public final int           x;
+    public final int          x;
     
     /** The position of this chunk on the chunk grid. */
-    public final int           y;
+    public final int          y;
     
     /** The position of this chunk on the chunk grid. */
-    public final int           z;
+    public final int          z;
     
     /** If the chunk has been loaded yet. */
-    private boolean            loaded = false;
+    private boolean           loaded = false;
     
     /** The VBO for this chunk. */
-    private VertexBufferObject vbo    = null;
+    public VertexBufferObject vbo    = null;
     
     //
     // Constructors
@@ -128,6 +128,9 @@ public class Chunk {
         
         if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
             vbo.setGLMode( GL11.GL_POINTS );
+        }
+        else if ( Keyboard.isKeyDown( Keyboard.KEY_2 ) ) {
+            vbo.setGLMode( GL11.GL_LINES );
         }
         else {
             vbo.setGLMode( GL11.GL_TRIANGLES );

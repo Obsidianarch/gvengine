@@ -36,7 +36,7 @@ public class Voxel {
         
         float[] colorSource = { material.color.getRed() / 255f, material.color.getGreen() / 255f, material.color.getBlue() / 255f };
         RepeatingArray repeatingColors = new RepeatingArray( colorSource );
-        float[] repeatedColors = repeatingColors.createArray( 18 );
+        float[] repeatedColors = repeatingColors.createArray( 18 ); // this will be added for every face, for the voxel's color
         
         float gX = MathHelper.getGlobalPosition( c.x, x );
         float gY = MathHelper.getGlobalPosition( c.y, y );
@@ -101,7 +101,7 @@ public class Voxel {
     public static final float[] createFace( Face direction, float x, float y, float z ) {
         float[] points = null; // the point's we'll send back
         
-        // these make the positive spaces easier to reach
+        // these make the far (positive) spaces easier to reach
         float xp = x + 1;
         float yp = y + 1;
         float zp = z + 1;
