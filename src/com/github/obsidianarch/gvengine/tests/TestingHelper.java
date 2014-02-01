@@ -98,8 +98,6 @@ public class TestingHelper {
      * Initializes the input with the default control configurations.
      */
     public static void initInput() {
-        CONFIG.read();
-        
         Input.initialize(); // initialize Input
         
         // load the input bindings, and if it doesn't work, add the defaults

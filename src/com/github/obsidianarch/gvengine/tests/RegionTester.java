@@ -40,6 +40,7 @@ public class RegionTester extends ChunkGenerator {
      *            Command line arguments.
      */
     public static void main( String[] args ) throws Exception {
+        TestingHelper.CONFIG.read();
         OptionManager.initialize( TestingHelper.CONFIG );
         OptionManager.initialize( args );
         
@@ -53,7 +54,7 @@ public class RegionTester extends ChunkGenerator {
         Region region = new Region( new RegionTester(), 0, 0, 0 );
         region.rebuild();
         
-        Scheduler.scheduleRecurringEvent( "rebuild", region, 25000 ); // rebuild the region every 5 seconds
+        Scheduler.scheduleRecurringEvent( "rebuild", region, 30000 ); // rebuild the region every 5 seconds
         
         Camera camera = new Camera(); // the camera of the player
         camera.setMinimumPitch( 15f );
