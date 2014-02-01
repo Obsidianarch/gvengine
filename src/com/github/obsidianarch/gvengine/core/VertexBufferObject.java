@@ -163,7 +163,7 @@ public class VertexBufferObject {
      */
     public void render() {
         if ( !dataValid ) {
-            Scheduler.scheduleEvent( "validate", this ); // schedule a validation of the data
+            Scheduler.scheduleEvent( "validate", this, -1 ); // schedule a validation of the data
             if ( glBinding == -1 ) return;
         }
         

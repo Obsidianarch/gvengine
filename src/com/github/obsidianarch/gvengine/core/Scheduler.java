@@ -61,9 +61,12 @@ public class Scheduler {
      * @param target
      *            The object upon which the method will be invoked.
      * @param time
-     *            The time (in milliseconds) until the event will be fired.
+     *            The time (in milliseconds) until the event will be fired (Use -1 when
+     *            the event doesn't have a time it needs to run by).
+     * @param parameters
+     *            The parameters passed to the method when executed.
      */
-    public static void scheduleEvent( String method, Object target, long time ) {
+    public static void scheduleEvent( String method, Object target, long time, Object... parameters ) {
         Event e = new Event();
         
         try {
@@ -74,32 +77,13 @@ public class Scheduler {
         }
         
         e.target = target;
-        e.executionTime = Sys.getTime() + MathHelper.toTicks( time );
-        
-        addEvent( e ); // add the event to the list
-    }
-    
-    /**
-     * Schedules and event to run, this will have a lower priority than events which have
-     * been scheduled to run at a certain time.
-     * 
-     * @param method
-     *            The method to execute.
-     * @param target
-     *            The object upon which the method will be invoked.
-     */
-    public static void scheduleEvent( String method, Object target ) {
-        Event e = new Event();
-        
-        try {
-            e.action = target.getClass().getMethod( method );
+        if ( time == -1 ) {
+            e.executionTime = -1;
         }
-        catch ( Exception e1 ) {
-            e1.printStackTrace(); // hopefully will never be thrown
+        else {
+            e.executionTime = Sys.getTime() + MathHelper.toTicks( time );
         }
-        
-        e.target = target;
-        e.executionTime = -1;
+        e.parameters = parameters;
         
         addEvent( e ); // add the event to the list
     }
@@ -125,7 +109,7 @@ public class Scheduler {
             if ( e.executionTime > Sys.getTime() ) break;
             
             try {
-                e.action.invoke( e.target ); // invoke the method
+                e.action.invoke( e.target, e.parameters ); // invoke the method
                 if ( TimedEventsThrottled ) firedEvents++;
             }
             catch ( Exception ex ) {
@@ -146,7 +130,7 @@ public class Scheduler {
             if ( firedEvents >= MaxEvents ) break;
             
             try {
-                e.action.invoke( e.target ); // invoke the method
+                e.action.invoke( e.target, e.parameters ); // invoke the method
                 firedEvents++;
             }
             catch ( Exception ex ) {
@@ -231,13 +215,16 @@ public class Scheduler {
     private static class Event {
         
         /** The action for this event. */
-        public Method action;
+        public Method   action;
         
         /** The executor. */
-        public Object target;
+        public Object   target;
         
         /** The time this event should be executed at. -1 if there is not timing priority. */
-        public long   executionTime;
+        public long     executionTime;
+        
+        /** The parameters passed to the methods. */
+        public Object[] parameters;
         
     }
     
