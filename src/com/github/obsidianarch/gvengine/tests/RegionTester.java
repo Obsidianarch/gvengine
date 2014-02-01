@@ -6,9 +6,11 @@ import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkGenerator;
+import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.Region;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
+import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
@@ -24,11 +26,8 @@ public class RegionTester extends ChunkGenerator {
     // Fields
     //
     
-    /** The time the region was last rebuilt. */
-    private static long lastRebuild = TestingHelper.getTime();
-    
     /** The seed for the random number generator. */
-    private static long seed        = 1070136;
+    private static long seed = 1070136;
     
     //
     // Methods
@@ -41,9 +40,7 @@ public class RegionTester extends ChunkGenerator {
      *            Command line arguments.
      */
     public static void main( String[] args ) throws Exception {
-        if ( !TestingHelper.isDeveloping() ) {
-            System.setProperty( "org.lwjgl.librarypath", System.getProperty( "user.dir" ) + "/res/" );
-        }
+        OptionManager.initialize( TestingHelper.CONFIG );
         OptionManager.initialize( args );
         
         OptionManager.registerClass( "Scheduler", Scheduler.class );
@@ -96,8 +93,24 @@ public class RegionTester extends ChunkGenerator {
     
     @Override
     public void generateChunk( Chunk c ) {
-        for ( int i = 0; i < 4096; i++ ) {
-            c.setMaterialAt( ( byte ) 2, i );
+        for ( int x = 0; x < 16; x++ ) {
+            for ( int y = 0; y < 16; y++ ) {
+                for ( int z = 0; z < 16; z++ ) {
+                    float gY = MathHelper.getGlobalPosition( c.y, y );
+                    int index = x + ( y * 16 ) + ( z * 256 );
+                    
+                    if ( gY < 16 ) {
+                        c.setMaterialAt( Material.STONE, index );
+                    }
+                    else if ( gY < 32 ) {
+                        c.setMaterialAt( Material.DIRT, index );
+                    }
+                    else if ( gY == 32 ) {
+                        c.setMaterialAt( Material.GRASS, index );
+                    }
+                    
+                }
+            }
         }
     }
 }

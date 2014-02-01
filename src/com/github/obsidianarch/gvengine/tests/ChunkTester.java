@@ -57,9 +57,7 @@ public class ChunkTester {
      *             If something went wrong.
      */
     public static void main( String... args ) throws Exception {
-        if ( !TestingHelper.isDeveloping() ) {
-            System.setProperty( "org.lwjgl.librarypath", System.getProperty( "user.dir" ) + "/res/" );
-        }
+        OptionManager.initialize( TestingHelper.CONFIG );
         OptionManager.initialize( args );
         
         OptionManager.registerClass( "Tester", ChunkTester.class );

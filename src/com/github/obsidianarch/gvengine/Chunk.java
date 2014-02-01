@@ -237,6 +237,8 @@ public class Chunk {
      */
     public Material getMaterialAt( int x, int y, int z ) {
         if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
+            if ( region == null ) return Material.AIR;
+            
             int xOff = ( int ) Math.floor( x / 16.0 ); // get the x chunk offset
             int yOff = ( int ) Math.floor( y / 16.0 ); // get the y chunk offset
             int zOff = ( int ) Math.floor( z / 16.0 ); // get the z chunk offset

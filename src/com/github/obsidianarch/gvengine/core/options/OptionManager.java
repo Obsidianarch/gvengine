@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.obsidianarch.gvengine.io.Config;
+
 /**
  * Gathers and organizes all preference annotations.
  * 
@@ -72,6 +74,21 @@ public class OptionManager {
             String value = splitArg[ 1 ]; // the second value is the field value
             
             defaultValues.put( fieldName, value ); // add the default value to the manager
+        }
+    }
+    
+    /**
+     * Reads the options from the specified file.
+     * 
+     * @param f
+     *            The files from which options will be read.
+     */
+    public static void initialize( Config c ) {
+        List< String > data = c.getTagData( "OPTIONS" );
+        
+        for ( String s : data ) {
+            String[] split = s.split( "=" );
+            defaultValues.put( split[ 0 ], split[ 1 ] );
         }
     }
     

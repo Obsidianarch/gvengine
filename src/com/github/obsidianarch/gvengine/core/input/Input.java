@@ -1,17 +1,16 @@
 package com.github.obsidianarch.gvengine.core.input;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
+import com.github.obsidianarch.gvengine.io.Config;
 
 /**
  * @author Austin
@@ -61,102 +60,53 @@ public final class Input {
     //
     
     /**
-     * Saves the input bindings to their own file.
+     * Adds all input bindings to the configuration object.<BR>
+     * This does not save the bindings, rather it merely adds them to the configuration
+     * object for later reading and writing.
      * 
-     * @param f
-     *            The file to which the InputBindings will be saved.
-     * @return If the save was successful or not.
+     * @param c
+     *            The configuration object.
      */
-    public static boolean saveBindings( File f ) {
-        f.delete(); // delete the previous file
-        return saveBindings( f, false ); // save the file without appending
+    public static void addBindings( Config c ) {
+        List< String > data = new ArrayList<>(); // the list of bindings
+        
+        // add the bindigns to the list
+        for ( Map.Entry< String, InputBinding > entry : bindings.entrySet() ) {
+            data.add( entry.getKey() + "=" + entry.getValue().toString() ); // write <key>=<value>
+        }
+        
+        c.setTagData( "INPUT", data ); // set the tag data
     }
     
     /**
-     * Saves the input bindings to the provided file, the input bindings will be appended
-     * to the end of the file if {@code append} is true.
+     * Loads the input bindings from the configuration object.<BR>
+     * The input bindings will be read from the configuration object's data, however any
+     * bindings that already exist will be cleared.
      * 
-     * @param f
-     *            The file to which the InputBindings will be saved.
-     * @param append
-     *            If the InputBindings will be appended to the end of the file or not.
-     * @return If the save was successful or not.
+     * @param c
+     *            The configuration object.
+     * @return The total number of bindings loaded.
      */
-    public static boolean saveBindings( File f, boolean append ) {
-        try {
-            BufferedWriter out = new BufferedWriter( new FileWriter( f, append ) ); // create the buffered writer so we can start writing to the file
+    public static int loadBindings( Config c ) {
+        bindings.clear();
+        
+        List< String > data = c.getTagData( "INPUT" ); // get the input data from the config object
+        
+        int loadedBindings = 0;
+        for ( String s : data ) {
+            if ( !s.contains( "=" ) ) continue;
+            String[] split = s.split( "=" );
             
-            out.write( String.format( "%n[INPUT]%n" ) ); // add an extra line of spacing before the title
-            
-            for ( Map.Entry< String, InputBinding > entry : bindings.entrySet() ) {
-                out.write( String.format( "  %s=%s%n", entry.getKey(), entry.getValue().toString() ) ); // add an entry to the file
+            try {
+                setBinding( split[ 0 ], new InputBinding( split[ 1 ] ) );
+                loadedBindings++;
             }
-            
-            out.write( String.format( "[END]%n" ) ); // add an extra line of spacing after the end tag
-            
-            out.close(); // close our resources so we don't waste them
-            
-            return true;
-        }
-        catch ( Exception e ) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    /**
-     * Loads input bindings from the file. This will scan the entire file for the input
-     * bindings section.
-     * 
-     * @param f
-     *            The file in which InputBindings have been saved.
-     * @return The number of bindings read from the file.
-     */
-    public static int loadBindings( File f ) {
-        try {
-            BufferedReader in = new BufferedReader( new FileReader( f ) ); // create the buffered reader so we can start reading from the file
-            
-            int lineNumber = 0;
-            int readBindings = 0;
-            boolean bindingsStarted = false;
-            String line;
-            
-            while ( ( line = in.readLine() ) != null ) {
-                lineNumber++;
-                
-                if ( line.contains( "[INPUT]" ) ) {
-                    bindingsStarted = true; // we now start reading bindings
-                    continue;
-                }
-                
-                if ( line.contains( "[END]" ) ) {
-                    break;
-                }
-                
-                if ( bindingsStarted ) {
-                    if ( !line.contains( "=" ) ) {
-                        System.err.println( "Invalid input binding line in \"" + f.getName() + "\" on line " + lineNumber );
-                        continue;
-                    }
-                    
-                    String ibAction = line.substring( 2, line.lastIndexOf( '=' ) );
-                    String ibData = line.substring( line.lastIndexOf( '=' ) + 1 );
-                    
-                    InputBinding binding = new InputBinding( ibData );
-                    
-                    setBinding( ibAction, binding ); // add the binding to the map of bindings
-                    readBindings++;
-                }
+            catch ( Exception e ) {
+                System.out.println( "Failed to load InputBinding from string [" + s + "]" );
             }
-            
-            in.close();
-            
-            return readBindings;
         }
-        catch ( Exception e ) {
-            e.printStackTrace();
-            return 0;
-        }
+        
+        return loadedBindings;
     }
     
     //

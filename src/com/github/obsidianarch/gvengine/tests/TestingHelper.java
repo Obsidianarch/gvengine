@@ -16,25 +16,32 @@ import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputBindingMode;
+import com.github.obsidianarch.gvengine.io.Config;
 
 /**
  * @author Austin
  */
 public class TestingHelper {
     
+    static {
+        if ( !System.getProperty( "gvengine.developerMode", "false" ).equalsIgnoreCase( "true" ) ) {
+            System.setProperty( "org.lwjgl.librarypath", new File( "natives" ).getAbsolutePath() );
+        }
+    }
+    
     //
-    // Variables
+    // Fields
     //
     
-    private static long       lastTime    = getTime();
+    public static final Config CONFIG      = new Config( new File( System.getProperty( "user.dir" ), "config" ) );
     
-    private static long       lastFPS     = getTime();
+    private static long        lastTime    = getTime();
     
-    private static int        fps         = 0;
+    private static long        lastFPS     = getTime();
     
-    private static int        measuredFPS = 0;
+    private static int         fps         = 0;
     
-    private static final File CONFIG_FILE = new File( System.getProperty( "user.dir" ), "config" );
+    private static int         measuredFPS = 0;
     
     //
     // Methods
@@ -91,10 +98,12 @@ public class TestingHelper {
      * Initializes the input with the default control configurations.
      */
     public static void initInput() {
+        CONFIG.read();
+        
         Input.initialize(); // initialize Input
         
         // load the input bindings, and if it doesn't work, add the defaults
-        if ( Input.loadBindings( CONFIG_FILE ) < 10 /* we have ten key bindings */) {
+        if ( Input.loadBindings( CONFIG ) < 10 /* we have ten key bindings */) {
             
             Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
             Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
@@ -187,7 +196,10 @@ public class TestingHelper {
      */
     public static void destroy() {
         Display.destroy();
-        Input.saveBindings( CONFIG_FILE );
+        Input.addBindings( CONFIG );
+        
+        if ( !CONFIG.save() ) {
+            System.err.println( "Failed to save bindings!" );
+        }
     }
-    
 }
