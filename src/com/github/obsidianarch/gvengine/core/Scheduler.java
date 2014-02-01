@@ -53,8 +53,8 @@ public class Scheduler {
     
     /**
      * Schedules an event {@code time} milliseconds in the future. So
-     * {@code scheduleEvent( "aMethod", anObject, 5000 )} will
-     * execute anObject's method {@code aMethod()} in 5 seconds.
+     * {@code scheduleEvent( "aMethod", anObject, 5000, aParameter )} will
+     * invoke {@code anObject.aMethod( aParameter )} in 5 seconds.
      * 
      * @param method
      *            The method to execute.
@@ -70,7 +70,17 @@ public class Scheduler {
         Event e = new Event();
         
         try {
-            e.action = target.getClass().getMethod( method );
+            if ( parameters != null ) {
+                Class< ? >[] paramClasses = new Class< ? >[ parameters.length ];
+                for ( int i = 0; i < paramClasses.length; i++ ) {
+                    paramClasses[ i ] = parameters[ i ].getClass();
+                }
+                
+                e.action = target.getClass().getMethod( method, paramClasses );
+            }
+            else {
+                e.action = target.getClass().getMethod( method );
+            }
         }
         catch ( NoSuchMethodException | SecurityException e1 ) {
             e1.printStackTrace(); // hopefully will never be thrown

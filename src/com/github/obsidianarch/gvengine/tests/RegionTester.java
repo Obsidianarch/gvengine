@@ -2,6 +2,7 @@ package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
@@ -66,6 +67,8 @@ public class RegionTester extends ChunkGenerator {
             
             Input.poll(); // poll the input
             TestingHelper.processInput( camera, controller ); // move and orient the player
+            if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) region.rebuild();
+            
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
             
@@ -96,5 +99,6 @@ public class RegionTester extends ChunkGenerator {
         for ( int i = 0; i < 4096; i++ ) {
             c.setMaterialAt( ( byte ) ( i % 4 ), i );
         }
+        c.buildMesh();
     }
 }

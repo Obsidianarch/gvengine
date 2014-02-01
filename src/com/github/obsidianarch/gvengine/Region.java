@@ -68,8 +68,8 @@ public class Region {
      * Regenerates all chunks based on the current seed.
      */
     public void regenerate() {
-        for ( Chunk c : chunks ) {
-            generator.generateChunk( c );
+        for ( int i = 0; i < chunks.length; i++ ) {
+            Scheduler.scheduleEvent( "generateChunk", generator, i * 100, chunks[ i ] );
         }
     }
     
@@ -78,7 +78,7 @@ public class Region {
      */
     public void rebuild() {
         for ( int i = 0; i < chunks.length; i++ ) {
-            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 100 ); // a chunk in this region is rebuilt every 100 milliseconds 
+            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 100 ); // a chunk in this region is rebuilt every 10 milliseconds 
         }
     }
     
