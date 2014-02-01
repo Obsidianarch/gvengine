@@ -29,8 +29,8 @@ public class Scheduler {
     
     /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
     @Option( description = "Timed events throttled", screenName = "Timed Events Throttled", x = -1, y = -1 )
-    @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled (recommended)", "Enabled" } )
-    public static boolean        TimedEventsThrottled = false;
+    @ToggleOption( options = { "true", "false" }, descriptions = { "Enabled (recommended)", "Disabled" } )
+    public static boolean        TimedEventsThrottled = true;
     
     @Option( description = "Log scheduling output messages", screenName = "Log Scheduling Output", x = -1, y = -1 )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled", "Enabled" } )

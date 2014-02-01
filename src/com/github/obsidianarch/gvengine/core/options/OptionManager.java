@@ -63,12 +63,13 @@ public class OptionManager {
     public static void initialize( String... args ) {
         for ( String s : args ) {
             if ( !s.startsWith( "-O:" ) ) continue; // not a valid OptionManager flag
+            s = s.substring( "-O:".length() ); // remove the -O: prefix
+            
+            String[] splitArg = s.split( "=" );
+            if ( splitArg.length != 2 ) continue; // there should be only 2 items
                 
-            String[] splitArg = s.split( ":" );
-            if ( splitArg.length != 3 ) continue; // there should be only 3 options
-                
-            String fieldName = splitArg[ 1 ]; // the name of the field this is the default value for
-            String value = splitArg[ 2 ]; // the default value for the field
+            String fieldName = splitArg[ 0 ]; // the first value is the field name
+            String value = splitArg[ 1 ]; // the second value is the field value
             
             defaultValues.put( fieldName, value ); // add the default value to the manager
         }

@@ -71,6 +71,7 @@ public class Region {
      */
     public void regenerate() {
         for ( int i = 0; i < chunks.length; i++ ) {
+            // rebuilding takes a longer time than rebuilding, so it fires 4 times less often
             Scheduler.scheduleEvent( "generateChunk", generator, i * 100, chunks[ i ] );
         }
     }
