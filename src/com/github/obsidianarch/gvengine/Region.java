@@ -1,5 +1,7 @@
 package com.github.obsidianarch.gvengine;
 
+import static com.github.obsidianarch.gvengine.core.MathHelper.*;
+
 import com.github.obsidianarch.gvengine.core.Scheduler;
 
 /**
@@ -48,7 +50,7 @@ public class Region {
         for ( int cX = 0; cX < 4; cX++ ) {
             for ( int cY = 0; cY < 4; cY++ ) {
                 for ( int cZ = 0; cZ < 4; cZ++ ) {
-                    Chunk c = new Chunk( cX, cY, cZ ); // create the chunk
+                    Chunk c = new Chunk( this, cX, cY, cZ ); // create the chunk
                     generator.generateChunk( c ); // generate teh chunk's voxels
                     
                     int index = cX;
@@ -78,7 +80,7 @@ public class Region {
      */
     public void rebuild() {
         for ( int i = 0; i < chunks.length; i++ ) {
-            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 100 ); // a chunk in this region is rebuilt every 10 milliseconds 
+            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 25 ); // a chunk in this region is rebuilt every 10 milliseconds 
         }
     }
     
@@ -89,6 +91,33 @@ public class Region {
         for ( Chunk c : chunks ) {
             c.render();
         }
+    }
+    
+    //
+    // Getters
+    //
+    
+    /**
+     * Returns the chunk at the given local positions.
+     * 
+     * @param x
+     *            The x coordinate of the chunk.
+     * @param y
+     *            The y coordinate of the chunk.
+     * @param z
+     *            The z coordinate of the chunk.
+     * @return The chunk at the given local positions.
+     */
+    public Chunk getChunkAt( int x, int y, int z ) {
+        if ( !inRange( x, 0, 3 ) || !inRange( y, 0, 3 ) || !inRange( z, 0, 3 ) ) {
+            return null; // TODO change this to something else later
+        }
+        
+        int index = x;
+        index += ( y * 4 );
+        index += ( z * 16 );
+        
+        return chunks[ index ];
     }
     
 }

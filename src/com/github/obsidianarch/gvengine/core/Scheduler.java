@@ -169,6 +169,8 @@ public class Scheduler {
                 ex.printStackTrace();
             }
             
+            if ( LogOutput ) System.out.println( "> Executed recurring event \"" + e.action.getName() + "\"" );
+            
             e.executionTime = Sys.getTime() + MathHelper.toTicks( e.delay ); // set the next execution time
         }
         
@@ -191,7 +193,7 @@ public class Scheduler {
                 ex.printStackTrace();
             }
             
-            System.out.println( "> Executed timed event \"" + e.action.getName() + "\"" );
+            if ( LogOutput ) System.out.println( "> Executed timed event \"" + e.action.getName() + "\"" );
             
             it.remove(); // remove the iterated objects
         }
@@ -212,7 +214,7 @@ public class Scheduler {
                 ex.printStackTrace();
             }
             
-            System.out.println( "> Executed event \"" + e.action.getName() + "\"" );
+            if ( LogOutput ) System.out.println( "> Executed event \"" + e.action.getName() + "\"" );
             
             it.remove(); // remove the iterated object
         }
@@ -254,11 +256,14 @@ public class Scheduler {
         }
         finally {
             if ( LogOutput ) {
-                if ( e.executionTime == -1 ) {
-                    System.out.println( "> Scheduled " + e.action.getName() );
+                if ( e.delay != -1 ) {
+                    System.out.println( "> Scheulded \"" + e.action.getName() + "\" for every " + e.delay + " milliseconds" );
+                }
+                else if ( e.executionTime == -1 ) {
+                    System.out.println( "> Scheduled \"" + e.action.getName() + "\"" );
                 }
                 else {
-                    System.out.println( "> Scheduled " + e.action.getName() + " for " + e.executionTime );
+                    System.out.println( "> Scheduled \"" + e.action.getName() + "\" for " + e.executionTime );
                 }
             }
         }
@@ -295,7 +300,7 @@ public class Scheduler {
         public Object   target;
         
         /** The delay between executions (only used for recurring events). */
-        public long     delay;
+        public long     delay = -1;
         
         /** The time this event should be executed at. -1 if there is not timing priority. */
         public long     executionTime;

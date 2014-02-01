@@ -24,22 +24,25 @@ public class Chunk {
     //
     
     /** The voxels in this chunk. */
-    private final byte[]      voxels = new byte[ 4096 ];
+    private final byte[]       voxels = new byte[ 4096 ];
     
     /** The position of this chunk on the chunk grid. */
-    public final int          x;
+    public final int           x;
     
     /** The position of this chunk on the chunk grid. */
-    public final int          y;
+    public final int           y;
     
     /** The position of this chunk on the chunk grid. */
-    public final int          z;
+    public final int           z;
+    
+    /** The region this chunk is a part of. */
+    private final Region       region;
     
     /** If the chunk has been loaded yet. */
-    private boolean           loaded = false;
+    private boolean            loaded = false;
     
     /** The VBO for this chunk. */
-    public VertexBufferObject vbo    = null;
+    private VertexBufferObject vbo    = null;
     
     //
     // Constructors
@@ -48,6 +51,8 @@ public class Chunk {
     /**
      * Creates a chunk at the given chunk coordinates.
      * 
+     * @param region
+     *            The region this chunk is a part of.
      * @param x
      *            The chunk's x coordinate.
      * @param y
@@ -55,7 +60,8 @@ public class Chunk {
      * @param z
      *            The chunk's z coordinate.
      */
-    public Chunk( int x, int y, int z ) {
+    public Chunk( Region region, int x, int y, int z ) {
+        this.region = region;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -219,26 +225,6 @@ public class Chunk {
     }
     
     /**
-     * Gets the material at the given <b>global</b> position.
-     * 
-     * @param x
-     *            The global x position.
-     * @param y
-     *            The global y position.
-     * @param z
-     *            The global z position.
-     * @return The material at the global position.
-     */
-    public Material getMaterialAt( float x, float y, float z ) {
-        // convert the global positions to the local chunk positions
-        int localX = MathHelper.getChunkPosition( x );
-        int localY = MathHelper.getChunkPosition( y );
-        int localZ = MathHelper.getChunkPosition( z );
-        
-        return getMaterialAt( localX, localY, localZ ); // return the materials at the local chunk position
-    }
-    
-    /**
      * Gets the material at the given <b>local</b> position.
      * 
      * @param x
@@ -251,7 +237,28 @@ public class Chunk {
      */
     public Material getMaterialAt( int x, int y, int z ) {
         if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
-            return Material.AIR;
+            int xOff = ( int ) Math.floor( x / 16.0 ); // get the x chunk offset
+            int yOff = ( int ) Math.floor( y / 16.0 ); // get the y chunk offset
+            int zOff = ( int ) Math.floor( z / 16.0 ); // get the z chunk offset
+            
+            // get the new local positions of the voxel
+            x %= 16;
+            y %= 16;
+            z %= 16;
+            
+            // if the local position is less than 0, we need to add 16
+            if ( x < 0 ) x += 16;
+            if ( y < 0 ) y += 16;
+            if ( z < 0 ) z += 16;
+            
+            Chunk c = region.getChunkAt( this.x + xOff, this.y + yOff, this.z + zOff ); // get the chunk at the chunk offset
+            
+            if ( c != null ) { // if the chunk isn't null
+                return c.getMaterialAt( x, y, z ); // return the material at it's position
+            }
+            else { // if the chunk is null
+                return Material.AIR; // return air
+            }
         }
         
         Material mat = Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] ); // get the material
