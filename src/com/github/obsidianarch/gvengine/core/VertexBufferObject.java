@@ -153,15 +153,6 @@ public class VertexBufferObject {
         glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind the buffer to OpenGL
         glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW ); // bind the buffer data
         
-        int stride = ( ps.coordinates + cs.channels + ns.coordinates ) * 4;
-        
-        glVertexPointer( ps.coordinates, GL_FLOAT, stride, 0 ); // tell OpenGL where our vertices are
-        glColorPointer( cs.channels, GL_FLOAT, stride, ps.coordinates * 4 ); // tell OpenGL where our colors are
-        
-        if ( ns.coordinates != 0 ) { // if we have normals enabled...
-            glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // ...tell OpenGL where our normals are
-        }
-        
         glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffer
         
         dataValid = true;
@@ -179,10 +170,25 @@ public class VertexBufferObject {
         glPushMatrix();
         {
             glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind our buffer
+            provideVertexData();
             glDrawArrays( glMode, 0, coordinates.size() + channels.size() + normalCoordinates.size() ); // draw the arrays
             glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind our buffer
         }
         glPopMatrix(); // stop editing our matrix
+    }
+    
+    /**
+     * Provides OpenGL with the vertex data (positions, colors, and normals) for the VBO.
+     */
+    private void provideVertexData() {
+        int stride = ( ps.coordinates + cs.channels + ns.coordinates ) * 4;
+        
+        glVertexPointer( ps.coordinates, GL_FLOAT, stride, 0 ); // tell OpenGL where our vertices are
+        glColorPointer( cs.channels, GL_FLOAT, stride, ps.coordinates * 4 ); // tell OpenGL where our colors are
+        
+        if ( ns.coordinates != 0 ) { // if we have normals enabled...
+            glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // ...tell OpenGL where our normals are
+        }
     }
     
     //

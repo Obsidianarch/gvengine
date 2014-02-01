@@ -88,7 +88,7 @@ public class ChunkTester {
             processInput( camera, controller, c ); // move and orient the player
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, c ); // render the scene
-            //            c2.render();
+            c2.render();
             
             TestingHelper.updateDisplay( "Chunk Tester", FPSCap );
         }

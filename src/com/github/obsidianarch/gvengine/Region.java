@@ -45,11 +45,18 @@ public class Region {
         this.y = y;
         this.z = z;
         
-        // generate the chunks in this region
-        for ( int i = 0; i < chunks.length; i++ ) {
-            Chunk c = new Chunk( ( 4 * x ) + i, ( 4 * y ) + i, ( 4 * z ) + i ); // create the chunk
-            generator.generateChunk( c ); // generate the chunk's voxels
-            chunks[ i ] = c; // add the chunk to the region
+        for ( int cX = 0; cX < 4; cX++ ) {
+            for ( int cY = 0; cY < 4; cY++ ) {
+                for ( int cZ = 0; cZ < 4; cZ++ ) {
+                    Chunk c = new Chunk( cX, cY, cZ ); // create the chunk
+                    generator.generateChunk( c ); // generate teh chunk's voxels
+                    
+                    int index = cX;
+                    index += cY * 4;
+                    index += cZ * 16;
+                    chunks[ index ] = c; // add the chunk to the region
+                }
+            }
         }
     }
     

@@ -53,23 +53,13 @@ public class RegionTester extends ChunkGenerator {
         TestingHelper.setupGL();
         TestingHelper.initInput();
         
-        Chunk c = new Chunk( 0, -2, 0 );
-        new RegionTester().generateChunk( c );
-        c.buildMesh();
-        
-        Chunk c2 = new Chunk( 0, 2, 0 );
-        new RegionTester().generateChunk( c2 );
-        c2.buildMesh();
-        
-        //        Region region = new Region( new RegionTester(), 0, 0, 0 );
-        //        region.rebuild();
+        Region region = new Region( new RegionTester(), 0, 0, 0 );
+        region.rebuild();
         
         Camera camera = new Camera(); // the camera of the player
         camera.setMinimumPitch( 15f );
         camera.setMaximumPitch( 165f );
         Controller controller = new Controller( camera ); // the controller for the camera
-        
-        Display.setVSyncEnabled( true );
         
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
@@ -77,10 +67,7 @@ public class RegionTester extends ChunkGenerator {
             Input.poll(); // poll the input
             TestingHelper.processInput( camera, controller ); // move and orient the player
             Scheduler.doTick(); // ticks the scheduler
-            renderScene( camera, null ); // render the scene
-            
-            c2.render();
-            c.render();
+            renderScene( camera, region ); // render the scene
             
             TestingHelper.updateDisplay( "Chunk Tester", -1 );
         }
@@ -97,7 +84,7 @@ public class RegionTester extends ChunkGenerator {
     public static void renderScene( Camera camera, Region region ) {
         glLoadIdentity();
         camera.lookThrough();
-        //        region.render();
+        region.render();
     }
     
     //
