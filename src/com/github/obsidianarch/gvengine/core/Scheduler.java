@@ -3,7 +3,6 @@ package com.github.obsidianarch.gvengine.core;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.Sys;
@@ -41,15 +40,64 @@ public class Scheduler {
     // Fields
     //
     
+    private static List< Event > recurringEvents      = new ArrayList<>();
+    
     /** The list of events which have timers attached. */
-    private static List< Event > timedEvents          = new ArrayList< Event >();
+    private static List< Event > timedEvents          = new ArrayList<>();
     
     /** The list of events which have just been scheduled. (FIFO) */
-    private static List< Event > events               = new LinkedList<>();
+    private static List< Event > events               = new ArrayList<>();
     
     //
     // Schedulers
     //
+    
+    /**
+     * Schedules an event to be performed every tick, this should be used sparingly or
+     * have large delays, as these cannot be throttled to a maximum number of events per
+     * tick.
+     * 
+     * @param method
+     *            The name of the method to invoke.
+     * @param target
+     *            The object to target.
+     * @param delay
+     *            The time (in milliseconds) between the executions.
+     * @param parameters
+     *            The parameters to pass to the method.
+     */
+    public static void scheduleRecurringEvent( String method, Object target, long delay, Object... parameters ) {
+        Event event = new Event();
+        
+        try {
+            if ( parameters != null ) {
+                Class< ? >[] paramClasses = new Class< ? >[ parameters.length ];
+                for ( int i = 0; i < paramClasses.length; i++ ) {
+                    paramClasses[ i ] = parameters[ i ].getClass();
+                }
+                
+                event.action = target.getClass().getMethod( method, paramClasses );
+            }
+            else {
+                event.action = target.getClass().getMethod( method );
+            }
+            
+        }
+        catch ( NoSuchMethodException e ) {
+            e.printStackTrace();
+        }
+        catch ( SecurityException e ) {
+            System.err.println( "Scheduler cannot get method due to SecurityException" );
+            e.printStackTrace();
+        }
+        
+        event.target = target;
+        event.delay = delay;
+        event.executionTime = MathHelper.toTicks( Sys.getTime() ) + delay;
+        event.parameters = parameters;
+        
+        recurringEvents.add( event );
+    }
     
     /**
      * Schedules an event {@code time} milliseconds in the future. So
@@ -67,7 +115,7 @@ public class Scheduler {
      *            The parameters passed to the method when executed.
      */
     public static void scheduleEvent( String method, Object target, long time, Object... parameters ) {
-        Event e = new Event();
+        Event event = new Event();
         
         try {
             if ( parameters != null ) {
@@ -76,26 +124,26 @@ public class Scheduler {
                     paramClasses[ i ] = parameters[ i ].getClass();
                 }
                 
-                e.action = target.getClass().getMethod( method, paramClasses );
+                event.action = target.getClass().getMethod( method, paramClasses );
             }
             else {
-                e.action = target.getClass().getMethod( method );
+                event.action = target.getClass().getMethod( method );
             }
         }
         catch ( NoSuchMethodException | SecurityException e1 ) {
             e1.printStackTrace(); // hopefully will never be thrown
         }
         
-        e.target = target;
+        event.target = target;
         if ( time == -1 ) {
-            e.executionTime = -1;
+            event.executionTime = -1;
         }
         else {
-            e.executionTime = Sys.getTime() + MathHelper.toTicks( time );
+            event.executionTime = Sys.getTime() + MathHelper.toTicks( time );
         }
-        e.parameters = parameters;
+        event.parameters = parameters;
         
-        addEvent( e ); // add the event to the list
+        addEvent( event ); // add the event to the list
     }
     
     //
@@ -107,6 +155,22 @@ public class Scheduler {
      */
     public static void doTick() {
         int firedEvents = 0;
+        
+        // fire all of the recurring events
+        for ( Event e : recurringEvents ) {
+            if ( Sys.getTime() < e.executionTime ) continue;
+            
+            try {
+                e.action.invoke( e.target, e.parameters ); // invoke the method
+                if ( TimedEventsThrottled ) firedEvents++;
+            }
+            catch ( Exception ex ) {
+                System.err.println( "Scheduler failed to invoke \"" + e.action.getName() + "()\"" );
+                ex.printStackTrace();
+            }
+            
+            e.executionTime = Sys.getTime() + MathHelper.toTicks( e.delay ); // set the next execution time
+        }
         
         Iterator< Event > it = timedEvents.iterator(); // get the iterator for the timed events
         while ( it.hasNext() ) {
@@ -229,6 +293,9 @@ public class Scheduler {
         
         /** The executor. */
         public Object   target;
+        
+        /** The delay between executions (only used for recurring events). */
+        public long     delay;
         
         /** The time this event should be executed at. -1 if there is not timing priority. */
         public long     executionTime;
