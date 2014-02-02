@@ -173,4 +173,15 @@ public final class MathHelper {
         return localPosition + ( chunkCoordinate * 16 );
     }
     
+    /**
+     * Floors the input to an int.
+     * 
+     * @param in
+     *            The number to floor.
+     * @return The number floored as an int.
+     */
+    public static int floor( double in ) {
+        return in > 0 ? ( int ) in : ( int ) ( in - 1 );
+    }
+    
 }
