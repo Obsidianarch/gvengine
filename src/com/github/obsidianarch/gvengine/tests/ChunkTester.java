@@ -57,6 +57,7 @@ public class ChunkTester {
      *             If something went wrong.
      */
     public static void main( String... args ) throws Exception {
+        TestingHelper.CONFIG.read();
         OptionManager.initialize( TestingHelper.CONFIG );
         OptionManager.initialize( args );
         

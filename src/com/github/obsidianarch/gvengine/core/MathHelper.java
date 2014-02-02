@@ -6,6 +6,9 @@ import org.lwjgl.Sys;
 import org.lwjgl.util.vector.Vector3f;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
+import com.github.obsidianarch.gvengine.Chunk;
+import com.github.obsidianarch.gvengine.Region;
+
 /**
  * @author Austin
  */
@@ -160,17 +163,42 @@ public final class MathHelper {
     }
     
     /**
-     * Gets the global position for an object. This is the position of an object relative
-     * to the world's origin.
+     * Gets the global position of the voxel based on the chunk it resides in.
      * 
-     * @param chunkCoordinate
-     *            The position of the chunk in this axis.
-     * @param localPosition
-     *            The position of the object relative to the chunk's axis.
-     * @return The global position of the object.
+     * @param c
+     *            The chunk the voxel is in.
+     * @param localPos
+     *            The {@code x, y, and z} positions of the voxel inside the chunk.
+     * @return The {@code x, y, and z} positions of the voxel, relative to the world's
+     *         origin.
      */
-    public static float getGlobalPosition( int chunkCoordinate, int localPosition ) {
-        return localPosition + ( chunkCoordinate * 16 );
+    public static float[] getGlobalPosition( Chunk c, int[] localPos ) {
+        float[] globalPos = new float[ 3 ];
+        Region r = c.region; // the region this chunk belongs to
+        
+        if ( r == null ) { // there is no region
+            globalPos[ 0 ] = localPos[ 0 ] + ( c.x * 16 );
+            globalPos[ 1 ] = localPos[ 1 ] + ( c.y * 16 );
+            globalPos[ 2 ] = localPos[ 2 ] + ( c.z * 16 );
+        }
+        else {
+            // region offset, in voxels
+            float rOffX = r.x * 64;
+            float rOffY = r.y * 64;
+            float rOffZ = r.z * 64;
+            
+            // chunk offset, in voxels
+            float cOffX = rOffX + ( c.x * 16 );
+            float cOffY = rOffY + ( c.y * 16 );
+            float cOffZ = rOffZ + ( c.z * 16 );
+            
+            // add the voxel offset to the chunk offset
+            globalPos[ 0 ] = localPos[ 0 ] + cOffX;
+            globalPos[ 1 ] = localPos[ 1 ] + cOffY;
+            globalPos[ 2 ] = localPos[ 2 ] + cOffZ;
+        }
+        
+        return globalPos;
     }
     
     /**

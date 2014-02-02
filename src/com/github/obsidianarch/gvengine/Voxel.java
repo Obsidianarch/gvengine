@@ -31,27 +31,30 @@ public class Voxel {
      *            The local z coordinate of the voxel.
      */
     public static final void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z ) {
-        Material material = c.getMaterialAt( x, y, z );
-        if ( !material.active ) return;
+        if ( !c.shouldBeRendered( x, y, z ) ) return; // this voxel shouldn't be rendered
+            
+        Material material = c.getMaterialAt( x, y, z ); // the material of this voxel
         
         float[] colorSource = { material.color.getRed() / 255f, material.color.getGreen() / 255f, material.color.getBlue() / 255f };
         RepeatingArray repeatingColors = new RepeatingArray( colorSource );
         float[] repeatedColors = repeatingColors.createArray( 18 ); // this will be added for every face, for the voxel's color
         
-        float gX = MathHelper.getGlobalPosition( c.x, x );
-        float gY = MathHelper.getGlobalPosition( c.y, y );
-        float gZ = MathHelper.getGlobalPosition( c.z, z );
+        // get the global positions of the voxel
+        float[] global = MathHelper.getGlobalPosition( c, new int[ ] { x, y, z } );
+        float gX = global[ 0 ];
+        float gY = global[ 1 ];
+        float gZ = global[ 2 ];
         
         //
         // X-Faces
         //
         
-        if ( !c.getMaterialAt( x - 1, y, z ).active ) {
+        if ( !c.getMaterialAt( x - 1, y, z ).active && !c.isEclipsed( x - 1, y, z ) ) {
             positions.addAll( createFace( Face.LEFT, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }
         
-        if ( !c.getMaterialAt( x + 1, y, z ).active ) {
+        if ( !c.getMaterialAt( x + 1, y, z ).active && !c.isEclipsed( x + 1, y, z ) ) {
             positions.addAll( createFace( Face.RIGHT, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }
@@ -60,12 +63,12 @@ public class Voxel {
         // Y-Faces
         //
         
-        if ( !c.getMaterialAt( x, y - 1, z ).active ) {
+        if ( !c.getMaterialAt( x, y - 1, z ).active && !c.isEclipsed( x, y - 1, z ) ) {
             positions.addAll( createFace( Face.BOTTOM, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }
         
-        if ( !c.getMaterialAt( x, y + 1, z ).active ) {
+        if ( !c.getMaterialAt( x, y + 1, z ).active && !c.isEclipsed( x, y + 1, z ) ) {
             positions.addAll( createFace( Face.TOP, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }
@@ -74,12 +77,12 @@ public class Voxel {
         // Z-Faces
         //
         
-        if ( !c.getMaterialAt( x, y, z - 1 ).active ) {
+        if ( !c.getMaterialAt( x, y, z - 1 ).active && !c.isEclipsed( x, y, z - 1 ) ) {
             positions.addAll( createFace( Face.FRONT, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }
         
-        if ( !c.getMaterialAt( x, y, z + 1 ).active ) {
+        if ( !c.getMaterialAt( x, y, z + 1 ).active && !c.isEclipsed( x, y, z + 1 ) ) {
             positions.addAll( createFace( Face.BACK, gX, gY, gZ ) );
             colors.addAll( repeatedColors );
         }

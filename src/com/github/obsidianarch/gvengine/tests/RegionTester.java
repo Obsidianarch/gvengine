@@ -6,13 +6,12 @@ import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkGenerator;
-import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.Region;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
-import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
+import com.github.obsidianarch.gvengine.core.noise.Noises;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
 
 /**
@@ -97,19 +96,13 @@ public class RegionTester extends ChunkGenerator {
         for ( int x = 0; x < 16; x++ ) {
             for ( int y = 0; y < 16; y++ ) {
                 for ( int z = 0; z < 16; z++ ) {
-                    float gY = MathHelper.getGlobalPosition( c.y, y );
-                    int index = x + ( y * 16 ) + ( z * 256 );
+                    double noise = Noises.simplex4D( x, y, z, seed );
+                    noise += 1; // [0,2]
+                    noise *= 2; // [0,4]
                     
-                    if ( gY < 16 ) {
-                        c.setMaterialAt( Material.STONE, index );
-                    }
-                    else if ( gY < 32 ) {
-                        c.setMaterialAt( Material.DIRT, index );
-                    }
-                    else if ( gY == 32 ) {
-                        c.setMaterialAt( Material.GRASS, index );
-                    }
+                    byte material = ( byte ) Math.round( noise );
                     
+                    c.setMaterialAt( material, x, y, z );
                 }
             }
         }

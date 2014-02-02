@@ -36,7 +36,7 @@ public class Chunk {
     public final int           z;
     
     /** The region this chunk is a part of. */
-    private final Region       region;
+    public final Region        region;
     
     /** If the chunk has been loaded yet. */
     private boolean            loaded = false;
@@ -265,6 +265,50 @@ public class Chunk {
         
         Material mat = Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] ); // get the material
         return mat == null ? Material.AIR : mat; // return AIR if the material could not be found, otherwise the material
+    }
+    
+    /**
+     * Checks to see if the voxel at the given location should be rendered.<BR>
+     * This algorithm checks the following items, in the following order:<BR>
+     * 1. Is the material at the position active?<BR>
+     * 2. Is the voxel eclipsed?<BR>
+     * 
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            the z coordinate of the voxel, in this chunk.
+     * @return If the voxel should be rendered or not.
+     */
+    public boolean shouldBeRendered( int x, int y, int z ) {
+        if ( !getMaterialAt( x, y, z ).active ) return false; // the material is not active, it shouldn't be rendered
+        return !isEclipsed( x, y, z ); // all neighbors are rendered
+    }
+    
+    /**
+     * Checks to see if the voxel is completely eclipsed, covered by an active material
+     * from all sides.
+     * 
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            The z coordinate of the voxel, in this chunk.
+     * @return If the voxel is completely eclipsed.
+     */
+    public boolean isEclipsed( int x, int y, int z ) {
+        if ( !getMaterialAt( x - 1, y, z ).active ) return false; // the material to the left of this isn't active
+        if ( !getMaterialAt( x + 1, y, z ).active ) return false; // the material to the right of this isn't active
+            
+        if ( !getMaterialAt( x, y - 1, z ).active ) return false; // the material below this isn't active
+        if ( !getMaterialAt( x, y + 1, z ).active ) return false; // the material above this isn't active
+            
+        if ( !getMaterialAt( x, y, z - 1 ).active ) return false; // the material in front of this isn't active
+        if ( !getMaterialAt( x, y, z + 1 ).active ) return false; // the material behind this isn't active
+            
+        return true;
     }
     
     //
