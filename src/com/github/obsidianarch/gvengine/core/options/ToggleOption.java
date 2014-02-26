@@ -6,6 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Used for denoting options which have a set number of options to "toggle" through.
+ * 
+ * @author Austin
+ */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
 @Documented

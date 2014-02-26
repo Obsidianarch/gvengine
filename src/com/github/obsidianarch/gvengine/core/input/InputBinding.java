@@ -38,7 +38,7 @@ public class InputBinding {
     /**
      * Creates an InputBinding from a string.
      * 
-     * @param binding
+     * @param s
      *            The string value of an InputBinding.
      */
     public InputBinding( String s ) {

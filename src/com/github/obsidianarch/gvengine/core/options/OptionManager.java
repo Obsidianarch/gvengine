@@ -29,13 +29,6 @@ public class OptionManager {
     }
     
     //
-    // Constants
-    //
-    
-    public static final String                   FPS_CAP         = "FPS Cap";
-    public static final String                   VSYNC_ENABLED   = "VSync";
-    
-    //
     // Fields
     //
     
@@ -80,8 +73,8 @@ public class OptionManager {
     /**
      * Reads the options from the specified file.
      * 
-     * @param f
-     *            The files from which options will be read.
+     * @param c
+     *            The configuratin object which contains default values for options.
      */
     public static void initialize( Config c ) {
         List< String > data = c.getTagData( "OPTIONS" );
@@ -299,7 +292,7 @@ public class OptionManager {
                 }
             }
             
-            optionFields.put( option.description(), field ); // add the option to the list
+            optionFields.put( option.value(), field ); // add the option to the list
         }
     }
     
@@ -338,12 +331,12 @@ public class OptionManager {
     /**
      * Shortens the annotations toString() method.
      * 
-     * @param s
+     * @param o
      *            The annotation's default
      * @return A shortened version of the annotation's toString().
      */
     private static String toString( Object o ) {
-        return o.toString().substring( "@com.github.obsidianarch.gvengine.core.options.".length() );
+        return o.toString().substring( "@gvengine.core.options.".length() );
     }
     
 }

@@ -33,20 +33,28 @@ public class TestingHelper {
     // Fields
     //
     
+    /** The configuration file. */
     public static final Config CONFIG      = new Config( new File( System.getProperty( "user.dir" ), "config" ) );
     
+    /** The last time a time measurement was taken (used for change in time). */
     private static long        lastTime    = getTime();
     
+    /** The last time an FPS measure was taken. */
     private static long        lastFPS     = getTime();
     
+    /** The current FPS. */
     private static int         fps         = 0;
     
+    /** The last measured FPS. */
     private static int         measuredFPS = 0;
     
     //
     // Methods
     //
     
+    /**
+     * @return {@code true} if the "gvengine.developerMode" property has been set to true.
+     */
     public static boolean isDeveloping() {
         String options = System.getProperty( "gvengine.developerMode", "false" );
         return options.equalsIgnoreCase( "true" );
@@ -124,7 +132,7 @@ public class TestingHelper {
      * 
      * @param camera
      *            The camera.
-     * @param Controller
+     * @param controller
      *            The controller.
      */
     public static void processInput( Camera camera, Controller controller ) {

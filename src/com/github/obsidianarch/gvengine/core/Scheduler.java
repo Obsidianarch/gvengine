@@ -23,16 +23,17 @@ public class Scheduler {
     //
     
     /** The maximum number of events dispatched every tick. */
-    @Option( description = "Maximum events", screenName = "Maximum events per tick", x = -1, y = -1 )
+    @Option( "Maximum events per Tick" )
     @SliderOption( minimum = 8, maximum = 4096 )
     public static int            MaxEvents            = 16;
     
     /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
-    @Option( description = "Timed events throttled", screenName = "Timed Events Throttled", x = -1, y = -1 )
+    @Option( "Timed events throttled" )
     @ToggleOption( options = { "true", "false" }, descriptions = { "Enabled (recommended)", "Disabled" } )
     public static boolean        TimedEventsThrottled = true;
     
-    @Option( description = "Log scheduling output messages", screenName = "Log Scheduling Output", x = -1, y = -1 )
+    /** When true, all event scheduling and dispatching is logged to the console. */
+    @Option( "Log scheduling output messages" )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled", "Enabled" } )
     public static boolean        LogOutput            = false;
     
@@ -40,6 +41,7 @@ public class Scheduler {
     // Fields
     //
     
+    /** Events that are schedule to continuously occur every so often. */
     private static List< Event > recurringEvents      = new ArrayList<>();
     
     /** The list of events which have timers attached. */
@@ -228,9 +230,16 @@ public class Scheduler {
      *            The event to schedule.
      */
     private static void addEvent( Event e ) {
+        boolean scheduled = true;
         try {
             // if there is not timed constraint
             if ( e.executionTime == -1 ) {
+                for ( Event event : events ) {
+                    if ( e.equals( event ) ) {
+                        scheduled = false;
+                        return; // the event is already scheduled, don't perform it again
+                    }
+                }
                 events.add( e );
                 return;
             }
@@ -256,7 +265,10 @@ public class Scheduler {
         }
         finally {
             if ( LogOutput ) {
-                if ( e.delay != -1 ) {
+                if ( !scheduled ) {
+                    System.out.println( "> Ignored previously existing event \"" + e.action.getName() + "\"" );
+                }
+                else if ( e.delay != -1 ) {
                     System.out.println( "> Scheulded \"" + e.action.getName() + "\" for every " + e.delay + " milliseconds" );
                 }
                 else if ( e.executionTime == -1 ) {
@@ -308,6 +320,30 @@ public class Scheduler {
         /** The parameters passed to the methods. */
         public Object[] parameters;
         
+        @Override
+        public String toString() {
+            return String.format( "%s.%s() { %d delay, %d time }", target.getClass().getName(), action.getName(), delay, executionTime );
+        }
+        
+        @Override
+        public boolean equals( Object obj ) {
+            if ( !( obj instanceof Event ) ) return false;
+            Event e = ( Event ) obj;
+            
+            if ( e.action.equals( action ) && ( target == e.target ) && ( delay == e.delay ) && ( executionTime == e.executionTime )
+                && ( parameters.length == e.parameters.length ) ) {
+
+                for ( int i = 0; i < parameters.length; i++ ) {
+                    if ( !parameters[ i ].equals( e.parameters[ i ] ) ) return false;
+                }
+
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
     }
     
 }

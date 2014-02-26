@@ -21,6 +21,7 @@ public final class Input {
     // Fields
     //
     
+    /** All current bindings which have been defined. */
     private static final Map< String, InputBinding > bindings = new HashMap<>();
     
     //

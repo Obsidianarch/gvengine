@@ -7,7 +7,18 @@ package com.github.obsidianarch.gvengine.core;
  */
 public enum PositionSystem {
     
-    XY( 2 ), XYZ( 3 ), XYZW( 4 );
+    /**
+     * Only two coordinates will be rendered.
+     */
+    XY( 2 ),
+    /**
+     * Three coordinates will be used.
+     */
+    XYZ( 3 ),
+    /**
+     * All four coordinates will be used.
+     */
+    XYZW( 4 );
     
     /** The number of coordinates in the system. */
     public final int coordinates;

@@ -21,10 +21,14 @@ public class VBOTest {
     /** the VertexBufferObject we're testing. */
     private static VertexBufferObject vbo;
     
+    /** A second VBO for testing two at once. */
     private static VertexBufferObject vbo2;
     
     /**
      * Starts the test.
+     * 
+     * @throws Exception
+     *             If something couldn't be initialized.
      */
     private static void init() throws Exception {
         Display.setDisplayMode( new DisplayMode( 640, 480 ) );
@@ -76,6 +80,8 @@ public class VBOTest {
      * 
      * @param args
      *            The command line arguments.
+     * @throws Exception
+     *             If a problem happened setting up or running the test.
      */
     public static void main( String[] args ) throws Exception {
         init();

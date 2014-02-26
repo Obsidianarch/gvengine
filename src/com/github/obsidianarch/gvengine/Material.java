@@ -58,6 +58,8 @@ public class Material {
      *            The color of a voxel with this material.
      * @param active
      *            If a voxel with this material should be rendered or not.
+     * @param byteID
+     *            The (unsigned) byte id of the material in the index array.
      */
     public Material( ReadableColor color, boolean active, int byteID ) {
         this.color = color;

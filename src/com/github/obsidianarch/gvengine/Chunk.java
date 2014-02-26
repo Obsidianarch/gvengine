@@ -10,6 +10,7 @@ import com.github.obsidianarch.gvengine.core.ColorSystem;
 import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
+import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
 /**
@@ -24,7 +25,7 @@ public class Chunk {
     //
     
     /** The voxels in this chunk. */
-    private final byte[]       voxels = new byte[ 4096 ];
+    private final byte[]       voxels           = new byte[ 4096 ];
     
     /** The position of this chunk on the chunk grid. */
     public final int           x;
@@ -39,10 +40,13 @@ public class Chunk {
     public final Region        region;
     
     /** If the chunk has been loaded yet. */
-    private boolean            loaded = false;
+    private boolean            loaded           = false;
+    
+    /** If a rebuild has already been scheduled. */
+    private boolean            rebuildScheduled = false;
     
     /** The VBO for this chunk. */
-    private VertexBufferObject vbo    = null;
+    private VertexBufferObject vbo              = null;
     
     //
     // Constructors
@@ -122,16 +126,15 @@ public class Chunk {
         vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
         
         vbo.validate(); // manually validate the VBO
+        rebuildScheduled = false;
     }
     
     /**
      * Renders the VertexBufferObject for this chunk.
      */
     public void render() {
-        if ( vbo == null ) {
-            return; // let's not get errors
-        }
-        
+        if ( vbo == null ) return; // let's not get errors
+            
         if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) ) {
             vbo.setGLMode( GL11.GL_POINTS );
         }
@@ -150,6 +153,37 @@ public class Chunk {
     //
     
     /**
+     * Sets the voxel material at the given index by the material's byte id.
+     * 
+     * @param b
+     *            The byte id of the material.
+     * @param index
+     *            The index in the array.
+     */
+    public void setMaterialAt( byte b, int index ) {
+        byte prev = voxels[ index ];
+        
+        if ( prev == b ) {
+            return;
+            // no point in setting it to the same thing
+            // THIS IS USEFUL (not necassarily for speed in the array setting method, though)
+            // Scheduling a rebuild is completely useless and just wastes time and resources
+            // if the block at this index has not been changed, this was originally implemented
+            // in the if statement below, however implementing it here makes allows for a tiny
+            // tiny performance boost as we don't have to set an element in the array
+        }
+        
+        voxels[ index ] = b;
+        
+        if ( vbo == null ) return; // let's try to avoid some errors
+            
+        if ( !rebuildScheduled ) {
+            Scheduler.scheduleEvent( "buildMesh", this, -1 );
+            rebuildScheduled = true;
+        }
+    }
+    
+    /**
      * Sets the voxel material at the given index.
      * 
      * @param mat
@@ -160,18 +194,6 @@ public class Chunk {
     
     public void setMaterialAt( Material mat, int index ) {
         setMaterialAt( mat.byteID, index );
-    }
-    
-    /**
-     * Sets the voxel material at the given index by the material's byte id.
-     * 
-     * @param b
-     *            The byte id of the material.
-     * @param index
-     *            The index in the array.
-     */
-    public void setMaterialAt( byte b, int index ) {
-        voxels[ index ] = b;
     }
     
     /**
@@ -203,12 +225,83 @@ public class Chunk {
      *            The local z position.
      */
     public void setMaterialAt( byte b, int x, int y, int z ) {
+        // the voxel is out of bounds, divert the set material to the chunk containing the voxel
+        if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
+            Object[] data = grabExternalVoxelData( x, y, z );
+            
+            Chunk c = ( Chunk ) data[ 0 ]; // get the chunk which contains the voxel
+            
+            if ( c == null ) return; // we can't do anything with this data
+                
+            // get the local coordinates
+            x = ( int ) data[ 1 ];
+            y = ( int ) data[ 2 ];
+            z = ( int ) data[ 3 ];
+            
+            // set the material in the correct chunk
+            c.setMaterialAt( b, x, y, z );
+            return;
+        }
+        
         setMaterialAt( b, x + ( y * 16 ) + ( z * 256 ) );
     }
     
     //
     // Getters
     //
+    
+    /**
+     * Obtains the external voxel data for out of bounds coordinates.
+     * 
+     * @param x
+     *            The x coordinate.
+     * @param y
+     *            The y coordinate.
+     * @param z
+     *            The z coordinate.
+     * @return An object array where
+     *         {@code [ 0 ] = chunk, [ 1 ] = local x, [ 2 ] = local y, [ 3 ] = local z, and [ 4 ] = material}
+     *         .
+     */
+    private Object[] grabExternalVoxelData( int x, int y, int z ) {
+        Object[] data = new Object[ 5 ];
+        if ( region == null ) {
+            data[ 0 ] = null;
+            data[ 1 ] = Math.abs( x ) % 16;
+            data[ 2 ] = Math.abs( y ) % 16;
+            data[ 3 ] = Math.abs( z ) % 16;
+            data[ 4 ] = Material.AIR;
+            return data;
+        }
+        
+        int xOff = ( int ) Math.floor( x / 16.0 );
+        int yOff = ( int ) Math.floor( y / 16.0 );
+        int zOff = ( int ) Math.floor( z / 16.0 );
+        
+        x %= 16;
+        y %= 16;
+        z %= 16;
+        
+        if ( x < 0 ) x += 16;
+        if ( y < 0 ) y += 16;
+        if ( z < 0 ) z += 16;
+        
+        Chunk c = region.getChunkAt( this.x + xOff, this.y + yOff, this.z + zOff );
+        data[ 0 ] = c;
+        
+        data[ 1 ] = x;
+        data[ 2 ] = y;
+        data[ 3 ] = z;
+        
+        if ( c != null ) {
+            data[ 4 ] = c.getMaterialAt( x, y, z );
+        }
+        else {
+            data[ 4 ] = Material.AIR;
+        }
+        
+        return data;
+    }
     
     /**
      * @return The number of vertices in the chunk.
@@ -237,30 +330,7 @@ public class Chunk {
      */
     public Material getMaterialAt( int x, int y, int z ) {
         if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
-            if ( region == null ) return Material.AIR;
-            
-            int xOff = ( int ) Math.floor( x / 16.0 ); // get the x chunk offset
-            int yOff = ( int ) Math.floor( y / 16.0 ); // get the y chunk offset
-            int zOff = ( int ) Math.floor( z / 16.0 ); // get the z chunk offset
-            
-            // get the new local positions of the voxel
-            x %= 16;
-            y %= 16;
-            z %= 16;
-            
-            // if the local position is less than 0, we need to add 16
-            if ( x < 0 ) x += 16;
-            if ( y < 0 ) y += 16;
-            if ( z < 0 ) z += 16;
-            
-            Chunk c = region.getChunkAt( this.x + xOff, this.y + yOff, this.z + zOff ); // get the chunk at the chunk offset
-            
-            if ( c != null ) { // if the chunk isn't null
-                return c.getMaterialAt( x, y, z ); // return the material at it's position
-            }
-            else { // if the chunk is null
-                return Material.AIR; // return air
-            }
+            return ( Material ) grabExternalVoxelData( x, y, z )[ 4 ];
         }
         
         Material mat = Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] ); // get the material
@@ -309,6 +379,15 @@ public class Chunk {
         if ( !getMaterialAt( x, y, z + 1 ).active ) return false; // the material behind this isn't active
             
         return true;
+    }
+    
+    /**
+     * Returns the voxel material ids in this chunk.
+     * 
+     * @return The voxel material ids in this chunk.
+     */
+    public byte[] getVoxels() {
+        return voxels;
     }
     
     //

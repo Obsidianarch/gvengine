@@ -10,6 +10,14 @@ import org.lwjgl.opengl.GLContext;
  */
 public class RequirementsTester {
     
+    /**
+     * Prints if the current computer meets the minimum requirements.
+     * 
+     * @param args
+     *            Command line arguments.
+     * @throws Exception
+     *             If there was a problem with LWJGL.
+     */
     public static void main( String[] args ) throws Exception {
         TestingHelper.createDisplay();
         

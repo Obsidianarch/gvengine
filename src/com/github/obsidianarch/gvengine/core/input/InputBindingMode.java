@@ -5,6 +5,17 @@ package com.github.obsidianarch.gvengine.core.input;
  */
 public enum InputBindingMode {
     
-    MOUSE, KEYBOARD, CONTROLLER;
+    /**
+     * The input binding is using the mouse.
+     */
+    MOUSE,
+    /**
+     * The input binding is using the keyboard.
+     */
+    KEYBOARD,
+    /**
+     * The input binding is using a controller.
+     */
+    CONTROLLER;
     
 }

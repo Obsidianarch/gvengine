@@ -7,7 +7,14 @@ package com.github.obsidianarch.gvengine.core;
  */
 public enum ColorSystem {
     
-    RGB( 3 ), RGBA( 4 );
+    /**
+     * The alpha channel will not be used.
+     */
+    RGB( 3 ),
+    /**
+     * The alpha channel will be used.
+     */
+    RGBA( 4 );
     
     /** The number of colors channels per color. */
     public int channels;

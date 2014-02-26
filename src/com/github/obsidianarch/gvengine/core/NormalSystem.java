@@ -7,7 +7,14 @@ package com.github.obsidianarch.gvengine.core;
  */
 public enum NormalSystem {
     
-    DISABLED( 0 ), ENABLED( 3 );
+    /**
+     * No normals will be in used for the face.
+     */
+    DISABLED( 0 ),
+    /**
+     * Normals will be used for the face.
+     */
+    ENABLED( 3 );
     
     /** The number of coordinates in a normal. */
     public int coordinates;

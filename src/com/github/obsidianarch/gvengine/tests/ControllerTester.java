@@ -25,16 +25,30 @@ public class ControllerTester {
     /** Controller giving input */
     private static Controller controller;
     
+    /** The x position of the red dot. */
     private static float      redX   = 0.5f;
+    
+    /** The y position of the red dot. */
     private static float      redY   = 0.5f;
     
+    /** The x position of the white dot. */
     private static float      whiteX = 0.5f;
+    
+    /** The y position of the white dot. */
     private static float      whiteY = 0.5f;
     
     //
     // Methods
     //
     
+    /**
+     * Creates and runs the test for controller inputs.
+     * 
+     * @param args
+     *            command-line arguments
+     * @throws LWJGLException
+     *             If there was a problem setting up LWJGL.
+     */
     public static void main( String[] args ) throws LWJGLException {
         Controllers.create();
         Controllers.poll();
@@ -87,6 +101,9 @@ public class ControllerTester {
         destroy();
     }
     
+    /**
+     * Updates and draws the frame.
+     */
     public static void update() {
         float[] input = getInputs( 1, 0 );
         
@@ -130,6 +147,15 @@ public class ControllerTester {
         glColor3f( 0, 0, 0 );
     }
     
+    /**
+     * Gets the input from the given axes.
+     * 
+     * @param x
+     *            The x axis number.
+     * @param y
+     *            The y axis number.
+     * @return The two controller inputs scaled down by 100.
+     */
     private static float[] getInputs( int x, int y ) {
         float inputX = controller.getAxisValue( x );
         float inputY = controller.getAxisValue( y );
@@ -147,6 +173,13 @@ public class ControllerTester {
         return new float[ ] { inputX, inputY };
     }
     
+    /**
+     * Changes the color depending on if the button is pressed. The color will be set to
+     * red if the button is not down, and green if it is.
+     * 
+     * @param button
+     *            The button the check for input from.
+     */
     private static void changeColor( int button ) {
         boolean down = controller.isButtonPressed( button );
         
@@ -158,6 +191,12 @@ public class ControllerTester {
         }
     }
     
+    /**
+     * Sets up the Display and initializes OpenGL.
+     * 
+     * @throws LWJGLException
+     *             If the display couldn't be created.
+     */
     public static void setup() throws LWJGLException {
         Display.setTitle( "Controller Test" );
         Display.setDisplayMode( new DisplayMode( 640, 480 ) );
@@ -166,6 +205,9 @@ public class ControllerTester {
         glOrtho( 0, 1, 0, 1, - 1, 1 );
     }
     
+    /**
+     * Destroys the display.
+     */
     public static void destroy() {
         Display.destroy();
     }

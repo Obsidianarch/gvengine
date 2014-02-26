@@ -23,10 +23,12 @@ package com.github.obsidianarch.gvengine.core.noise;
  */
 class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
 
+    /** */
     private static Grad         grad3[]     = { new Grad( 1, 1, 0 ), new Grad( -1, 1, 0 ), new Grad( 1, -1, 0 ), new Grad( -1, -1, 0 ), new Grad( 1, 0, 1 ),
         new Grad( -1, 0, 1 ), new Grad( 1, 0, -1 ), new Grad( -1, 0, -1 ), new Grad( 0, 1, 1 ), new Grad( 0, -1, 1 ), new Grad( 0, 1, -1 ),
         new Grad( 0, -1, -1 )              };
     
+    /** */
     private static Grad         grad4[]     = { new Grad( 0, 1, 1, 1 ), new Grad( 0, 1, 1, -1 ), new Grad( 0, 1, -1, 1 ), new Grad( 0, 1, -1, -1 ),
         new Grad( 0, -1, 1, 1 ), new Grad( 0, -1, 1, -1 ), new Grad( 0, -1, -1, 1 ), new Grad( 0, -1, -1, -1 ), new Grad( 1, 0, 1, 1 ),
         new Grad( 1, 0, 1, -1 ), new Grad( 1, 0, -1, 1 ), new Grad( 1, 0, -1, -1 ), new Grad( -1, 0, 1, 1 ), new Grad( -1, 0, 1, -1 ),
@@ -35,6 +37,7 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         new Grad( 1, 1, 1, 0 ), new Grad( 1, 1, -1, 0 ), new Grad( 1, -1, 1, 0 ), new Grad( 1, -1, -1, 0 ), new Grad( -1, 1, 1, 0 ), new Grad( -1, 1, -1, 0 ),
         new Grad( -1, -1, 1, 0 ), new Grad( -1, -1, -1, 0 ) };
     
+    /** */
     private static short        p[]         = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37,
         240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125,
         136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40,
@@ -46,7 +49,10 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         156, 180                           };
     
     // To remove the need for index wrapping, double the permutation table length
+    /** */
     private static short        perm[]      = new short[ 512 ];
+    
+    /** */
     private static short        permMod12[] = new short[ 512 ];
     
     // static initializer
@@ -57,33 +63,77 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         }
     }
     
-    // Skewing and unskewing factors for 2, 3, and 4 dimensions
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double F2          = 0.5 * ( Math.sqrt( 3.0 ) - 1.0 );
+    
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double G2          = ( 3.0 - Math.sqrt( 3.0 ) ) / 6.0;
+    
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double F3          = 1.0 / 3.0;
+    
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double G3          = 1.0 / 6.0;
+    
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double F4          = ( Math.sqrt( 5.0 ) - 1.0 ) / 4.0;
+    
+    /** Skewing and unskewing factors for 2, 3, and 4 dimensions */
     private static final double G4          = ( 5.0 - Math.sqrt( 5.0 ) ) / 20.0;
     
-    // This method is a *lot* faster than using (int)Math.floor(x)
+    /**
+     * This method is a *lot* faster than using (int)Math.floor(x)
+     * 
+     * @param x
+     *            The number to truncate.
+     * @return The number with truncated decimals.
+     */
     private static int fastfloor( double x ) {
         int xi = ( int ) x;
         return x < xi ? xi - 1 : xi;
     }
     
+    /***
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @return N/A
+     */
     private static double dot( Grad g, double x, double y ) {
         return ( g.x * x ) + ( g.y * y );
     }
     
+    /***
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param z
+     * @return N/A
+     */
     private static double dot( Grad g, double x, double y, double z ) {
         return ( g.x * x ) + ( g.y * y ) + ( g.z * z );
     }
     
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param z
+     * @param w
+     * @return N/A
+     */
     private static double dot( Grad g, double x, double y, double z, double w ) {
         return ( g.x * x ) + ( g.y * y ) + ( g.z * z ) + ( g.w * w );
     }
     
-    // 2D simplex noise
+    /**
+     * @param xin
+     * @param yin
+     * @return 2D simplex noise
+     */
     static double noise( double xin, double yin ) {
         double n0, n1, n2; // Noise contributions from the three corners
         // Skew the input space to determine which simplex cell we're in
@@ -143,7 +193,12 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         return 70.0 * ( n0 + n1 + n2 );
     }
     
-    // 3D simplex noise
+    /**
+     * @param xin
+     * @param yin
+     * @param zin
+     * @return 3D simplex noise
+     */
     static double noise( double xin, double yin, double zin ) {
         
         double n0, n1, n2, n3; // Noise contributions from the four corners
@@ -289,7 +344,13 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         return 32.0 * ( n0 + n1 + n2 + n3 );
     }
     
-    // 4D simplex noise, better simplex rank ordering method 2012-03-09
+    /**
+     * @param x
+     * @param y
+     * @param z
+     * @param w
+     * @return 4D simplex noise, better simplex rank ordering method 2012-03-09
+     */
     static double noise( double x, double y, double z, double w ) {
         double n0, n1, n2, n3, n4; // Noise contributions from the five corners
         
@@ -451,17 +512,41 @@ class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         return 27.0 * ( n0 + n1 + n2 + n3 + n4 );
     }
     
-    // Inner class to speed upp gradient computations
-    // (array access is a lot slower than member access)
+    /**
+     * Inner class to speed upp gradient computations
+     * (array access is a lot slower than member access)
+     */
     private static class Grad {
-        double x, y, z, w;
         
+        /** */
+        double x;
+        
+        /** */
+        double y;
+        
+        /** */
+        double z;
+        
+        /** */
+        double w;
+
+        /**
+         * @param x
+         * @param y
+         * @param z
+         */
         Grad( double x, double y, double z ) {
             this.x = x;
             this.y = y;
             this.z = z;
         }
         
+        /**
+         * @param x
+         * @param y
+         * @param z
+         * @param w
+         */
         Grad( double x, double y, double z, double w ) {
             this.x = x;
             this.y = y;

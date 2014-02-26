@@ -39,6 +39,12 @@ public class Region {
      * 
      * @param generator
      *            The chunk generator used to generate this region's chunks.
+     * @param x
+     *            The x coordiante of the region in the region grid.
+     * @param y
+     *            The y coordinate of the region in the region grid.
+     * @param z
+     *            The z coordinate of the region in the region grid.
      */
     public Region( ChunkGenerator generator, int x, int y, int z ) {
         this.generator = generator;
@@ -119,6 +125,15 @@ public class Region {
         index += ( z * 16 );
         
         return chunks[ index ];
+    }
+    
+    /**
+     * Returns the chunks in this region.
+     * 
+     * @return The chunks in this region.
+     */
+    public Chunk[] getChunks() {
+        return chunks;
     }
     
 }

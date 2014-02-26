@@ -27,11 +27,13 @@ public class ChunkTester {
     // Options
     //
     
-    @Option( description = OptionManager.FPS_CAP, screenName = "", x = -1, y = -1 )
-    @SliderOption( minimum = -1, maximum = 120 )
+    /** The max FPS the chunk tester will go to. */
+    @Option( "FPS Cap" )
+    @SliderOption( minimum = 10, maximum = 120 )
     public static int     FPSCap       = -1;
     
-    @Option( description = OptionManager.VSYNC_ENABLED, screenName = "", x = -1, y = -1 )
+    /** If the FPS is maxed out at the max refresh rate of the monitor. */
+    @Option( "VSync" )
     @ToggleOption( options = { "false", "true" }, descriptions = { "Enabled", "Disabled" } )
     public static boolean VSyncEnabled = false;
     
@@ -39,7 +41,10 @@ public class ChunkTester {
     // OptionListeners
     //
     
-    @OptionListener( { OptionManager.VSYNC_ENABLED } )
+    /**
+     * Listens for when the VSync variable has been changed.
+     */
+    @OptionListener( "VSync" )
     public static void onVSyncToggle() {
         Display.setVSyncEnabled( VSyncEnabled );
     }
@@ -156,7 +161,6 @@ public class ChunkTester {
         
         Scheduler.scheduleEvent( "buildMesh", c, -1 );
         
-        //        
         //        long start = System.nanoTime();
         //        
         //        c.buildMesh();
