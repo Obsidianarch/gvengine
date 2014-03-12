@@ -159,7 +159,7 @@ public class ChunkTester {
             }
         }
         
-        Scheduler.scheduleEvent( "buildMesh", c, -1 );
+        Scheduler.enqueueEvent( "buildMesh", c );
         
         //        long start = System.nanoTime();
         //        

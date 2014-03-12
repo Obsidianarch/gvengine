@@ -99,10 +99,10 @@ public final class RegionIO {
 
             for ( int i = 0; i < chunks.length; i++ ) {
                 // have a 0.250 second delay between each chunk write to maintain the FPS (this also makes writing take 16 seconds)
-                Scheduler.scheduleEvent( "writeChunk", RegionIO.class, -1, dos, chunkCoords[ i ], voxels[ i ] );
+                Scheduler.enqueueEvent( "writeChunk", RegionIO.class, dos, chunkCoords[ i ], voxels[ i ] );
             }
             
-            Scheduler.scheduleEvent( "close", dos, ( chunks.length * 250 ) + 1000 );
+            Scheduler.enqueueEvent( "close", dos ); // closes the stream after everything has been written
         }
         catch ( Exception e ) {
             // TODO log this error somewhere

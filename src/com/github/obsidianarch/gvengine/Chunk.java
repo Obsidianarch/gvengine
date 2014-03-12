@@ -178,7 +178,7 @@ public class Chunk {
         if ( vbo == null ) return; // let's try to avoid some errors
             
         if ( !rebuildScheduled ) {
-            Scheduler.scheduleEvent( "buildMesh", this, -1 );
+            Scheduler.enqueueEvent( "buildMesh", this );
             rebuildScheduled = true;
         }
     }

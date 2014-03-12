@@ -19,10 +19,6 @@ import com.github.obsidianarch.gvengine.core.options.ToggleOption;
 public final class Scheduler {
     
     //
-    // Constants
-    //
-    
-    //
     // Options
     //
     
@@ -36,7 +32,6 @@ public final class Scheduler {
     @SliderOption( minimum = 10, maximum = 1000 )
     public static int            MaxTickTime          = 10;
     
-
     /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
     @Option( "Timed events throttled" )
     @ToggleOption( options = { "true", "false" }, descriptions = { "Enabled", "Disabled" } )
@@ -77,6 +72,8 @@ public final class Scheduler {
      *            The time (in milliseconds) between the executions.
      * @param parameters
      *            The parameters to pass to the method.
+     * @see #scheduleEvent(String, Object, long, Object...)
+     * @see #enqueueEvent(String, Object, Object...)
      */
     public static void scheduleRecurringEvent( String method, Object target, long delay, Object... parameters ) {
         Event event = new Event();
@@ -119,12 +116,13 @@ public final class Scheduler {
      * @param method
      *            The method to execute.
      * @param target
-     *            The object upon which the method will be invoked.
+     *            The object whose method will be invoked.
      * @param time
-     *            The time (in milliseconds) until the event will be fired (Use -1 when
-     *            the event doesn't have a time it needs to run by).
+     *            The time (in milliseconds) until the event will be fired.
      * @param parameters
-     *            The parameters passed to the method when executed.
+     *            The parameters passed to the method when invoked.
+     * @see #scheduleRecurringEvent(String, Object, long, Object...)
+     * @see #enqueueEvent(String, Object, Object...)
      */
     public static void scheduleEvent( String method, Object target, long time, Object... parameters ) {
         Event event = new Event();
@@ -147,17 +145,54 @@ public final class Scheduler {
         }
         
         event.target = target;
-        if ( time == -1 ) {
-            event.executionTime = -1;
-        }
-        else {
-            event.executionTime = Sys.getTime() + TimeHelper.toTicks( time );
-        }
+        event.executionTime = Sys.getTime() + TimeHelper.toTicks( time );
         event.parameters = parameters;
         
         addEvent( event ); // add the event to the list
     }
     
+    /**
+     * Enqueues an event to be executed whenever the scheduler has time to execute it.
+     * 
+     * @param method
+     *            The method to execute.
+     * @param target
+     *            The object whose method will be invoked.
+     * @param parameters
+     *            The parameters passed to the method when invoked.
+     * @see #scheduleRecurringEvent(String, Object, long, Object...)
+     * @see #scheduleEvent(String, Object, long, Object...)
+     */
+    public static void enqueueEvent( String method, Object target, Object... parameters ) {
+        Event event = new Event(); // create the event
+        
+        try {
+            // determine the classes of our parameters
+            Class< ? >[] paramClasses = new Class< ? >[ parameters.length ];
+            for ( int i = 0; i < paramClasses.length; i++ ) {
+                paramClasses[ i ] = parameters[ i ].getClass();
+            }
+            
+            if ( target instanceof Class ) {
+                // if the method is a static method, use the class object to get the method
+                event.action = ( ( Class< ? > ) target ).getMethod( method, paramClasses );
+            }
+            else {
+                // otherwise, use the target's class to get the method
+                event.action = target.getClass().getMethod( method, paramClasses );
+            }
+        }
+        catch ( NoSuchMethodException | SecurityException e1 ) {
+            e1.printStackTrace(); // hopefully will never be thrown
+        }
+        
+        event.target = target; // set the event's target object
+        event.executionTime = -1; // set the event's executing time (-1 because it has no priority to be executed)
+        event.parameters = parameters; // set the event's parameters
+        
+        addEvent( event ); // add the event to the list
+    }
+
     //
     // Actions
     //
@@ -177,7 +212,7 @@ public final class Scheduler {
         for ( Event e : recurringEvents ) {
             if ( TimeHelper.isOver( startTime, MaxTickTime ) ) return firedEvents; // we've run out of time for this tick, let's keep the game running
             if ( Sys.getTime() < e.executionTime ) continue; // the event hasn't been scheduled to run again yet
-            
+
             try {
                 e.action.invoke( e.target, e.parameters ); // invoke the method
                 if ( TimedEventsThrottled ) firedEvents++; // we've fired a method
@@ -189,7 +224,7 @@ public final class Scheduler {
             }
             
             if ( LogOutput ) System.out.println( "> Executed recurring event \"" + e.action.getName() + "\"" ); // be verbose if we should be
-            
+
             e.executionTime = TimeHelper.getDelay( e.delay ); // set the next execution time
         }
         
@@ -295,7 +330,7 @@ public final class Scheduler {
     private static void addEvent( Event e ) {
         boolean scheduled = true;
         try {
-            // if there is not timed constraint
+            // if there is not time constraint
             if ( e.executionTime == -1 ) {
                 for ( Event event : events ) {
                     if ( e.equals( event ) ) {
