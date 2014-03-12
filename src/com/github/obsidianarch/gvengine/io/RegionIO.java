@@ -97,11 +97,12 @@ public final class RegionIO {
         try {
             DataOutputStream dos = new DataOutputStream( new FileOutputStream( f ) );
 
+            // schedule writes for each chunk
             for ( int i = 0; i < chunks.length; i++ ) {
-                // have a 0.250 second delay between each chunk write to maintain the FPS (this also makes writing take 16 seconds)
                 Scheduler.enqueueEvent( "writeChunk", RegionIO.class, dos, chunkCoords[ i ], voxels[ i ] );
             }
             
+            // scheduler the closing of the stream after all the writes
             Scheduler.enqueueEvent( "close", dos ); // closes the stream after everything has been written
         }
         catch ( Exception e ) {

@@ -13,13 +13,13 @@ public final class TimeHelper {
      * Checks to see if the current time has run "over".
      * 
      * @param start
-     *            The start time.
+     *            The start time (milliseconds).
      * @param delay
-     *            The delay time.
-     * @return {@code ( ( start + delay ) > getTime() )}
+     *            The delay time (millliseconds).
+     * @return {@code ( toTicks( start + delay ) > getTime() )}
      */
     public static boolean isOver( long start, int delay ) {
-        return ( ( start + delay ) > getTime() );
+        return ( ( start + delay ) < getTime() );
     }
     
     /**
