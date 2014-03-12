@@ -1,12 +1,12 @@
 package com.github.obsidianarch.gvengine.tests;
 
+import static com.github.obsidianarch.gvengine.core.TimeHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.File;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -165,13 +165,6 @@ public class TestingHelper {
         Display.setTitle( name + " [" + TestingHelper.getFPS() + "]" );
         Display.update();
         if ( fpsCap != -1 ) Display.sync( fpsCap );
-    }
-    
-    /**
-     * @return The system time in milliseconds.
-     */
-    public static long getTime() {
-        return ( Sys.getTime() * 1000 ) / Sys.getTimerResolution();
     }
     
     /**

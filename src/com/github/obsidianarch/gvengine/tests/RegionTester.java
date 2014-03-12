@@ -2,6 +2,7 @@ package com.github.obsidianarch.gvengine.tests;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.File;
 import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
@@ -18,6 +19,7 @@ import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.noise.Noises;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
+import com.github.obsidianarch.gvengine.io.RegionIO;
 
 /**
  * Tests the region and it's methods.
@@ -72,6 +74,8 @@ public class RegionTester extends ChunkGenerator {
             TestingHelper.processInput( camera, controller ); // move and orient the player
             if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) removeBlocks( region );
             if ( Keyboard.isKeyDown( Keyboard.KEY_F ) ) addBlocks( region );
+            if ( Keyboard.isKeyDown( Keyboard.KEY_L ) ) loadRegion( region );
+            if ( Keyboard.isKeyDown( Keyboard.KEY_O ) ) saveRegion( region );
             
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
@@ -82,6 +86,26 @@ public class RegionTester extends ChunkGenerator {
         TestingHelper.destroy(); // destroys everything
     }
     
+    /**
+     * Loads the saved region from the given save directory.
+     * 
+     * @param region
+     *            The region to load the data into.
+     */
+    private static void loadRegion( Region region ) {
+        RegionIO.loadRegion( region, new File( "/data/" ) );
+    }
+    
+    /**
+     * Saves teh region into the given save directory.
+     * 
+     * @param region
+     *            The region to save into a data file.
+     */
+    private static void saveRegion( Region region ) {
+        RegionIO.saveRegion( region, new File( "data/" ) );
+    }
+
     /**
      * Removes blocks from the environment randomly.
      * 

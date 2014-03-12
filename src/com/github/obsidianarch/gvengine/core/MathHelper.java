@@ -2,7 +2,6 @@ package com.github.obsidianarch.gvengine.core;
 
 import java.nio.FloatBuffer;
 
-import org.lwjgl.Sys;
 import org.lwjgl.util.vector.Vector3f;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
@@ -32,18 +31,7 @@ public final class MathHelper {
     public static boolean inRange( float x, float xMin, float xMax ) {
         return ( ( x >= xMin ) && ( x <= xMax ) );
     }
-    
-    /**
-     * Returns {@code milliseconds} in LWJGL ticks.
-     * 
-     * @param milliseconds
-     *            The number of milliseconds to convert.
-     * @return Ticks.
-     */
-    public static long toTicks( long milliseconds ) {
-        return ( milliseconds * Sys.getTimerResolution() ) / 1000;
-    }
-    
+
     /**
      * Adds teh data from teh source {@code FloatGapList} into the {@code FloatBuffer}.
      * 
@@ -200,16 +188,4 @@ public final class MathHelper {
         
         return globalPos;
     }
-    
-    /**
-     * Floors the input to an int.
-     * 
-     * @param in
-     *            The number to floor.
-     * @return The number floored as an int.
-     */
-    public static int floor( double in ) {
-        return in > 0 ? ( int ) in : ( int ) ( in - 1 );
-    }
-    
 }
