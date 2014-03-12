@@ -34,7 +34,7 @@ public class ChunkTester {
     
     /** If the FPS is maxed out at the max refresh rate of the monitor. */
     @Option( "VSync" )
-    @ToggleOption( options = { "false", "true" }, descriptions = { "Enabled", "Disabled" } )
+    @ToggleOption( { "false", "true" } )
     public static boolean VSyncEnabled = false;
     
     //

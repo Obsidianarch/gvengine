@@ -17,14 +17,8 @@ import java.lang.annotation.Target;
 public @interface ToggleOption {
     
     /**
-     * @return The enum for the possible options.
+     * @return The possible values for the toggle option.
      */
-    String[] options();
-    
-    /**
-     * @return The descriptions for each item, if this is empty then the options will be
-     *         used.
-     */
-    String[] descriptions() default {};
-    
+    String[] value();
+
 }

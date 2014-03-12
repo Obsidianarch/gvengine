@@ -133,8 +133,9 @@ public final class RegionIO {
                 // construct the chunk
                 Chunk c = new Chunk( region, dis.readInt(), dis.readInt(), dis.readInt() ); // create a chunk based on the chunk's position data
                 
+                // read the materials
                 for ( int j = 0; j < 4096; j++ ) {
-                    c.setMaterialAt( dis.readByte(), i ); // read the voxel id
+                    c.setMaterialAt( dis.readByte(), j ); // read the voxel id
                 }
                 
                 region.chunks[ i ] = c; // set the chunk value

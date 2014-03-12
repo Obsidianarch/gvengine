@@ -34,12 +34,12 @@ public final class Scheduler {
     
     /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
     @Option( "Timed events throttled" )
-    @ToggleOption( options = { "true", "false" }, descriptions = { "Enabled", "Disabled" } )
+    @ToggleOption( { "false", "true" } )
     public static boolean        TimedEventsThrottled = true;
 
     /** When true, all event scheduling and dispatching is logged to the console. */
     @Option( "Log scheduling output messages" )
-    @ToggleOption( options = { "false", "true" }, descriptions = { "Disabled", "Enabled" } )
+    @ToggleOption( { "false", "true" } )
     public static boolean        LogOutput            = false;
     
     //
@@ -282,6 +282,7 @@ public final class Scheduler {
     private static int doEvents( int firedEvents, long startTime ) {
 
         Iterator< Event > it = events.iterator(); // get the iterator for the untimed events
+
         while ( it.hasNext() ) {
             if ( TimeHelper.isOver( startTime, MaxTickTime ) ) return firedEvents; // we've run out of time for this tick, let's keep the game running
             Event e = it.next(); // get the next event
