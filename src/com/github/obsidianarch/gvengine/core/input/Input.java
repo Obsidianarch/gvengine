@@ -99,7 +99,7 @@ public final class Input {
             String[] split = s.split( "=" );
             
             try {
-                setBinding( split[ 0 ], new InputBinding( split[ 1 ] ) );
+                // setBinding( split[ 0 ], new InputBinding( split[ 1 ] ) );
                 loadedBindings++;
             }
             catch ( Exception e ) {
@@ -115,20 +115,61 @@ public final class Input {
     //
     
     /**
-     * Sets the InputBinding that will trigger the action.
+     * Creates a new InputBinding and assigns it to the given action name.
      * 
      * @param action
-     *            The action that will be triggered.
+     *            The name of the action.
+     * @param medium
+     *            The input medium the action is bound to.
      * @param mode
-     *            The device that will be giving input.
+     *            How the input is expected.
+     * @param mask
+     *            Any input masks that are required.
      * @param button
-     *            The button on the device to listen for.
+     *            The button to be bound.
      */
-    public static void setBinding( String action, InputBindingMode mode, int button ) {
-        InputBinding binding = new InputBinding( mode, button ); // create the input binding
+    public static void setBinding( String action, InputMedium medium, InputMode mode, InputMask mask, int button ) {
+        InputBinding binding = new InputBinding( medium, mode, mask, button );
         setBinding( action, binding );
     }
     
+    /**
+     * Creates a new InputBinding and assigns it to the given action name. This is a
+     * convenience method for
+     * {@code setBinding( action, medium, mode, InputMask.NO_MASK, button )}.
+     * 
+     * @param action
+     *            The name of the action.
+     * @param medium
+     *            The input medium the action is bound to.
+     * @param mode
+     *            How the input is expected.
+     * @param button
+     *            The button to be bound.
+     * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
+     */
+    public static void setBinding( String action, InputMedium medium, InputMode mode, int button ) {
+        setBinding( action, medium, mode, InputMask.NO_MASK, button );
+    }
+    
+    /**
+     * Creates a new InputBinding and assigns it to the given action name. This is a
+     * convenience method for
+     * {@code setBinding( action, medium, InputMode.BUTTON_DOWN, InputMask.NO_MASK, button )}
+     * .
+     * 
+     * @param action
+     *            The name of the action.
+     * @param medium
+     *            The input medium the action is bound to.
+     * @param button
+     *            The button to be bound.
+     * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
+     */
+    public static void setBinding( String action, InputMedium medium, int button ) {
+        setBinding( action, medium, InputMode.BUTTON_DOWN, InputMask.NO_MASK, button );
+    }
+
     /**
      * Sets the InputBinding that will trigger the action.
      * 
@@ -145,6 +186,34 @@ public final class Input {
     // Getters
     //
     
+    /**
+     * Checks to see if an InputMask is active or not.
+     * 
+     * @param mask
+     *            The InputMask.
+     * @return If either keyboard key mask is down, or if {@code mask} is {@code NO_MASK},
+     *         {@code true}.
+     */
+    public static boolean isMaskActive( InputMask mask ) {
+        
+        switch ( mask ) {
+        
+        case CONTROL_MASK:
+            return Keyboard.isKeyDown( Keyboard.KEY_LCONTROL ) || Keyboard.isKeyDown( Keyboard.KEY_RCONTROL );
+            
+        case MENU_MASK:
+            return Keyboard.isKeyDown( Keyboard.KEY_LMENU ) || Keyboard.isKeyDown( Keyboard.KEY_RMENU );
+            
+        case META_MASK:
+            return Keyboard.isKeyDown( Keyboard.KEY_LMETA ) || Keyboard.isKeyDown( Keyboard.KEY_RMETA );
+            
+        default:
+            return true;
+
+        }
+
+    }
+
     /**
      * Returns the InputBinding with the given name.
      * 

@@ -15,7 +15,7 @@ import org.lwjgl.opengl.DisplayMode;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
-import com.github.obsidianarch.gvengine.core.input.InputBindingMode;
+import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.io.Config;
 
 /**
@@ -111,18 +111,18 @@ public class TestingHelper {
         // load the input bindings, and if it doesn't work, add the defaults
         if ( Input.loadBindings( CONFIG ) < 10 /* we have ten key bindings */) {
             
-            Input.setBinding( "forward", InputBindingMode.KEYBOARD, Keyboard.KEY_W );
-            Input.setBinding( "left", InputBindingMode.KEYBOARD, Keyboard.KEY_A );
-            Input.setBinding( "backward", InputBindingMode.KEYBOARD, Keyboard.KEY_S );
-            Input.setBinding( "right", InputBindingMode.KEYBOARD, Keyboard.KEY_D );
-            Input.setBinding( "sprint", InputBindingMode.KEYBOARD, Keyboard.KEY_LSHIFT );
+            Input.setBinding( "forward", InputMedium.KEYBOARD, Keyboard.KEY_W );
+            Input.setBinding( "left", InputMedium.KEYBOARD, Keyboard.KEY_A );
+            Input.setBinding( "backward", InputMedium.KEYBOARD, Keyboard.KEY_S );
+            Input.setBinding( "right", InputMedium.KEYBOARD, Keyboard.KEY_D );
+            Input.setBinding( "sprint", InputMedium.KEYBOARD, Keyboard.KEY_LSHIFT );
             
-            Input.setBinding( "rebuildChunk", InputBindingMode.KEYBOARD, Keyboard.KEY_R );
-            Input.setBinding( "removeVoxels", InputBindingMode.KEYBOARD, Keyboard.KEY_E );
+            Input.setBinding( "rebuildChunk", InputMedium.KEYBOARD, Keyboard.KEY_R );
+            Input.setBinding( "removeVoxels", InputMedium.KEYBOARD, Keyboard.KEY_E );
             
-            Input.setBinding( "unbindMouse", InputBindingMode.MOUSE, 0 );
-            Input.setBinding( "bindMouse", InputBindingMode.MOUSE, 1 );
-            Input.setBinding( "dbgc", InputBindingMode.MOUSE, 2 );
+            Input.setBinding( "unbindMouse", InputMedium.MOUSE, 0 );
+            Input.setBinding( "bindMouse", InputMedium.MOUSE, 1 );
+            Input.setBinding( "dbgc", InputMedium.MOUSE, 2 );
             
         }
     }

@@ -1,7 +1,5 @@
 package com.github.obsidianarch.gvengine.core.input;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 /**
  * @author Austin
@@ -12,12 +10,21 @@ public class InputBinding {
     // Fields
     //
     
-    /** The type of binding this is. */
-    private final InputBindingMode mode;
-    
+    /** The medium of input being bound. */
+    private final InputMedium medium;
+
     /** The button the action is bound to. */
-    private final int              button;
+    private final int         button;
     
+    /** The method of input we are expecting. */
+    private final InputMode   mode;
+    
+    /** Are any modifier keys required to trigger this action. */
+    private final InputMask   mask;
+
+    /** Was the butotn down last time? */
+    private boolean           lastDown;
+
     //
     // Constructors
     //
@@ -25,28 +32,20 @@ public class InputBinding {
     /**
      * Creates an InputBinding.
      * 
+     * @param medium
+     *            The medium of input being bound.
      * @param mode
-     *            The medium through which the input is controlled.
+     *            The method we are expecting input.
+     * @param mask
+     *            Are any modifier keys required to trigger this action.
      * @param button
      *            The button which triggers this binding.
      */
-    public InputBinding( InputBindingMode mode, int button ) {
-        this.mode = mode;
+    protected InputBinding( InputMedium medium, InputMode mode, InputMask mask, int button ) {
+        this.medium = medium;
         this.button = button;
-    }
-    
-    /**
-     * Creates an InputBinding from a string.
-     * 
-     * @param s
-     *            The string value of an InputBinding.
-     */
-    public InputBinding( String s ) {
-        // get the input binding mode whose ordinal returns the first digit of the string
-        mode = InputBindingMode.values()[ Integer.valueOf( Character.toString( s.charAt( 0 ) ) ) ];
-        
-        s = s.substring( 1 ); // remove the first character
-        button = Integer.valueOf( s ); // convert the remaining digits to the button value
+        this.mode = mode;
+        this.mask = mask;
     }
     
     //
@@ -54,31 +53,101 @@ public class InputBinding {
     //
     
     /**
+     * @return The button number being used.
+     */
+    public final int getButton() {
+        return button;
+    }
+    
+    /**
+     * @return The InputMedium the binding is using.
+     */
+    public final InputMedium getMedium() {
+        return medium;
+    }
+
+    /**
+     * @return The InputMode the binding is using.
+     */
+    public final InputMode getMode() {
+        return mode;
+    }
+    
+    /**
+     * @return The InputMask the binding is using.
+     */
+    public final InputMask getMask() {
+        return mask;
+    }
+
+    /**
      * @return If this InputBinding is currently active or not.
      */
     public boolean isActive() {
+        boolean isDown = medium.isButtonDown( getButton() ); // is the key being pressed right now?
+        boolean preMask = false; // would the keybinding be active without the key mask?
+        boolean active = false; // is the keybinding active after the key mask?
         
-        if ( mode == InputBindingMode.KEYBOARD ) {
-            return Keyboard.isKeyDown( button );
-        }
-        else if ( mode == InputBindingMode.MOUSE ) {
-            return Mouse.isButtonDown( button );
-        }
-        else if ( mode == InputBindingMode.CONTROLLER ) {
-            // TODO controller input
-            return false;
+        switch ( getMode() ) {
+        
+        case BUTTON_DOWN:
+            preMask = isDown;
+            
+        case BUTTON_UP:
+            preMask = !isDown;
+            
+        case BUTTON_PRESSED:
+            preMask = !lastDown && isDown;
+            
+        case BUTTON_RELEASED:
+            preMask = lastDown && !isDown;
+
         }
         
-        return false;
+        active = preMask && Input.isMaskActive( getMask() );
+        
+        lastDown = isDown;
+        return active;
     }
     
     //
     // Overrides
     //
-    
+
     @Override
     public String toString() {
-        return mode.ordinal() + "" + button;
+        String s = "";
+        
+        s += getMedium().ordinal();
+        s += getMode().ordinal();
+        s += getMask().ordinal();
+        s += getButton();
+
+        return s;
     }
     
+    //
+    // Static
+    //
+    
+    /**
+     * @param s
+     *            The string input for an input binding.
+     * @return The InputBinding described by the text string.
+     */
+    public static final InputBinding createInputBinding( String s ) {
+        int[] info = new int[ 4 ]; // medium, mode, mask, button
+        info[ 0 ] = Integer.parseInt( s.substring( 0, 1 ) );
+        info[ 1 ] = Integer.parseInt( s.substring( 1, 2 ) );
+        info[ 2 ] = Integer.parseInt( s.substring( 2, 3 ) );
+        info[ 3 ] = Integer.parseInt( s.substring( 3 ) );
+
+        InputMedium medium = InputMedium.values()[ info[ 0 ] ];
+        InputMode mode = InputMode.values()[ info[ 1 ] ];
+        InputMask mask = InputMask.values()[ info[ 2 ] ];
+        int button = info[ 3 ];
+        
+        return new InputBinding( medium, mode, mask, button );
+    }
+
 }

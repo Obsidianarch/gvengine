@@ -15,6 +15,8 @@ import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
+import com.github.obsidianarch.gvengine.core.input.InputMedium;
+import com.github.obsidianarch.gvengine.core.input.InputMode;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
 import com.github.obsidianarch.gvengine.io.RegionIO;
 
@@ -64,15 +66,20 @@ public class RegionTester extends ChunkGenerator {
         camera.setMaximumPitch( 165f );
         Controller controller = new Controller( camera ); // the controller for the camera
         
+        Input.setBinding( "removeBlocks", InputMedium.KEYBOARD, Keyboard.KEY_R );
+        Input.setBinding( "addBlocks", InputMedium.KEYBOARD, Keyboard.KEY_F );
+        Input.setBinding( "saveRegion", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, Keyboard.KEY_O );
+        Input.setBinding( "loadRegion", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, Keyboard.KEY_L );
+
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
             
             Input.poll(); // poll the input
             TestingHelper.processInput( camera, controller ); // move and orient the player
-            if ( Keyboard.isKeyDown( Keyboard.KEY_R ) ) removeBlocks( region );
-            if ( Keyboard.isKeyDown( Keyboard.KEY_F ) ) addBlocks( region );
-            if ( Keyboard.isKeyDown( Keyboard.KEY_L ) ) loadRegion( region );
-            if ( Keyboard.isKeyDown( Keyboard.KEY_O ) ) saveRegion( region );
+            if ( Input.isBindingActive( "removeBlocks" ) ) removeBlocks( region );
+            if ( Input.isBindingActive( "addBlocks" ) ) addBlocks( region );
+            if ( Input.isBindingActive( "saveRegion" ) ) saveRegion( region );
+            if ( Input.isBindingActive( "loadRegion" ) ) loadRegion( region );
             
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
