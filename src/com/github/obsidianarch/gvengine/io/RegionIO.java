@@ -52,13 +52,15 @@ public final class RegionIO {
      */
     public static void writeChunk( DataOutputStream dos, int[] coordinates, byte[] voxels ) {
         try {
-            for ( int i = 0; i < coordinates.length; i++ ) {
-                dos.writeInt( coordinates[ i ] );
+            for ( int i : coordinates ) {
+                dos.writeInt( i );
             }
+            dos.flush();
             
-            for ( int j = 0; j < voxels.length; j++ ) {
-                dos.writeByte( voxels[ j ] );
+            for ( byte b : voxels ) {
+                dos.writeByte( b );
             }
+            dos.flush();
         }
         catch ( IOException e ) {
             e.printStackTrace();
@@ -74,7 +76,6 @@ public final class RegionIO {
      *            The directory to write to.
      */
     public static void saveRegion( Region region, File dir ) {
-        System.out.println( dir.getAbsolutePath() );
         File f = new File( dir, String.format( "r%d %d %d.gven.dat", region.x, region.y, region.z ) );
 
         if ( !createFile( f ) ) return;

@@ -12,7 +12,7 @@ import java.util.Map;
 import com.github.obsidianarch.gvengine.io.Config;
 
 /**
- * Gathers and organizes all preference annotations.
+ * Gathers and organizes all option annotations.
  * 
  * @author Austin
  */
@@ -50,7 +50,8 @@ public class OptionManager {
     
     /**
      * Initializes the OptionManager, this will take parse the commandline arguments
-     * passed to the program.
+     * passed to the program. An option argument must follow this format:<br />
+     * {@code "-O:" + fieldName + ":" + value}
      * 
      * @param args
      *            The arguments passed by commandline.
@@ -336,7 +337,7 @@ public class OptionManager {
      * @return A shortened version of the annotation's toString().
      */
     private static String toString( Object o ) {
-        return o.toString().substring( "@gvengine.core.options.".length() );
+        return o.toString().substring( "@com.github.obsidianarch.gvengine.core.options.".length() );
     }
     
 }

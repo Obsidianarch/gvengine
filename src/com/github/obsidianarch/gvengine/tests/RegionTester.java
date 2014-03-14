@@ -10,14 +10,11 @@ import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkGenerator;
-import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.Region;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
-import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
-import com.github.obsidianarch.gvengine.core.noise.Noises;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
 import com.github.obsidianarch.gvengine.io.RegionIO;
 
@@ -33,7 +30,7 @@ public class RegionTester extends ChunkGenerator {
     //
     
     /** The seed for the random number generator. */
-    private static long seed = 1070136;
+    private static long seed = 1271995;
     
     //
     // Methods
@@ -80,7 +77,7 @@ public class RegionTester extends ChunkGenerator {
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
             
-            TestingHelper.updateDisplay( "Region Tester", 60 );
+            TestingHelper.updateDisplay( "Region Tester", -1 );
         }
         
         TestingHelper.destroy(); // destroys everything
@@ -166,51 +163,11 @@ public class RegionTester extends ChunkGenerator {
         for ( int x = 0; x < 16; x++ ) {
             for ( int y = 0; y < 16; y++ ) {
                 for ( int z = 0; z < 16; z++ ) {
-                    float[] global = MathHelper.getGlobalPosition( c, new int[ ] { x, y, z } );
+
+                    double d = Math.random() * 3;
+                    byte b = ( byte ) ( Math.round( d ) );
                     
-                    double noise = Noises.simplex4D( global[ 0 ], global[ 1 ], global[ 2 ], seed );
-                    noise += 1; // [0,2]
-                    noise *= 1.5; // [0,3]
-                    
-                    byte material = ( byte ) Math.round( noise );
-                    noise = Noises.simplex3D( global[ 0 ], global[ 2 ], seed );
-                    
-                    if ( ( global[ 1 ] < 20 ) && ( noise > 0 ) ) {
-                        material = Material.STONE.byteID;
-                    }
-                    else if ( global[ 1 ] < 45 ) {
-                        
-                        if ( noise > 0.5 ) {
-                            material = Material.DIRT.byteID;
-                        }
-                        else if ( noise < -0.5 ) {
-                            material = Material.STONE.byteID;
-                        }
-                        
-                    }
-                    
-                    if ( ( global[ 1 ] > 45 ) ) {
-                        if ( ( noise + 1 ) > 0.25 ) {
-                            material = Material.AIR.byteID;
-                        }
-                        else {
-                            material = Material.GRASS.byteID;
-                        }
-                    }
-                    
-                    Material below = c.getMaterialAt( x, y - 1, z ); // the material below us
-                    if ( ( below != null ) && ( below != Material.AIR ) ) {
-                        
-                        if ( Material.getMaterial( material ).active && ( below == Material.GRASS ) ) {
-                            c.setMaterialAt( Material.DIRT, x, y - 1, z );
-                        }
-                        else if ( !Material.getMaterial( material ).active && ( below == Material.DIRT ) ) {
-                            c.setMaterialAt( Material.GRASS, x, y - 1, z );
-                        }
-                        
-                    }
-                    
-                    c.setMaterialAt( material, x, y, z );
+                    c.setMaterialAt( b, x, y, z );
                 }
             }
         }

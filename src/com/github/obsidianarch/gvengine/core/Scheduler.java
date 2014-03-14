@@ -25,7 +25,7 @@ public final class Scheduler {
     /** The maximum number of events dispatched every tick. */
     @Option( "Maximum events per tick" )
     @SliderOption( minimum = 8, maximum = 4096 )
-    public static int            MaxEvents            = 16;
+    public static int            MaxEvents            = 8;
     
     /** The maximum number of milliseconds that a single scheduling tick can take. */
     @Option( "Max time per tick" )
