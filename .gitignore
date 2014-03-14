@@ -15,3 +15,4 @@ bin/
 config
 
 /ant.xml
+/data

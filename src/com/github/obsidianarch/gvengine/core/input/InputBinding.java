@@ -92,15 +92,19 @@ public class InputBinding {
         
         case BUTTON_DOWN:
             preMask = isDown;
+            break;
             
         case BUTTON_UP:
             preMask = !isDown;
+            break;
             
         case BUTTON_PRESSED:
             preMask = !lastDown && isDown;
+            break;
             
         case BUTTON_RELEASED:
             preMask = lastDown && !isDown;
+            break;
 
         }
         

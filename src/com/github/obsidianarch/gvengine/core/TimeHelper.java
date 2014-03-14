@@ -16,7 +16,7 @@ public final class TimeHelper {
      *            The start time (milliseconds).
      * @param delay
      *            The delay time (millliseconds).
-     * @return {@code ( toTicks( start + delay ) > getTime() )}
+     * @return {@code ( ( start + delay ) > getTime() )}
      */
     public static boolean isOver( long start, int delay ) {
         return ( ( start + delay ) < getTime() );
@@ -30,7 +30,7 @@ public final class TimeHelper {
      * @return The time (in ticks) {@code delay} milliseconds in the future.
      */
     public static long getDelay( long delay ) {
-        return getTime() + toTicks( delay );
+        return getTime() + delay;
     }
 
     /**

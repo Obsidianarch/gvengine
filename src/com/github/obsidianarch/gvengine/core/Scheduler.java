@@ -410,10 +410,10 @@ public final class Scheduler {
         /** The executor. */
         public Object   target;
         
-        /** The delay between executions (only used for recurring events). */
+        /** The delay between executions (only used for recurring events) (milliseconds). */
         public long     delay = -1;
         
-        /** The time this event should be executed at. -1 if there is not timing priority. */
+        /** The time this event should be executed at (ticks). */
         public long     executionTime;
         
         /** The parameters passed to the methods. */

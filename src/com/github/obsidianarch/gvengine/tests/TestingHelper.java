@@ -109,22 +109,20 @@ public class TestingHelper {
         Input.initialize(); // initialize Input
         
         // load the input bindings, and if it doesn't work, add the defaults
-        if ( Input.loadBindings( CONFIG ) < 10 /* we have ten key bindings */) {
-            
-            Input.setBinding( "forward", InputMedium.KEYBOARD, Keyboard.KEY_W );
-            Input.setBinding( "left", InputMedium.KEYBOARD, Keyboard.KEY_A );
-            Input.setBinding( "backward", InputMedium.KEYBOARD, Keyboard.KEY_S );
-            Input.setBinding( "right", InputMedium.KEYBOARD, Keyboard.KEY_D );
-            Input.setBinding( "sprint", InputMedium.KEYBOARD, Keyboard.KEY_LSHIFT );
-            
-            Input.setBinding( "rebuildChunk", InputMedium.KEYBOARD, Keyboard.KEY_R );
-            Input.setBinding( "removeVoxels", InputMedium.KEYBOARD, Keyboard.KEY_E );
-            
-            Input.setBinding( "unbindMouse", InputMedium.MOUSE, 0 );
-            Input.setBinding( "bindMouse", InputMedium.MOUSE, 1 );
-            Input.setBinding( "dbgc", InputMedium.MOUSE, 2 );
-            
-        }
+        Input.loadBindings( CONFIG );
+        
+        Input.setBinding( "forward", InputMedium.KEYBOARD, Keyboard.KEY_W );
+        Input.setBinding( "left", InputMedium.KEYBOARD, Keyboard.KEY_A );
+        Input.setBinding( "backward", InputMedium.KEYBOARD, Keyboard.KEY_S );
+        Input.setBinding( "right", InputMedium.KEYBOARD, Keyboard.KEY_D );
+        Input.setBinding( "sprint", InputMedium.KEYBOARD, Keyboard.KEY_LSHIFT );
+        
+        Input.setBinding( "rebuildChunk", InputMedium.KEYBOARD, Keyboard.KEY_R );
+        Input.setBinding( "removeVoxels", InputMedium.KEYBOARD, Keyboard.KEY_E );
+        
+        Input.setBinding( "unbindMouse", InputMedium.MOUSE, 0 );
+        Input.setBinding( "bindMouse", InputMedium.MOUSE, 1 );
+        Input.setBinding( "dbgc", InputMedium.MOUSE, 2 );
     }
     
     /**
