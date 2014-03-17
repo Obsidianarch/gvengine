@@ -10,6 +10,7 @@ import org.lwjgl.opengl.Display;
 
 import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.ChunkGenerator;
+import com.github.obsidianarch.gvengine.Material;
 import com.github.obsidianarch.gvengine.Region;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
@@ -56,6 +57,7 @@ public class RegionTester extends ChunkGenerator {
         
         TestingHelper.createDisplay();
         TestingHelper.setupGL();
+        TestingHelper.enableLighting();
         TestingHelper.initInput();
         
         Region region = new Region( new RegionTester(), 0, 0, 0 );
@@ -171,10 +173,12 @@ public class RegionTester extends ChunkGenerator {
             for ( int y = 0; y < 16; y++ ) {
                 for ( int z = 0; z < 16; z++ ) {
 
-                    double d = Math.random() * 3;
-                    byte b = ( byte ) ( Math.round( d ) );
-                    
-                    c.setMaterialAt( b, x, y, z );
+                    float[] global = c.getGlobalOffset( x, y, z );
+                    double test = Math.sqrt( Math.pow( global[ 0 ] / 8, 2 ) + Math.pow( global[ 1 ] / 8, 2 ) + Math.pow( global[ 2 ] / 8, 2 ) );
+                    if ( test <= 8 ) {
+                        c.setMaterialAt( Material.GRASS, x, y, z );
+                    }
+
                 }
             }
         }

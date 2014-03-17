@@ -390,6 +390,21 @@ public class Chunk {
         return voxels;
     }
     
+    /**
+     * @param x
+     * @param y
+     * @param z
+     * @return The global offsets for the local voxel position as a float array, where
+     *         index zero is the x position, one is the y, and two the z.
+     */
+    public float[] getGlobalOffset( int x, int y, int z ) {
+        float[] global = new float[ 3 ];
+        global[ 0 ] = x + ( this.x * 16 ) + ( region.x * 8 );
+        global[ 1 ] = y + ( this.y * 16 ) + ( region.y * 8 );
+        global[ 2 ] = z + ( this.z * 16 ) + ( region.z * 8 );
+        return global;
+    }
+
     //
     // Overrides
     //

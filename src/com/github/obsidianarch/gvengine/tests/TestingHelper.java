@@ -5,7 +5,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 
 import java.io.File;
+import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -102,6 +104,37 @@ public class TestingHelper {
         glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST ); // supposedly makes everything look nicer
     }
     
+    /**
+     * Enables lighting in the testing environment.
+     */
+    public static void enableLighting() {
+        float[][] lightingFloats = {
+            { 0.2f, 0.2f, 0.2f, 1.0f }, // ambient
+            { 1.0f, 1.0f, 1.0f, 1.0f }, // diffuse
+            { 1.0f, 1.0f, 1.0f, 1.0f }, // specular
+            { 0.0f, 0.0f, 0.0f, 1.0f } // position
+        };
+
+        FloatBuffer[] lighting = new FloatBuffer[ 4 ];
+        
+        for ( int i = 0; i < lighting.length; i++ ) {
+            lighting[ i ] = BufferUtils.createFloatBuffer( 4 ).put( lightingFloats[ i ] );
+            lighting[ i ].flip();
+        }
+        
+        glLight( GL_LIGHT1, GL_AMBIENT, lighting[ 0 ] );
+        glLight( GL_LIGHT1, GL_DIFFUSE, lighting[ 1 ] );
+        glLight( GL_LIGHT1, GL_SPECULAR, lighting[ 2 ] );
+        glLight( GL_LIGHT1, GL_POSITION, lighting[ 3 ] );
+        
+        glEnable( GL_LIGHT1 );
+        glEnable( GL_LIGHTING );
+        
+        glColorMaterial( GL_FRONT, GL_DIFFUSE );
+        glEnable( GL_COLOR_MATERIAL );
+
+    }
+
     /**
      * Initializes the input with the default control configurations.
      */
