@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
  * Denotes an option for the OptionManager to account for.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )

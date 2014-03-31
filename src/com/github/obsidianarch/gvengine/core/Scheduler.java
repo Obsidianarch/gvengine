@@ -15,6 +15,9 @@ import com.github.obsidianarch.gvengine.core.options.ToggleOption;
  * Maintains a schedule of events and when they need to be executed.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public final class Scheduler {
     
@@ -74,6 +77,9 @@ public final class Scheduler {
      *            The parameters to pass to the method.
      * @see #scheduleEvent(String, Object, long, Object...)
      * @see #enqueueEvent(String, Object, Object...)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void scheduleRecurringEvent( String method, Object target, long delay, Object... parameters ) {
         Event event = new Event();
@@ -123,6 +129,9 @@ public final class Scheduler {
      *            The parameters passed to the method when invoked.
      * @see #scheduleRecurringEvent(String, Object, long, Object...)
      * @see #enqueueEvent(String, Object, Object...)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void scheduleEvent( String method, Object target, long time, Object... parameters ) {
         Event event = new Event();
@@ -162,6 +171,9 @@ public final class Scheduler {
      *            The parameters passed to the method when invoked.
      * @see #scheduleRecurringEvent(String, Object, long, Object...)
      * @see #scheduleEvent(String, Object, long, Object...)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void enqueueEvent( String method, Object target, Object... parameters ) {
         Event event = new Event(); // create the event
@@ -205,6 +217,9 @@ public final class Scheduler {
      * @param startTime
      *            The time the tick began.
      * @return The total number of events fired so far into the tick.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static int doRecurringEvents( int firedEvents, long startTime ) {
 
@@ -239,6 +254,9 @@ public final class Scheduler {
      * @param startTime
      *            The time the tick began.
      * @return The total number of events fired so far into the tick.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static int doTimedEvents( int firedEvents, long startTime ) {
 
@@ -278,6 +296,9 @@ public final class Scheduler {
      * @param startTime
      *            The time the tick began.
      * @return The total number of events fired in this tick.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static int doEvents( int firedEvents, long startTime ) {
 
@@ -309,6 +330,9 @@ public final class Scheduler {
 
     /**
      * Updates the scheduler, and fires events which need to be fired.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void doTick() {
         long start = TimeHelper.getTime(); // get the start time (we'll force a stop if this goes over)
@@ -327,6 +351,9 @@ public final class Scheduler {
      * 
      * @param e
      *            The event to schedule.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void addEvent( Event e ) {
         boolean scheduled = true;
@@ -401,9 +428,16 @@ public final class Scheduler {
      * executing the method, and the time at which the method will be fired.
      * 
      * @author Austin
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static class Event {
         
+        //
+        // Fields
+        //
+
         /** The action for this event. */
         public Method   action;
         
@@ -419,6 +453,10 @@ public final class Scheduler {
         /** The parameters passed to the methods. */
         public Object[] parameters;
         
+        //
+        // Overrides
+        //
+
         @Override
         public String toString() {
             return String.format( "%s.%s() { %d delay, %d time }", target.getClass().getName(), action.getName(), delay, executionTime );

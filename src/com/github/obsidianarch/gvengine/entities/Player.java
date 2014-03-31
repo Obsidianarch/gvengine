@@ -6,6 +6,9 @@ import com.github.obsidianarch.gvengine.core.input.Input;
  * A simple player who is controllable.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Player extends Entity {
     

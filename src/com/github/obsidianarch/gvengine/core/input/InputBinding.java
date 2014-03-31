@@ -2,7 +2,13 @@ package com.github.obsidianarch.gvengine.core.input;
 
 
 /**
+ * The input binding. This will check to see if the current input being given will
+ * activate the actions bound to this.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class InputBinding {
     
@@ -40,6 +46,9 @@ public class InputBinding {
      *            Are any modifier keys required to trigger this action.
      * @param button
      *            The button which triggers this binding.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     protected InputBinding( InputMedium medium, InputMode mode, InputMask mask, int button ) {
         this.medium = medium;
@@ -81,7 +90,12 @@ public class InputBinding {
     }
 
     /**
+     * Checks to see if the current state of input will active this binding.
+     * 
      * @return If this InputBinding is currently active or not.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public boolean isActive() {
         boolean isDown = medium.isButtonDown( getButton() ); // is the key being pressed right now?
@@ -135,9 +149,14 @@ public class InputBinding {
     //
     
     /**
+     * Creates an InputBinding from a string, usually from a saved config file.
+     * 
      * @param s
      *            The string input for an input binding.
      * @return The InputBinding described by the text string.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static final InputBinding createInputBinding( String s ) {
         int[] info = new int[ 4 ]; // medium, mode, mask, button

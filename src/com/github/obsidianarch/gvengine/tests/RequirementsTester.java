@@ -7,6 +7,9 @@ import org.lwjgl.opengl.GLContext;
  * Tests if your system meets the minimum requirements for OpenGL.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class RequirementsTester {
     
@@ -17,6 +20,9 @@ public class RequirementsTester {
      *            Command line arguments.
      * @throws Exception
      *             If there was a problem with LWJGL.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String[] args ) throws Exception {
         TestingHelper.createDisplay();

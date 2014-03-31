@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
  * A preference that is set by a slider.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 @Target( ElementType.FIELD )
 @Retention( RetentionPolicy.RUNTIME )

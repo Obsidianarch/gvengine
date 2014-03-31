@@ -13,7 +13,12 @@ import org.lwjgl.input.Mouse;
 import com.github.obsidianarch.gvengine.io.Config;
 
 /**
+ * The class for all input from the user.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public final class Input {
     
@@ -30,6 +35,9 @@ public final class Input {
     
     /**
      * Initializes the input controls, loads the controllers.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void initialize() {
         try {
@@ -42,6 +50,9 @@ public final class Input {
     
     /**
      * Polls the keyboard, mouse, and all controllers.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void poll() {
         Keyboard.poll();
@@ -51,6 +62,9 @@ public final class Input {
     
     /**
      * Removes all bindings.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void clearBindings() {
         bindings.clear();
@@ -67,6 +81,9 @@ public final class Input {
      * 
      * @param c
      *            The configuration object.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void addBindings( Config c ) {
         List< String > data = new ArrayList<>(); // the list of bindings
@@ -87,6 +104,9 @@ public final class Input {
      * @param c
      *            The configuration object.
      * @return The total number of bindings loaded.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int loadBindings( Config c ) {
         bindings.clear();
@@ -127,6 +147,9 @@ public final class Input {
      *            Any input masks that are required.
      * @param button
      *            The button to be bound.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setBinding( String action, InputMedium medium, InputMode mode, InputMask mask, int button ) {
         InputBinding binding = new InputBinding( medium, mode, mask, button );
@@ -147,6 +170,9 @@ public final class Input {
      * @param button
      *            The button to be bound.
      * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setBinding( String action, InputMedium medium, InputMode mode, int button ) {
         setBinding( action, medium, mode, InputMask.NO_MASK, button );
@@ -165,6 +191,9 @@ public final class Input {
      * @param button
      *            The button to be bound.
      * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setBinding( String action, InputMedium medium, int button ) {
         setBinding( action, medium, InputMode.BUTTON_DOWN, InputMask.NO_MASK, button );
@@ -177,6 +206,9 @@ public final class Input {
      *            The action that will be triggered.
      * @param binding
      *            The binding which will fire the action.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setBinding( String action, InputBinding binding ) {
         bindings.put( action.toLowerCase().trim(), binding );
@@ -193,6 +225,9 @@ public final class Input {
      *            The InputMask.
      * @return If either keyboard key mask is down, or if {@code mask} is {@code NO_MASK},
      *         {@code true}.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static boolean isMaskActive( InputMask mask ) {
         
@@ -220,6 +255,9 @@ public final class Input {
      * @param action
      *            The InputBinding's action name.
      * @return The InputBinding bound to the action.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static InputBinding getInputBinding( String action ) {
         return bindings.get( action.toLowerCase().trim() );
@@ -231,6 +269,9 @@ public final class Input {
      * @param action
      *            The action.
      * @return If the action has been triggered.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static boolean isBindingActive( String action ) {
         InputBinding binding = bindings.get( action.toLowerCase().trim() ); // get the binding from the map

@@ -9,6 +9,9 @@ package com.github.obsidianarch.gvengine.core;
  * 
  * @author Austin
  * @see Camera
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Controller {
     
@@ -24,6 +27,9 @@ public class Controller {
      * 
      * @param camera
      *            The camera to bind the controller to.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Controller( Camera camera ) {
         setCamera( camera );
@@ -40,6 +46,9 @@ public class Controller {
      *            The camera to which the controller will the bound.
      * @throws NullPointerException
      *             If {@code camera} is {@code null}.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setCamera( Camera camera ) throws NullPointerException {
         if ( camera == null ) throw new NullPointerException( "Controller cannot be bound to a null camera!" );
@@ -69,6 +78,9 @@ public class Controller {
      * @see #moveBackward(float)
      * @see #moveBackward(float)
      * @see #moveLeft(float)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void moveForward( float distance ) {
         camera.x += distance * ( float ) Math.sin( Math.toRadians( camera.yaw ) );
@@ -86,6 +98,9 @@ public class Controller {
      * @see #moveForward(float)
      * @see #moveRight(float)
      * @see #moveLeft(float)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void moveBackward( float distance ) {
         moveForward( -distance ); // we lazy
@@ -100,6 +115,9 @@ public class Controller {
      * @see #moveForward(float)
      * @see #moveBackward(float)
      * @see #moveLeft(float)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void moveRight( float distance ) {
         camera.x += distance * ( float ) Math.sin( Math.toRadians( camera.yaw + 90 ) );
@@ -116,6 +134,9 @@ public class Controller {
      * @see #moveForward(float)
      * @see #moveBackward(float)
      * @see #moveRight(float)
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void moveLeft( float distance ) {
         moveRight( -distance ); // we still lazy

@@ -16,3 +16,5 @@ config
 
 /ant.xml
 /data
+/build.props
+/builder.ant

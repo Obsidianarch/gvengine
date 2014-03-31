@@ -15,6 +15,9 @@ import com.github.obsidianarch.gvengine.core.Scheduler;
  * Contains the reading and writing to regions files.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public final class RegionIO {
     
@@ -24,6 +27,9 @@ public final class RegionIO {
      * @param f
      *            The file to create.
      * @return If the file was created.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static boolean createFile( File f ) {
         try {
@@ -49,6 +55,9 @@ public final class RegionIO {
      *            The chunk's coordinates.
      * @param voxels
      *            The voxel data.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void writeChunk( DataOutputStream dos, int[] coordinates, byte[] voxels ) {
         try {
@@ -74,6 +83,9 @@ public final class RegionIO {
      *            The region to save.
      * @param dir
      *            The directory to write to.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void saveRegion( Region region, File dir ) {
         File f = new File( dir, String.format( "r%d %d %d.gven.dat", region.x, region.y, region.z ) );
@@ -120,6 +132,9 @@ public final class RegionIO {
      * @param dir
      *            The directory where the region file is.
      * @return If the region was loaded properly or not.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static boolean loadRegion( Region region, File dir ) {
         File f = new File( dir, String.format( "r%d %d %d.gven.dat", region.x, region.y, region.z ) );

@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
  * Used for denoting options which have a set number of options to "toggle" through.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )

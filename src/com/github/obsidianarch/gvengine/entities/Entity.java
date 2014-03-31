@@ -10,6 +10,9 @@ import com.github.obsidianarch.gvengine.core.Controller;
  * vague.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Entity {
     
@@ -35,6 +38,9 @@ public class Entity {
      * 
      * @param dt
      *            The time since the last frame.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void update( float dt ) {
         // intentionally blank
@@ -42,6 +48,9 @@ public class Entity {
     
     /**
      * Renders the entity.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void render() {
         // intentionally blank

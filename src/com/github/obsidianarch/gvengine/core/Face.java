@@ -4,6 +4,9 @@ package com.github.obsidianarch.gvengine.core;
  * One of the six faces on a voxel.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public enum Face {
     
@@ -32,12 +35,23 @@ public enum Face {
      */
     BACK( 5 );
     
+    //
+    // Fields
+    //
+
     /** An integer value also representing the direction of the face. */
     public int value;
     
+    //
+    // Constructors
+    //
+
     /**
      * @param i
      *            An integer value representing the face direction (used in arrays).
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     Face(int i) {
         value = i;

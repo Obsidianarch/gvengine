@@ -17,6 +17,9 @@ import com.github.obsidianarch.gvengine.core.VertexBufferObject;
  * A container for a 16x16x16 selection of voxels.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Chunk {
     
@@ -63,6 +66,9 @@ public class Chunk {
      *            The chunk's y coordinate.
      * @param z
      *            The chunk's z coordinate.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Chunk( Region region, int x, int y, int z ) {
         this.region = region;
@@ -77,6 +83,9 @@ public class Chunk {
     
     /**
      * Loads the voxel data of this chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void load() {
         // TODO load the voxel data of this chunk
@@ -86,6 +95,9 @@ public class Chunk {
     /**
      * Unloads a chunk from OpenGL by deleting the VertexBufferObject, however the chunk
      * data (coordinates and voxel data) will remain in memory.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void unload() {
         if ( vbo != null ) vbo.delete();
@@ -94,6 +106,9 @@ public class Chunk {
     
     /**
      * Saves the chunk as a file.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void save() {
         throw new UnsupportedOperationException( "This will be implemented one of these days" );
@@ -105,6 +120,9 @@ public class Chunk {
     
     /**
      * Builds the mesh for the chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void buildMesh() {
         if ( vbo != null ) {
@@ -131,6 +149,9 @@ public class Chunk {
     
     /**
      * Renders the VertexBufferObject for this chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void render() {
         if ( vbo == null ) return; // let's not get errors
@@ -159,6 +180,9 @@ public class Chunk {
      *            The byte id of the material.
      * @param index
      *            The index in the array.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setMaterialAt( byte b, int index ) {
         byte prev = voxels[ index ];
@@ -191,7 +215,6 @@ public class Chunk {
      * @param index
      *            The index in the array.
      */
-    
     public void setMaterialAt( Material mat, int index ) {
         setMaterialAt( mat.byteID, index );
     }
@@ -260,8 +283,10 @@ public class Chunk {
      * @param z
      *            The z coordinate.
      * @return An object array where
-     *         {@code [ 0 ] = chunk, [ 1 ] = local x, [ 2 ] = local y, [ 3 ] = local z, and [ 4 ] = material}
-     *         .
+     *         {@code [ 0 ] = chunk, [ 1 ] = local x, [ 2 ] = local y, [ 3 ] = local z, and [ 4 ] = material}.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private Object[] grabExternalVoxelData( int x, int y, int z ) {
         Object[] data = new Object[ 5 ];
@@ -327,6 +352,9 @@ public class Chunk {
      * @param z
      *            The local z position.
      * @return The material at the local position.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Material getMaterialAt( int x, int y, int z ) {
         if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
@@ -350,6 +378,9 @@ public class Chunk {
      * @param z
      *            the z coordinate of the voxel, in this chunk.
      * @return If the voxel should be rendered or not.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public boolean shouldBeRendered( int x, int y, int z ) {
         if ( !getMaterialAt( x, y, z ).active ) return false; // the material is not active, it shouldn't be rendered
@@ -367,6 +398,9 @@ public class Chunk {
      * @param z
      *            The z coordinate of the voxel, in this chunk.
      * @return If the voxel is completely eclipsed.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public boolean isEclipsed( int x, int y, int z ) {
         if ( !getMaterialAt( x - 1, y, z ).active ) return false; // the material to the left of this isn't active
@@ -385,6 +419,9 @@ public class Chunk {
      * Returns the voxel material ids in this chunk.
      * 
      * @return The voxel material ids in this chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public byte[] getVoxels() {
         return voxels;
@@ -396,6 +433,9 @@ public class Chunk {
      * @param z
      * @return The global offsets for the local voxel position as a float array, where
      *         index zero is the x position, one is the y, and two the z.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public float[] getGlobalOffset( int x, int y, int z ) {
         float[] global = new float[ 3 ];

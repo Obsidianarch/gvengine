@@ -4,7 +4,13 @@ import static org.lwjgl.opengl.ARBShaderObjects.*;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
+ * An object representation of the low-level OpenGL shader programs. Allows for easily
+ * attaching shaders and enabling and disabling the shader.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class ShaderProgram {
     
@@ -27,6 +33,9 @@ public class ShaderProgram {
     
     /**
      * Constructs a new ShaderProgram.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public ShaderProgram() {
         programID = glCreateProgramObjectARB();
@@ -40,6 +49,9 @@ public class ShaderProgram {
     
     /**
      * Enables the use of this ShaderProgram.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void enable() {
         glUseProgramObjectARB( programID );
@@ -47,6 +59,9 @@ public class ShaderProgram {
 
     /**
      * Delets the ShaderProgram from OpenGL.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void delete() {
         glDeleteObjectARB( programID );
@@ -57,6 +72,9 @@ public class ShaderProgram {
      * 
      * @param shader
      *            The shader to attach to this program.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void attachShader( Shader shader ) {
         glAttachObjectARB( programID, shader.getShaderID() );
@@ -64,6 +82,9 @@ public class ShaderProgram {
     
     /**
      * Links the shaders to this program.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void link() {
         glLinkProgramARB( programID );
@@ -72,6 +93,9 @@ public class ShaderProgram {
     
     /**
      * Checks the validity of this ShaderProgram.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void validate() {
         glValidateProgramARB( programID );
@@ -102,6 +126,9 @@ public class ShaderProgram {
     
     /**
      * Disables all active ShaderPrograms.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void disable() {
         glUseProgramObjectARB( 0 );

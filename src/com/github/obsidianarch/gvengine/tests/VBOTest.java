@@ -15,6 +15,9 @@ import com.github.obsidianarch.gvengine.core.VertexBufferObject;
  * The first test, tests the validity of the methods of VertexBufferObject.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class VBOTest {
     
@@ -29,6 +32,9 @@ public class VBOTest {
      * 
      * @throws Exception
      *             If something couldn't be initialized.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void init() throws Exception {
         Display.setDisplayMode( new DisplayMode( 640, 480 ) );
@@ -53,6 +59,9 @@ public class VBOTest {
     
     /**
      * Runs the test.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void run() {
         while ( !Display.isCloseRequested() ) {
@@ -70,6 +79,9 @@ public class VBOTest {
     
     /**
      * Destroys the test.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void destroy() {
         Display.destroy();
@@ -82,6 +94,9 @@ public class VBOTest {
      *            The command line arguments.
      * @throws Exception
      *             If a problem happened setting up or running the test.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String[] args ) throws Exception {
         init();

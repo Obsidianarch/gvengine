@@ -10,6 +10,9 @@ import com.github.obsidianarch.gvengine.core.RepeatingArray;
  * Everything involved with the creation of individual voxels.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Voxel {
     
@@ -29,6 +32,9 @@ public class Voxel {
      *            The local y coordinate of the voxel.
      * @param z
      *            The local z coordinate of the voxel.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static final void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z ) {
         if ( !c.shouldBeRendered( x, y, z ) ) return; // this voxel shouldn't be rendered
@@ -100,6 +106,9 @@ public class Voxel {
      * @param z
      *            The global z coordinate of the face.
      * @return The face's position data.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static final float[] createFace( Face direction, float x, float y, float z ) {
         float[] points = null; // the point's we'll send back

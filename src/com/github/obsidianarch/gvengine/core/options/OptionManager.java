@@ -15,6 +15,8 @@ import com.github.obsidianarch.gvengine.io.Config;
  * Gathers and organizes all option annotations.
  * 
  * @author Austin
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class OptionManager {
     
@@ -24,6 +26,9 @@ public class OptionManager {
     
     /**
      * Doesn't do anything other than hide the constructor.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private OptionManager() {
     }
@@ -55,6 +60,9 @@ public class OptionManager {
      * 
      * @param args
      *            The arguments passed by commandline.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void initialize( String... args ) {
         for ( String s : args ) {
@@ -76,6 +84,9 @@ public class OptionManager {
      * 
      * @param c
      *            The configuratin object which contains default values for options.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void initialize( Config c ) {
         List< String > data = c.getTagData( "OPTIONS" );
@@ -98,6 +109,9 @@ public class OptionManager {
      * @return {@code null} if there was no option with the given description, or if there
      *         was a problem getting the value from the field, otherwise the value of the
      *         field.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static Object getValue( String optionDescription ) {
         Field field = optionFields.get( optionDescription );
@@ -119,6 +133,9 @@ public class OptionManager {
      *            The description of the option.
      * @param value
      *            The Option's new value.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setValue( String optionDescription, Object value ) {
         Field field = optionFields.get( optionDescription );
@@ -144,6 +161,9 @@ public class OptionManager {
      *            The field's description to add a listener to.
      * @param m
      *            The listener.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void addOptionListener( String s, Method m ) {
         List< Method > methods = changeListeners.get( s ); // get the pre-existing list
@@ -160,6 +180,9 @@ public class OptionManager {
      * 
      * @param s
      *            The Option description whose OptionListeners need to be fired.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void fireOptionListener( String s ) {
         List< Method > methods = changeListeners.get( s );
@@ -187,6 +210,9 @@ public class OptionManager {
      *            The string identifier for the class.
      * @param o
      *            The instance of the class which contains options.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void registerInstance( String identifier, Object o ) {
         Field[] fields = o.getClass().getDeclaredFields();
@@ -204,6 +230,9 @@ public class OptionManager {
      *            The string identifier for the class.
      * @param clazz
      *            The class that contains static options.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void registerClass( String identifier, Class< ? > clazz ) {
         Field[] fields = clazz.getDeclaredFields(); // get ONLY the fields that were declared in this class
@@ -222,6 +251,9 @@ public class OptionManager {
      *            The list of fields to scan through.
      * @param needsStatic
      *            If the fields must be static.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void registerFields( String identifier, Field[] fields, boolean needsStatic ) {
         for ( Field field : fields ) {
@@ -233,20 +265,17 @@ public class OptionManager {
             System.out.println( identifier + "." + field.getName() ); // start the option discovery log
             
             Option option = field.getAnnotation( Option.class ); // get the option annotation
-            System.out.println( " > " + toString( option ) ); // print the annotation's data
-            
-            // TODO later get the positioning data from the option annotation
-            // TODO actually use these annotations later
+            System.out.println( " > " + getDescription( option ) ); // print the annotation's data
             
             if ( field.isAnnotationPresent( SliderOption.class ) ) {
                 
                 SliderOption sliderOption = field.getAnnotation( SliderOption.class );
-                System.out.println( " > " + toString( sliderOption ) );
+                System.out.println( " > " + getDescription( sliderOption ) );
             }
             else if ( field.isAnnotationPresent( ToggleOption.class ) ) {
                 
                 ToggleOption toggleOption = field.getAnnotation( ToggleOption.class );
-                System.out.println( " > " + toString( toggleOption ) );
+                System.out.println( " > " + getDescription( toggleOption ) );
             }
             else {
                 System.out.println( " > No other option annotations found, is the option annotation supposed to be here?" );
@@ -306,6 +335,9 @@ public class OptionManager {
      *            The list of methods to scan through.
      * @param needsStatic
      *            If the methods must be static.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void registerMethods( String identifier, Method[] methods, boolean needsStatic ) {
         for ( Method method : methods ) {
@@ -325,18 +357,17 @@ public class OptionManager {
         }
     }
     
-    //
-    // Converters
-    //
-    
     /**
-     * Shortens the annotations toString() method.
+     * Shortens the annotation's toString() method.
      * 
      * @param o
      *            The annotation's default
      * @return A shortened version of the annotation's toString().
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
-    private static String toString( Object o ) {
+    private static String getDescription( Object o ) {
         return o.toString().substring( "@com.github.obsidianarch.gvengine.core.options.".length() );
     }
     

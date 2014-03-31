@@ -4,6 +4,9 @@ package com.github.obsidianarch.gvengine.core;
  * The three supported position systems by the VertexBufferObject.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public enum PositionSystem {
     
@@ -26,6 +29,9 @@ public enum PositionSystem {
     /**
      * @param i
      *            The number of coordinates in the system.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     PositionSystem(int i) {
         coordinates = i;

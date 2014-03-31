@@ -14,7 +14,12 @@ import com.github.obsidianarch.gvengine.core.shaders.Shader;
 import com.github.obsidianarch.gvengine.core.shaders.ShaderProgram;
 
 /**
+ * Tests the shaders to make sure they are working.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class ShaderTest {
     
@@ -27,6 +32,9 @@ public class ShaderTest {
      *             If the window couldn't be created.
      * @throws IOException
      *             If the shader files couldn't be read.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String[] args ) throws LWJGLException, IOException {
         TestingHelper.createDisplay();
@@ -69,6 +77,9 @@ public class ShaderTest {
     
     /**
      * Renders the VBO.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void render() {
         glLoadIdentity();

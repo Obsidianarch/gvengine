@@ -20,6 +20,9 @@ package com.github.obsidianarch.gvengine.core.noise;
  *      noise demystified</a>
  * @see <a href="http://www.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java">Original
  *      Source</a>
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
 

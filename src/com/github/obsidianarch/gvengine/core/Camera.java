@@ -12,6 +12,9 @@ import static org.lwjgl.opengl.GL11.*;
  * 
  * @author Austin
  * @see Controller
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Camera {
     
@@ -21,15 +24,19 @@ public class Camera {
     
     /** The x position of the camera. */
     protected float x;
+
     /** The y position of the camera. */
     protected float y;
+
     /** The z position of the camera. */
     protected float z;
     
     /** The rotation around the x axis. */
     protected float pitch;
+
     /** The rotation around the y axis. */
     protected float yaw;
+
     /** The rotation around the z axis. */
     protected float roll;
     
@@ -94,6 +101,9 @@ public class Camera {
      * 
      * @param pitch
      *            The rotation around the x axis.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setPitch( float pitch ) {
         if ( pitch < 0 ) pitch += 360f; // unnegativize(TM) the number
@@ -152,6 +162,9 @@ public class Camera {
      * 
      * @param max
      *            The highest pitch the camera can go to.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setMaximumPitch( float max ) {
         maxPitch = max % 360;
@@ -166,6 +179,9 @@ public class Camera {
      * 
      * @param min
      *            The lowest pitch the camera can go to.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setMinimumPitch( float min ) {
         minPitch = min % 360;
@@ -228,6 +244,9 @@ public class Camera {
     /**
      * Rotates and translates the viewport of OpenGL to the camera's rotation and
      * position.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void lookThrough() {
         glRotatef( pitch, 1, 0, 0 ); // set the pitch

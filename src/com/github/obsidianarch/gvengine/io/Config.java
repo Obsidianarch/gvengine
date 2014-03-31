@@ -14,6 +14,9 @@ import java.util.Map;
  * Reads and writes human readable configuration files.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Config {
     
@@ -36,6 +39,9 @@ public class Config {
      * 
      * @param f
      *            The file of configuration.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Config( File f ) {
         file = f;
@@ -50,6 +56,9 @@ public class Config {
      * 
      * @param tagName
      *            The tag to remove.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void removeTag( String tagName ) {
         tags.remove( tagName );
@@ -63,6 +72,9 @@ public class Config {
      * Saves the text to the file.
      * 
      * @return If the save was successful or not.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public boolean save() {
         try {
@@ -92,6 +104,9 @@ public class Config {
      * Reads the text from the file.
      * 
      * @return If the read was successful or not.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public boolean read() {
         try {
@@ -149,6 +164,9 @@ public class Config {
      *            The name of the tag.
      * @param data
      *            The new data for the tag.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setTagData( String tagName, String... data ) {
         List< String > list = new ArrayList<>();
@@ -166,6 +184,9 @@ public class Config {
      *            The name of the tag.
      * @param data
      *            The new data for the tag.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setTagData( String tagName, List< String > data ) {
         tags.put( tagName, data );

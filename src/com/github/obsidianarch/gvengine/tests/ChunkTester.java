@@ -20,6 +20,9 @@ import com.github.obsidianarch.gvengine.core.options.ToggleOption;
  * Tests the Voxel and Chunk Management systems.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class ChunkTester {
     
@@ -60,6 +63,9 @@ public class ChunkTester {
      *            Command line arguments.
      * @throws Exception
      *             If something went wrong.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String... args ) throws Exception {
         TestingHelper.CONFIG.read();
@@ -103,6 +109,9 @@ public class ChunkTester {
      *            The player's camera.
      * @param c
      *            The chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void renderScene( Camera camera, Chunk c ) {
         glLoadIdentity(); // remove the previous transformation
@@ -119,6 +128,9 @@ public class ChunkTester {
      *            The player's controller.
      * @param c
      *            The chunk that is being tested.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void processInput( Camera camera, Controller controller, Chunk c ) {
         TestingHelper.processInput( camera, controller );
@@ -132,6 +144,9 @@ public class ChunkTester {
      * 
      * @param c
      *            The chunk that will have voxels removed from it.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void removeBlocks( Chunk c ) {
         for ( int i = 0; i < 4096; i++ ) {
@@ -147,6 +162,9 @@ public class ChunkTester {
      * 
      * @param c
      *            The chunk.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void buildChunk( Chunk c ) {
         // set every material in the chunk
@@ -160,14 +178,5 @@ public class ChunkTester {
         }
         
         Scheduler.enqueueEvent( "buildMesh", c );
-        
-        //        long start = System.nanoTime();
-        //        
-        //        c.buildMesh();
-        //        
-        //        long end = System.nanoTime();
-        //        long diff = end - start;
-        //        
-        //        System.out.println( "Chunk rebuilt in: " + ( diff / 1000000000.0 ) + " millis (" + diff + " nanos)" );
     }
 }

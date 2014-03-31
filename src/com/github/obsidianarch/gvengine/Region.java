@@ -8,6 +8,9 @@ import com.github.obsidianarch.gvengine.core.Scheduler;
  * A 4x4x4 container of Chunks.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Region {
     
@@ -45,6 +48,9 @@ public class Region {
      *            The y coordinate of the region in the region grid.
      * @param z
      *            The z coordinate of the region in the region grid.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Region( ChunkGenerator generator, int x, int y, int z ) {
         this.generator = generator;
@@ -74,6 +80,9 @@ public class Region {
     
     /**
      * Regenerates all chunks based on the current seed.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void regenerate() {
         for ( int i = 0; i < chunks.length; i++ ) {
@@ -84,6 +93,9 @@ public class Region {
     
     /**
      * Schedules rebuilds for every chunk in this region.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void rebuild() {
         for ( int i = 0; i < chunks.length; i++ ) {
@@ -93,6 +105,9 @@ public class Region {
     
     /**
      * Renders every chunk in this region.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void render() {
         for ( Chunk c : chunks ) {
@@ -114,6 +129,9 @@ public class Region {
      * @param z
      *            The z coordinate of the chunk.
      * @return The chunk at the given local positions.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Chunk getChunkAt( int x, int y, int z ) {
         if ( !inRange( x, 0, 3 ) || !inRange( y, 0, 3 ) || !inRange( z, 0, 3 ) ) {

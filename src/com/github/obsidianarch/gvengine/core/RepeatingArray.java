@@ -4,6 +4,9 @@ package com.github.obsidianarch.gvengine.core;
  * An array that repeats itself infitely many times, due to the nature of it's getter.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class RepeatingArray {
     
@@ -23,6 +26,9 @@ public class RepeatingArray {
      * 
      * @param source
      *            The source array.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public RepeatingArray(float[] source) {
         array = source;
@@ -36,6 +42,9 @@ public class RepeatingArray {
      * @param index
      *            The index to get the item from.
      * @return The item at the given index.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public float get( int index ) {
         return array[ index % array.length ];
@@ -46,6 +55,9 @@ public class RepeatingArray {
      *            The length of the new array.
      * @return An array with the data reflecting this, repeated for the length of the
      *         array.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public float[] createArray( int arrayLength ) {
         float[] newArray = new float[ arrayLength ];

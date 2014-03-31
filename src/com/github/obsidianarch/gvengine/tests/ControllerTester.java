@@ -15,6 +15,9 @@ import org.lwjgl.opengl.DisplayMode;
  * Tests controller input.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class ControllerTester {
     
@@ -48,6 +51,9 @@ public class ControllerTester {
      *            command-line arguments
      * @throws LWJGLException
      *             If there was a problem setting up LWJGL.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String[] args ) throws LWJGLException {
         Controllers.create();
@@ -103,6 +109,9 @@ public class ControllerTester {
     
     /**
      * Updates and draws the frame.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void update() {
         float[] input = getInputs( 1, 0 );
@@ -155,6 +164,9 @@ public class ControllerTester {
      * @param y
      *            The y axis number.
      * @return The two controller inputs scaled down by 100.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static float[] getInputs( int x, int y ) {
         float inputX = controller.getAxisValue( x );
@@ -179,6 +191,9 @@ public class ControllerTester {
      * 
      * @param button
      *            The button the check for input from.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void changeColor( int button ) {
         boolean down = controller.isButtonPressed( button );
@@ -196,6 +211,9 @@ public class ControllerTester {
      * 
      * @throws LWJGLException
      *             If the display couldn't be created.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setup() throws LWJGLException {
         Display.setTitle( "Controller Test" );
@@ -207,6 +225,9 @@ public class ControllerTester {
     
     /**
      * Destroys the display.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void destroy() {
         Display.destroy();

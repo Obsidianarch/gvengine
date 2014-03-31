@@ -25,15 +25,11 @@ import com.github.obsidianarch.gvengine.io.RegionIO;
  * Tests the region and it's methods.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class RegionTester extends ChunkGenerator {
-    
-    //
-    // Fields
-    //
-    
-    /** The seed for the random number generator. */
-    private static long seed = 1271995;
     
     //
     // Methods
@@ -46,6 +42,9 @@ public class RegionTester extends ChunkGenerator {
      *            Command line arguments.
      * @throws Exception
      *             If there was a problem in the test.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void main( String[] args ) throws Exception {
         TestingHelper.CONFIG.read();
@@ -97,6 +96,9 @@ public class RegionTester extends ChunkGenerator {
      * 
      * @param region
      *            The region to load the data into.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void loadRegion( Region region ) {
         RegionIO.loadRegion( region, new File( "/data/" ) );
@@ -107,6 +109,9 @@ public class RegionTester extends ChunkGenerator {
      * 
      * @param region
      *            The region to save into a data file.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void saveRegion( Region region ) {
         RegionIO.saveRegion( region, new File( "data/" ) );
@@ -117,6 +122,9 @@ public class RegionTester extends ChunkGenerator {
      * 
      * @param r
      *            The region to remove blocks from.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void removeBlocks( Region r ) {
         Random random = new Random();
@@ -131,10 +139,13 @@ public class RegionTester extends ChunkGenerator {
     }
     
     /**
-     * Adds blocks to the environment randomly/
+     * Adds blocks to the environment randomly.
      * 
      * @param r
      *            The region to add blocks to.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private static void addBlocks( Region r ) {
         Random random = new Random();
@@ -156,6 +167,9 @@ public class RegionTester extends ChunkGenerator {
      *            The camera of the player.
      * @param region
      *            The region to render.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void renderScene( Camera camera, Region region ) {
         glLoadIdentity();

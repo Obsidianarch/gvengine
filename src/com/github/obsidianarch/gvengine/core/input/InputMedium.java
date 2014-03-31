@@ -4,7 +4,12 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 /**
+ * The physical device which is bound to an action. (e.g. mouse, keyboard, controller).
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public enum InputMedium {
 

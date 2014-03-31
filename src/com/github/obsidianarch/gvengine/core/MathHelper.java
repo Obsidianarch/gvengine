@@ -9,7 +9,12 @@ import com.github.obsidianarch.gvengine.Chunk;
 import com.github.obsidianarch.gvengine.Region;
 
 /**
+ * A general class for helping with common mathematical calculations.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public final class MathHelper {
     
@@ -27,6 +32,9 @@ public final class MathHelper {
      * @param xMax
      *            The maximum value in the range (inclusive).
      * @return If {@code xMin <= x <= xMax}.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static boolean inRange( float x, float xMin, float xMax ) {
         return ( ( x >= xMin ) && ( x <= xMax ) );
@@ -45,6 +53,9 @@ public final class MathHelper {
      *            The index in the buffer at which the first item will be inserted.
      * @param stride
      *            The distance between insertions.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void insertBuffer( FloatGapList source, FloatBuffer buffer, int size, int offset, int stride ) {
         if ( size == 0 ) return;
@@ -77,6 +88,9 @@ public final class MathHelper {
      *            The distance from the camera the target will be.
      * @return A Vector3f {@code targetDistance} away from the camera in it's current
      *         direction.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static Vector3f getTarget( Camera camera, int targetDistance ) {
         Vector3f target = new Vector3f( camera.getX(), camera.getY(), camera.getZ() );
@@ -100,6 +114,9 @@ public final class MathHelper {
      * @param size
      *            The cube root of the array length.
      * @return The x coordinate.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getXPosition( int index, int size ) {
         return index % size;
@@ -111,6 +128,9 @@ public final class MathHelper {
      * @param size
      *            The cube root of the array length.
      * @return The y coordinate.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getYPosition( int index, int size ) {
         return ( index / size ) % size;
@@ -122,6 +142,9 @@ public final class MathHelper {
      * @param size
      *            The cube root of the array length.
      * @return The z coordinate.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getZPosition( int index, int size ) {
         return ( index - getXPosition( index, size ) - ( size * getYPosition( index, size ) ) ) / ( size * size );
@@ -133,6 +156,9 @@ public final class MathHelper {
      * @param globalCoordinate
      *            The global coordinate.
      * @return The chunk coordinate.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getChunkCoordinate( float globalCoordinate ) {
         return ( int ) Math.floor( globalCoordinate / 16f );
@@ -145,6 +171,9 @@ public final class MathHelper {
      * @param globalPosition
      *            The position in 3d space the object is at.
      * @return The chunk position of the object.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getChunkPosition( float globalPosition ) {
         return ( int ) Math.floor( globalPosition - ( getChunkCoordinate( globalPosition ) * 16 ) );
@@ -159,6 +188,9 @@ public final class MathHelper {
      *            The {@code x, y, and z} positions of the voxel inside the chunk.
      * @return The {@code x, y, and z} positions of the voxel, relative to the world's
      *         origin.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static float[] getGlobalPosition( Chunk c, int[] localPos ) {
         float[] globalPos = new float[ 3 ];

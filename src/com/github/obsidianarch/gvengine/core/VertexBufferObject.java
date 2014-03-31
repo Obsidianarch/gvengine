@@ -13,6 +13,9 @@ import org.magicwerk.brownies.collections.primitive.FloatGapList;
  * calls to OpenGL in single methods.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class VertexBufferObject {
     
@@ -64,6 +67,9 @@ public class VertexBufferObject {
      *            The coloring system.
      * @param ns
      *            The normal system.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns ) {
         this( ps, cs, ns, 0, 0, 0 );
@@ -86,6 +92,9 @@ public class VertexBufferObject {
      *            The initial capacity on color data.
      * @param ncap
      *            The initial capacity on normal data.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, int pcap, int ccap, int ncap ) {
         this( ps, cs, ns, new FloatGapList( pcap ), new FloatGapList( ccap ), new FloatGapList( ncap ) );
@@ -107,6 +116,9 @@ public class VertexBufferObject {
      *            The initial channel values.
      * @param normalCoordinates
      *            The initial normal values.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, FloatGapList coordinates, FloatGapList channels,
         FloatGapList normalCoordinates ) {
@@ -132,6 +144,9 @@ public class VertexBufferObject {
     
     /**
      * {@code glDeleteBuffers( binding )}
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void delete() {
         glDeleteBuffers( glBinding );
@@ -139,6 +154,9 @@ public class VertexBufferObject {
     
     /**
      * Validates the data in the VBO, and rebinds it to OpenGL.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void validate() {
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normalCoordinates.size() );
@@ -160,6 +178,9 @@ public class VertexBufferObject {
     
     /**
      * Renders our buffers.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void render() {
         if ( !dataValid ) {
@@ -179,6 +200,9 @@ public class VertexBufferObject {
     
     /**
      * Provides OpenGL with the vertex data (positions, colors, and normals) for the VBO.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     private void provideVertexData() {
         int stride = ( ps.coordinates + cs.channels + ns.coordinates ) * 4;
@@ -375,6 +399,9 @@ public class VertexBufferObject {
      * @param vbos
      *            The VertexBufferObjects to merge.
      * @return The merged VertexBufferObject.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static VertexBufferObject merge( int pc, int cc, int nc, VertexBufferObject... vbos ) {
         VertexBufferObject merged = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED );

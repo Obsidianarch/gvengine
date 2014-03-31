@@ -21,7 +21,13 @@ import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.io.Config;
 
 /**
+ * A general class to simplify the testing cases, removing a large portion of code that's
+ * just required for setup.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class TestingHelper {
     
@@ -56,6 +62,9 @@ public class TestingHelper {
     
     /**
      * @return {@code true} if the "gvengine.developerMode" property has been set to true.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static boolean isDeveloping() {
         String options = System.getProperty( "gvengine.developerMode", "false" );
@@ -66,6 +75,10 @@ public class TestingHelper {
      * Creates the Display.
      * 
      * @throws LWJGLException
+     *             If the display couldn't be created.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void createDisplay() throws LWJGLException {
         Display.setTitle( "Voxel Testing" );
@@ -77,6 +90,9 @@ public class TestingHelper {
     
     /**
      * Sets up OpenGL for the game tests.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void setupGL() {
         glShadeModel( GL_SMOOTH ); // supposedly smooths things out
@@ -106,6 +122,9 @@ public class TestingHelper {
     
     /**
      * Enables lighting in the testing environment.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void enableLighting() {
         float[][] lightingFloats = {
@@ -137,6 +156,9 @@ public class TestingHelper {
 
     /**
      * Initializes the input with the default control configurations.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void initInput() {
         Input.initialize(); // initialize Input
@@ -165,6 +187,9 @@ public class TestingHelper {
      *            The camera.
      * @param controller
      *            The controller.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void processInput( Camera camera, Controller controller ) {
         if ( Input.isBindingActive( "unbindMouse" ) ) Mouse.setGrabbed( false );
@@ -191,6 +216,9 @@ public class TestingHelper {
      *            The title.
      * @param fpsCap
      *            The fps cap, or -1 if there is none.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void updateDisplay( String name, int fpsCap ) {
         Display.setTitle( name + " [" + TestingHelper.getFPS() + "]" );
@@ -200,6 +228,9 @@ public class TestingHelper {
     
     /**
      * @return The time since the last frame.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static float getDelta() {
         float dt = getTime() - lastTime;
@@ -209,6 +240,9 @@ public class TestingHelper {
     
     /**
      * @return The last measured FPS.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static int getFPS() {
         if ( ( getTime() - lastFPS ) > 1000 ) {
@@ -223,6 +257,9 @@ public class TestingHelper {
     
     /**
      * Destroys the display and saves the input settings.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public static void destroy() {
         Display.destroy();

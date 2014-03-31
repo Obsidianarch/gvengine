@@ -4,6 +4,9 @@ package com.github.obsidianarch.gvengine.core;
  * The two supported normal systems by VertexBufferObject.
  * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public enum NormalSystem {
     
@@ -22,8 +25,11 @@ public enum NormalSystem {
     /**
      * @param i
      *            The number of coordinates in a normal.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
-    NormalSystem(int i) {
+    NormalSystem( int i ) {
         coordinates = i;
     }
     

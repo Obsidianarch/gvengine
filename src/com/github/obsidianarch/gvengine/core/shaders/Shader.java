@@ -9,16 +9,14 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
+ * Represents the lower level OpenGL shader objects. These are attached to a ShaderObject.
+ * 
  * @author Austin
+ * 
+ * @since 14.03.30
+ * @version 14.03.30
  */
 public class Shader {
-    
-    //
-    // Constants
-    //
-    
-    /** The error message displayed when the user tries to use a deleted shader. */
-    private static final String SHADER_DELETED_EXCEPTION_STRING = "The shader has already been deleted!";
     
     //
     // Fields
@@ -42,6 +40,9 @@ public class Shader {
      * 
      * @param type
      *            The type of shader this is.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public Shader( int type ) {
         shaderType = type;
@@ -55,6 +56,9 @@ public class Shader {
     
     /**
      * Delets the shader object from OpenGL.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void delete() {
         glDeleteObjectARB( shaderID );
@@ -69,6 +73,9 @@ public class Shader {
      *            The file containing the source code of the shader.
      * @throws IOException
      *             If the file couldn't be read.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setSource( File f ) throws IOException {
         try ( BufferedReader br = new BufferedReader( new FileReader( f ) ) ) {
@@ -85,6 +92,9 @@ public class Shader {
     /**
      * @param s
      *            The source code of the shader.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setSource( String s ) {
         glShaderSourceARB( shaderID, s );
