@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 import com.github.obsidianarch.gvengine.core.ColorSystem;
+import com.github.obsidianarch.gvengine.core.Face;
 import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.NormalSystem;
 import com.github.obsidianarch.gvengine.core.PositionSystem;
@@ -19,7 +20,7 @@ import com.github.obsidianarch.gvengine.core.VertexBufferObject;
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.30
+ * @version 14.03.31
  */
 public class Chunk {
     
@@ -366,56 +367,6 @@ public class Chunk {
     }
     
     /**
-     * Checks to see if the voxel at the given location should be rendered.<BR>
-     * This algorithm checks the following items, in the following order:<BR>
-     * 1. Is the material at the position active?<BR>
-     * 2. Is the voxel eclipsed?<BR>
-     * 
-     * @param x
-     *            The x coordinate of the voxel, in this chunk.
-     * @param y
-     *            The y coordinate of the voxel, in this chunk.
-     * @param z
-     *            the z coordinate of the voxel, in this chunk.
-     * @return If the voxel should be rendered or not.
-     * 
-     * @since 14.03.30
-     * @version 14.03.30
-     */
-    public boolean shouldBeRendered( int x, int y, int z ) {
-        if ( !getMaterialAt( x, y, z ).active ) return false; // the material is not active, it shouldn't be rendered
-        return !isEclipsed( x, y, z ); // all neighbors are rendered
-    }
-    
-    /**
-     * Checks to see if the voxel is completely eclipsed, covered by an active material
-     * from all sides.
-     * 
-     * @param x
-     *            The x coordinate of the voxel, in this chunk.
-     * @param y
-     *            The y coordinate of the voxel, in this chunk.
-     * @param z
-     *            The z coordinate of the voxel, in this chunk.
-     * @return If the voxel is completely eclipsed.
-     * 
-     * @since 14.03.30
-     * @version 14.03.30
-     */
-    public boolean isEclipsed( int x, int y, int z ) {
-        if ( !getMaterialAt( x - 1, y, z ).active ) return false; // the material to the left of this isn't active
-        if ( !getMaterialAt( x + 1, y, z ).active ) return false; // the material to the right of this isn't active
-            
-        if ( !getMaterialAt( x, y - 1, z ).active ) return false; // the material below this isn't active
-        if ( !getMaterialAt( x, y + 1, z ).active ) return false; // the material above this isn't active
-            
-        if ( !getMaterialAt( x, y, z - 1 ).active ) return false; // the material in front of this isn't active
-        if ( !getMaterialAt( x, y, z + 1 ).active ) return false; // the material behind this isn't active
-            
-        return true;
-    }
-    
-    /**
      * Returns the voxel material ids in this chunk.
      * 
      * @return The voxel material ids in this chunk.
@@ -443,6 +394,111 @@ public class Chunk {
         global[ 1 ] = y + ( this.y * 16 ) + ( region.y * 8 );
         global[ 2 ] = z + ( this.z * 16 ) + ( region.z * 8 );
         return global;
+    }
+    
+    //
+    // Voxel Visibility
+    //
+    
+    /**
+     * Determines if a voxel's specific face is visible or not.
+     * 
+     * @param face
+     *            The face.
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            The z coordinate of the voxel, in this chunk.
+     * @return If the voxel's face is visible.
+     * 
+     * @since 14.03.31
+     * @version 14.03.31
+     */
+    public boolean isVisible( Face face, int x, int y, int z ) {
+        int[] touchingCoords = face.getTouchingVoxel( x, y, z ); // screw the word "coordiantes"
+        
+        int tX = touchingCoords[ 0 ];
+        int tY = touchingCoords[ 1 ];
+        int tZ = touchingCoords[ 2 ];
+        
+        if ( getMaterialAt( tX, tY, tZ ).active ) return false; // the material this face's touching is active, therefore we don't need to render this face
+
+        // TODO follow a trail of faces to determine if the area is enclosed or not
+
+        return true;
+    }
+    
+    /**
+     * Gets all the visible faces for the provided voxel.
+     * 
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            The z coordinate of the voxel, in this chunk.
+     * @return The visibility of the faces (the faces are ordered as the values of the
+     *         face).
+     * 
+     * @since 14.03.31
+     * @version 14.03.31
+     */
+    public boolean[] getVisibleFaces( int x, int y, int z ) {
+        boolean[] faces = new boolean[ 6 ];
+
+        for ( int i = 0; i < faces.length; i++ ) {
+            faces[ Face.values()[ i ].value ] = isVisible( Face.values()[ i ], x, y, z );
+        }
+
+        return faces;
+    }
+
+    /**
+     * Checks to see if the voxel is completely eclipsed, covered by an active material
+     * from all sides.
+     * 
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            The z coordinate of the voxel, in this chunk.
+     * @return If the voxel is completely eclipsed.
+     * 
+     * @since 14.03.30
+     * @version 14.03.31
+     */
+    public boolean isEclipsed( int x, int y, int z ) {
+        boolean[] visible = getVisibleFaces( x, y, z ); // get the visibility for every face
+
+        for ( boolean b : visible ) {
+            if ( b ) return false; // if ANY face on this voxel is visible, it is not eclipsed
+        }
+        
+        return true; // no faces are visible; it's eclipsed
+    }
+    
+    /**
+     * Determines if the voxel is renderable or not. This will check first to see if the
+     * voxel's material is visible, then it will check to see if the voxel is completely
+     * eclipsed or not.
+     * 
+     * @param x
+     *            The x coordinate of the voxel, in this chunk.
+     * @param y
+     *            The y coordinate of the voxel, in this chunk.
+     * @param z
+     *            The z coordinate of the voxel, in this chunk.
+     * @return If the voxel is renderable or not.
+     * 
+     * @since 14.03.31
+     * @version 14.03.31
+     */
+    public boolean isRenderable( int x, int y, int z ) {
+        if ( !getMaterialAt( x, y, z ).active ) return false; // the voxel's material is defined as unrenderable
+        return !isEclipsed( x, y, z ); // if the voxel won't be visible; don't render it
     }
 
     //

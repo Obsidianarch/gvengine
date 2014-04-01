@@ -56,7 +56,7 @@ public class RegionTester extends ChunkGenerator {
         
         TestingHelper.createDisplay();
         TestingHelper.setupGL();
-        TestingHelper.enableLighting();
+        //        TestingHelper.enableLighting();
         TestingHelper.initInput();
         
         Region region = new Region( new RegionTester(), 0, 0, 0 );

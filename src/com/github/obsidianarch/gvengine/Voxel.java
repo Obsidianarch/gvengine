@@ -12,10 +12,14 @@ import com.github.obsidianarch.gvengine.core.RepeatingArray;
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.30
+ * @version 14.03.31
  */
-public class Voxel {
+public final class Voxel {
     
+    //
+    // Point Locations
+    //
+
     /**
      * Creates a voxel with only the needed faces.
      * 
@@ -34,10 +38,10 @@ public class Voxel {
      *            The local z coordinate of the voxel.
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.03.31
      */
-    public static final void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z ) {
-        if ( !c.shouldBeRendered( x, y, z ) ) return; // this voxel shouldn't be rendered
+    public static void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z ) {
+        if ( !c.isRenderable( x, y, z ) ) return; // this voxel shouldn't be rendered
             
         Material material = c.getMaterialAt( x, y, z ); // the material of this voxel
         
@@ -51,46 +55,14 @@ public class Voxel {
         float gY = global[ 1 ];
         float gZ = global[ 2 ];
         
-        //
-        // X-Faces
-        //
-        
-        if ( !c.getMaterialAt( x - 1, y, z ).active && !c.isEclipsed( x - 1, y, z ) ) {
-            positions.addAll( createFace( Face.LEFT, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
-        }
-        
-        if ( !c.getMaterialAt( x + 1, y, z ).active && !c.isEclipsed( x + 1, y, z ) ) {
-            positions.addAll( createFace( Face.RIGHT, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
-        }
-        
-        //
-        // Y-Faces
-        //
-        
-        if ( !c.getMaterialAt( x, y - 1, z ).active && !c.isEclipsed( x, y - 1, z ) ) {
-            positions.addAll( createFace( Face.BOTTOM, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
-        }
-        
-        if ( !c.getMaterialAt( x, y + 1, z ).active && !c.isEclipsed( x, y + 1, z ) ) {
-            positions.addAll( createFace( Face.TOP, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
-        }
-        
-        //
-        // Z-Faces
-        //
-        
-        if ( !c.getMaterialAt( x, y, z - 1 ).active && !c.isEclipsed( x, y, z - 1 ) ) {
-            positions.addAll( createFace( Face.FRONT, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
-        }
-        
-        if ( !c.getMaterialAt( x, y, z + 1 ).active && !c.isEclipsed( x, y, z + 1 ) ) {
-            positions.addAll( createFace( Face.BACK, gX, gY, gZ ) );
-            colors.addAll( repeatedColors );
+        // cycle through all the faces
+        for ( Face face : Face.values() ) {
+            
+            if ( c.isVisible( face, x, y, z ) ) {
+                // add the position and color data for this face
+                positions.addAll( createFace( face, gX, gY, gZ ) );
+                colors.addAll( repeatedColors );
+            }
         }
     }
     
@@ -110,7 +82,7 @@ public class Voxel {
      * @since 14.03.30
      * @version 14.03.30
      */
-    public static final float[] createFace( Face direction, float x, float y, float z ) {
+    public static float[] createFace( Face direction, float x, float y, float z ) {
         float[] points = null; // the point's we'll send back
         
         // these make the far (positive) spaces easier to reach
