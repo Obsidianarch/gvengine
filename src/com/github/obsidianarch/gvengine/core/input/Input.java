@@ -243,7 +243,7 @@ public final class Input {
             return Keyboard.isKeyDown( Keyboard.KEY_LMETA ) || Keyboard.isKeyDown( Keyboard.KEY_RMETA );
             
         default:
-            return true;
+            return !( isMaskActive( InputMask.CONTROL_MASK ) || isMaskActive( InputMask.MENU_MASK ) || isMaskActive( InputMask.META_MASK ) );
 
         }
 

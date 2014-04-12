@@ -155,6 +155,17 @@ public class TestingHelper {
     }
 
     /**
+     * Disables the lighting in the testing environment.
+     *
+     * @since 14.04.05
+     * @version 14.04.05
+     */
+    public static void disableLighting() {
+        glDisable( GL_LIGHT1 );
+        glDisable( GL_LIGHTING );
+    }
+
+    /**
      * Initializes the input with the default control configurations.
      * 
      * @since 14.03.30

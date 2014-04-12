@@ -5,21 +5,34 @@ import static com.github.obsidianarch.gvengine.core.MathHelper.*;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 
 /**
- * A 4x4x4 container of Chunks.
+ * A LENGTHxLENGTHxLENGTH container of Chunks.
  * 
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.30
+ * @version 14.04.12
  */
 public class Region {
     
+    //
+    // Constants
+    //
+    
+    /** The length of one side of the region (measured in chunks). */
+    public static final int      LENGTH = 4;
+    
+    /** The area of one face of the region. */
+    public static final int      AREA   = LENGTH * LENGTH;
+
+    /** The total number of chunks a region can hold. */
+    public static final int      VOLUME = AREA * LENGTH;
+
     //
     // Fields
     //
     
     /** An array of all the chunks in this region. */
-    public Chunk[]               chunks = new Chunk[ 64 ];
+    public Chunk[]               chunks = new Chunk[ VOLUME ];
     
     /** The region's x coordinate. */
     public final int             x;
@@ -50,7 +63,7 @@ public class Region {
      *            The z coordinate of the region in the region grid.
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.04.12
      */
     public Region( ChunkGenerator generator, int x, int y, int z ) {
         this.generator = generator;
@@ -59,14 +72,14 @@ public class Region {
         this.y = y;
         this.z = z;
         
-        for ( int cX = 0; cX < 4; cX++ ) {
-            for ( int cY = 0; cY < 4; cY++ ) {
-                for ( int cZ = 0; cZ < 4; cZ++ ) {
+        for ( int cX = 0; cX < LENGTH; cX++ ) {
+            for ( int cY = 0; cY < LENGTH; cY++ ) {
+                for ( int cZ = 0; cZ < LENGTH; cZ++ ) {
                     Chunk c = new Chunk( this, cX, cY, cZ ); // create the chunk
                     generator.generateChunk( c ); // generate teh chunk's voxels
                     
                     int index = cX;
-                    index += cY * 4;
+                    index += cY * LENGTH;
                     index += cZ * 16;
                     chunks[ index ] = c; // add the chunk to the region
                 }
@@ -86,7 +99,7 @@ public class Region {
      */
     public void regenerate() {
         for ( int i = 0; i < chunks.length; i++ ) {
-            // rebuilding takes a longer time than rebuilding, so it fires 4 times less often
+            // rebuilding takes a longer time than rebuilding, so it fires LENGTH times less often
             Scheduler.scheduleEvent( "generateChunk", generator, i * 100, chunks[ i ] );
         }
     }
@@ -131,16 +144,16 @@ public class Region {
      * @return The chunk at the given local positions.
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.04.12
      */
     public Chunk getChunkAt( int x, int y, int z ) {
-        if ( !inRange( x, 0, 3 ) || !inRange( y, 0, 3 ) || !inRange( z, 0, 3 ) ) {
+        if ( !inRange( x, 0, LENGTH ) || !inRange( y, 0, LENGTH ) || !inRange( z, 0, LENGTH ) ) {
             return null; // TODO change this to something else later
         }
         
         int index = x;
-        index += ( y * 4 );
-        index += ( z * 16 );
+        index += ( y * LENGTH );
+        index += ( z * AREA );
         
         return chunks[ index ];
     }

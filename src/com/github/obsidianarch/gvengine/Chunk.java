@@ -15,21 +15,34 @@ import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.VertexBufferObject;
 
 /**
- * A container for a 16x16x16 selection of voxels.
+ * A container for a LENGTHxLENGTHxLENGTH selection of voxels.
  * 
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.31
+ * @version 14.04.12
  */
 public class Chunk {
+    
+    //
+    // Constants
+    //
+    
+    /** The length of on side of the chunk. */
+    public static final int    LENGTH           = 16;
+    
+    /** The area of one face of the chunk. */
+    public static final int    AREA             = LENGTH * LENGTH;
+
+    /** The total volume of the chunk. */
+    public static final int    VOLUME           = AREA * LENGTH;
     
     //
     // Fields
     //
     
     /** The voxels in this chunk. */
-    private final byte[]       voxels           = new byte[ 4096 ];
+    private final byte[]       voxels           = new byte[ VOLUME ];
     
     /** The position of this chunk on the chunk grid. */
     public final int           x;
@@ -105,16 +118,6 @@ public class Chunk {
         loaded = false;
     }
     
-    /**
-     * Saves the chunk as a file.
-     * 
-     * @since 14.03.30
-     * @version 14.03.30
-     */
-    public void save() {
-        throw new UnsupportedOperationException( "This will be implemented one of these days" );
-    }
-    
     //
     // OpenGL
     //
@@ -123,21 +126,21 @@ public class Chunk {
      * Builds the mesh for the chunk.
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.04.12
      */
     public void buildMesh() {
         if ( vbo != null ) {
             vbo.delete(); // remove the previous VBO
         }
         
-        FloatGapList positions = new FloatGapList( 0 );
-        FloatGapList colors = new FloatGapList( 0 );
+        FloatGapList positions = new FloatGapList( VOLUME / 2 );
+        FloatGapList colors = new FloatGapList( VOLUME / 2 );
         
-        for ( int i = 0; i < 4096; i++ ) {
+        for ( int i = 0; i < VOLUME; i++ ) {
             // get the local positions from i
-            int x = MathHelper.getXPosition( i, 16 );
-            int y = MathHelper.getYPosition( i, 16 );
-            int z = MathHelper.getZPosition( i, 16 );
+            int x = MathHelper.getXPosition( i, LENGTH );
+            int y = MathHelper.getYPosition( i, LENGTH );
+            int z = MathHelper.getZPosition( i, LENGTH );
             
             Voxel.createVoxel( positions, colors, this, x, y, z );
         }
@@ -215,6 +218,9 @@ public class Chunk {
      *            The new material.
      * @param index
      *            The index in the array.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setMaterialAt( Material mat, int index ) {
         setMaterialAt( mat.byteID, index );
@@ -231,6 +237,9 @@ public class Chunk {
      *            The local y position.
      * @param z
      *            The local z position.
+     * 
+     * @since 14.03.30
+     * @version 14.03.30
      */
     public void setMaterialAt( Material mat, int x, int y, int z ) {
         setMaterialAt( mat.byteID, x, y, z );
@@ -247,10 +256,13 @@ public class Chunk {
      *            The local y position.
      * @param z
      *            The local z position.
+     * 
+     * @since 14.03.30
+     * @version 14.04.12
      */
     public void setMaterialAt( byte b, int x, int y, int z ) {
         // the voxel is out of bounds, divert the set material to the chunk containing the voxel
-        if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
+        if ( !inRange( x, 0, LENGTH ) || !inRange( y, 0, LENGTH ) || !inRange( z, 0, LENGTH ) ) {
             Object[] data = grabExternalVoxelData( x, y, z );
             
             Chunk c = ( Chunk ) data[ 0 ]; // get the chunk which contains the voxel
@@ -267,7 +279,7 @@ public class Chunk {
             return;
         }
         
-        setMaterialAt( b, x + ( y * 16 ) + ( z * 256 ) );
+        setMaterialAt( b, x + ( y * LENGTH ) + ( z * ( AREA ) ) );
     }
     
     //
@@ -284,33 +296,34 @@ public class Chunk {
      * @param z
      *            The z coordinate.
      * @return An object array where
-     *         {@code [ 0 ] = chunk, [ 1 ] = local x, [ 2 ] = local y, [ 3 ] = local z, and [ 4 ] = material}.
+     *         {@code [ 0 ] = chunk, [ 1 ] = local x, [ 2 ] = local y, [ 3 ] = local z, and [ 4 ] = material}
+     *         .
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.04.12
      */
     private Object[] grabExternalVoxelData( int x, int y, int z ) {
         Object[] data = new Object[ 5 ];
         if ( region == null ) {
             data[ 0 ] = null;
-            data[ 1 ] = Math.abs( x ) % 16;
-            data[ 2 ] = Math.abs( y ) % 16;
-            data[ 3 ] = Math.abs( z ) % 16;
+            data[ 1 ] = Math.abs( x ) % LENGTH;
+            data[ 2 ] = Math.abs( y ) % LENGTH;
+            data[ 3 ] = Math.abs( z ) % LENGTH;
             data[ 4 ] = Material.AIR;
             return data;
         }
         
-        int xOff = ( int ) Math.floor( x / 16.0 );
-        int yOff = ( int ) Math.floor( y / 16.0 );
-        int zOff = ( int ) Math.floor( z / 16.0 );
+        int xOff = ( int ) Math.floor( x / ( double ) LENGTH );
+        int yOff = ( int ) Math.floor( y / ( double ) LENGTH );
+        int zOff = ( int ) Math.floor( z / ( double ) LENGTH );
         
-        x %= 16;
-        y %= 16;
-        z %= 16;
+        x %= LENGTH;
+        y %= LENGTH;
+        z %= LENGTH;
         
-        if ( x < 0 ) x += 16;
-        if ( y < 0 ) y += 16;
-        if ( z < 0 ) z += 16;
+        if ( x < 0 ) x += LENGTH;
+        if ( y < 0 ) y += LENGTH;
+        if ( z < 0 ) z += LENGTH;
         
         Chunk c = region.getChunkAt( this.x + xOff, this.y + yOff, this.z + zOff );
         data[ 0 ] = c;
@@ -355,14 +368,14 @@ public class Chunk {
      * @return The material at the local position.
      * 
      * @since 14.03.30
-     * @version 14.03.30
+     * @version 14.04.12
      */
     public Material getMaterialAt( int x, int y, int z ) {
-        if ( !inRange( x, 0, 15 ) || !inRange( y, 0, 15 ) || !inRange( z, 0, 15 ) ) {
+        if ( !inRange( x, 0, LENGTH ) || !inRange( y, 0, LENGTH ) || !inRange( z, 0, LENGTH ) ) {
             return ( Material ) grabExternalVoxelData( x, y, z )[ 4 ];
         }
         
-        Material mat = Material.getMaterial( voxels[ x + ( y * 16 ) + ( z * 256 ) ] ); // get the material
+        Material mat = Material.getMaterial( voxels[ x + ( y * LENGTH ) + ( z * AREA ) ] ); // get the material
         return mat == null ? Material.AIR : mat; // return AIR if the material could not be found, otherwise the material
     }
     
@@ -379,23 +392,19 @@ public class Chunk {
     }
     
     /**
-     * @param x
-     * @param y
-     * @param z
-     * @return The global offsets for the local voxel position as a float array, where
-     *         index zero is the x position, one is the y, and two the z.
+     * @return The global offsets of every voxel's in the chunk.
      * 
-     * @since 14.03.30
-     * @version 14.03.30
+     * @since 14.04.12
+     * @version 14.04.12
      */
-    public float[] getGlobalOffset( int x, int y, int z ) {
-        float[] global = new float[ 3 ];
-        global[ 0 ] = x + ( this.x * 16 ) + ( region.x * 8 );
-        global[ 1 ] = y + ( this.y * 16 ) + ( region.y * 8 );
-        global[ 2 ] = z + ( this.z * 16 ) + ( region.z * 8 );
-        return global;
+    public double[] getGlobalOffset() {
+        double[] offset = new double[ 3 ];
+        offset[ 0 ] = ( x * LENGTH ) + ( region.x * Region.LENGTH );
+        offset[ 1 ] = ( y * LENGTH ) + ( region.y * Region.LENGTH );
+        offset[ 2 ] = ( z * LENGTH ) + ( region.z * Region.LENGTH );
+        return offset;
     }
-    
+
     //
     // Voxel Visibility
     //

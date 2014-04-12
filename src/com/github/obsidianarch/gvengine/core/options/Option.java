@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.30
+ * @version 14.04.03
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( ElementType.FIELD )
@@ -23,5 +23,11 @@ public @interface Option {
      * @return The description of the option that appears to the user.
      */
     String value();
+
+    /**
+     * @return If the OptionManager should change the value for this option
+     *         automatically or let the option listener do so.
+     */
+    boolean autoValueChange() default true;
     
 }

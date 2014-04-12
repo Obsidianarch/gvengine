@@ -3,7 +3,6 @@ package com.github.obsidianarch.gvengine;
 import org.magicwerk.brownies.collections.primitive.FloatGapList;
 
 import com.github.obsidianarch.gvengine.core.Face;
-import com.github.obsidianarch.gvengine.core.MathHelper;
 import com.github.obsidianarch.gvengine.core.RepeatingArray;
 
 /**
@@ -50,10 +49,10 @@ public final class Voxel {
         float[] repeatedColors = repeatingColors.createArray( 18 ); // this will be added for every face, for the voxel's color
         
         // get the global positions of the voxel
-        float[] global = MathHelper.getGlobalPosition( c, new int[ ] { x, y, z } );
-        float gX = global[ 0 ];
-        float gY = global[ 1 ];
-        float gZ = global[ 2 ];
+        double[] offsets = c.getGlobalOffset();
+        float gX = ( float ) ( x + offsets[ 0 ] );
+        float gY = ( float ) ( y + offsets[ 1 ] );
+        float gZ = ( float ) ( z + offsets[ 2 ] );
         
         // cycle through all the faces
         for ( Face face : Face.values() ) {

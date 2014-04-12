@@ -16,9 +16,14 @@ import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
+import com.github.obsidianarch.gvengine.core.input.InputMask;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.core.input.InputMode;
+import com.github.obsidianarch.gvengine.core.options.Option;
+import com.github.obsidianarch.gvengine.core.options.OptionListener;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
+import com.github.obsidianarch.gvengine.core.options.SliderOption;
+import com.github.obsidianarch.gvengine.core.options.ToggleOption;
 import com.github.obsidianarch.gvengine.io.RegionIO;
 
 /**
@@ -27,10 +32,41 @@ import com.github.obsidianarch.gvengine.io.RegionIO;
  * @author Austin
  * 
  * @since 14.03.30
- * @version 14.03.30
+ * @version 14.04.03
  */
 public class RegionTester extends ChunkGenerator {
-    
+
+    //
+    // Options
+    //
+
+    /** Enables or disables the vsync option */
+    @Option( value = "VSync", autoValueChange = false )
+    @ToggleOption( { "Enabled", "Disabled" } )
+    public static boolean VSyncEnabled = false;
+
+    /** Changes the max fps OpenGL will render at. */
+    @Option( "Max FPS" )
+    @SliderOption( minimum = -1, maximum = 120 )
+    public static int FPSCap = -1;
+
+    //
+    // Option Listeners
+    //
+
+    /**
+     * Listens for the VSync option to be changed.
+     * 
+     * @param newValue
+     *            The new value of the option.
+     */
+    @OptionListener( { "VSync" } )
+    public static void onVSyncChange( Object newValue ) {
+        VSyncEnabled = newValue.toString().equalsIgnoreCase( "Enabled" );
+        Display.setVSyncEnabled( VSyncEnabled );
+        System.out.println( "VSync set to:  " + newValue );
+    }
+
     //
     // Methods
     //
@@ -52,6 +88,7 @@ public class RegionTester extends ChunkGenerator {
         OptionManager.initialize( args ); // initialize options from commandline (override the config file)
         
         OptionManager.registerClass( "Scheduler", Scheduler.class );
+        OptionManager.registerClass( "Test", RegionTester.class );
         System.out.println();
         
         TestingHelper.createDisplay();
@@ -71,6 +108,9 @@ public class RegionTester extends ChunkGenerator {
         Input.setBinding( "addBlocks", InputMedium.KEYBOARD, Keyboard.KEY_F );
         Input.setBinding( "saveRegion", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, Keyboard.KEY_O );
         Input.setBinding( "loadRegion", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, Keyboard.KEY_L );
+        Input.setBinding( "toggleVSync", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, Keyboard.KEY_V );
+        Input.setBinding( "addLighting", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, InputMask.CONTROL_MASK, Keyboard.KEY_L );
+        Input.setBinding( "remLighting", InputMedium.KEYBOARD, InputMode.BUTTON_RELEASED, InputMask.MENU_MASK, Keyboard.KEY_L );
 
         while ( !Display.isCloseRequested() ) {
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
@@ -81,6 +121,12 @@ public class RegionTester extends ChunkGenerator {
             if ( Input.isBindingActive( "addBlocks" ) ) addBlocks( region );
             if ( Input.isBindingActive( "saveRegion" ) ) saveRegion( region );
             if ( Input.isBindingActive( "loadRegion" ) ) loadRegion( region );
+            if ( Input.isBindingActive( "toggleVSync" ) ) {
+                if ( VSyncEnabled ) OptionManager.setValue( "VSync", "Disabled" );
+                else OptionManager.setValue( "VSync", "Enabled" );
+            }
+            if ( Input.isBindingActive( "addLighting" ) ) TestingHelper.enableLighting();
+            if ( Input.isBindingActive( "remLighting" ) ) TestingHelper.disableLighting();
             
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
@@ -151,7 +197,7 @@ public class RegionTester extends ChunkGenerator {
         Random random = new Random();
         
         for ( Chunk c : r.getChunks() ) {
-            for ( int i = 0; i < 4096; i++ ) {
+            for ( int i = 0; i < Chunk.VOLUME; i++ ) {
                 if ( c.getVoxels()[ i ] != 0 ) continue;
                 if ( ( random.nextFloat() * 1000 ) > 10 ) continue;
                 
@@ -161,7 +207,7 @@ public class RegionTester extends ChunkGenerator {
     }
     
     /**
-     * Renders the region, and schedules rebuilds every 10 seconds.
+     * Renders the region.
      * 
      * @param camera
      *            The camera of the player.
@@ -183,13 +229,16 @@ public class RegionTester extends ChunkGenerator {
     
     @Override
     public void generateChunk( Chunk c ) {
-        for ( int x = 0; x < 16; x++ ) {
-            for ( int y = 0; y < 16; y++ ) {
-                for ( int z = 0; z < 16; z++ ) {
-
-                    float[] global = c.getGlobalOffset( x, y, z );
-                    double test = Math.sqrt( Math.pow( global[ 0 ] / 8, 2 ) + Math.pow( global[ 1 ] / 8, 2 ) + Math.pow( global[ 2 ] / 8, 2 ) );
-                    if ( test <= 8 ) {
+        for ( int z = 0; z < Chunk.LENGTH; z++ ) {
+            for ( int y = 0; y < Chunk.LENGTH; y++ ) {
+                for ( int x = 0; x < Chunk.LENGTH; x++ ) {
+                    
+                    double xDiff = x - ( Chunk.LENGTH / 2 );
+                    double yDiff = y - ( Chunk.LENGTH / 2 );
+                    double zDiff = z - ( Chunk.LENGTH / 2 );
+                    double sqrt = Math.sqrt( ( xDiff * xDiff ) + ( yDiff * yDiff ) + ( zDiff * zDiff ) );
+                    
+                    if ( sqrt <= ( Chunk.LENGTH / 2 ) ) {
                         c.setMaterialAt( Material.GRASS, x, y, z );
                     }
 
