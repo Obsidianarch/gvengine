@@ -168,9 +168,9 @@ public class ChunkTester {
      */
     private static void buildChunk( Chunk c ) {
         // set every material in the chunk
-        for ( int x = 0; x < 16; x++ ) {
-            for ( int y = 0; y < 16; y++ ) {
-                for ( int z = 0; z < 16; z++ ) {
+        for ( int x = 0; x < Chunk.LENGTH; x++ ) {
+            for ( int y = 0; y < Chunk.LENGTH; y++ ) {
+                for ( int z = 0; z < Chunk.LENGTH; z++ ) {
                     byte materialID = ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 );
                     c.setMaterialAt( materialID, x, y, z );
                 }
