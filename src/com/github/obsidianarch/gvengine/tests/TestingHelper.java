@@ -31,12 +31,6 @@ import com.github.obsidianarch.gvengine.io.Config;
  */
 public class TestingHelper {
     
-    static {
-        if ( !System.getProperty( "gvengine.developerMode", "false" ).equalsIgnoreCase( "true" ) ) {
-            System.setProperty( "org.lwjgl.librarypath", new File( "natives" ).getAbsolutePath() );
-        }
-    }
-    
     //
     // Fields
     //
@@ -44,6 +38,18 @@ public class TestingHelper {
     /** The configuration file. */
     public static final Config CONFIG      = new Config( new File( System.getProperty( "user.dir" ), "config" ) );
     
+    /** Ambient light coordinates. */
+    public static final FloatBuffer LIGHT_AMBIENT;
+    
+    /** Diffuse light coordinates. */
+    public static final FloatBuffer LIGHT_DIFFUSE;
+    
+    /** Specular light coordinates. */
+    public static final FloatBuffer LIGHT_SPECULAR;
+    
+    /** Position light coordiantes. */
+    public static final FloatBuffer LIGHT_POSITION;
+
     /** The last time a time measurement was taken (used for change in time). */
     private static long        lastTime    = getTime();
     
@@ -55,6 +61,26 @@ public class TestingHelper {
     
     /** The last measured FPS. */
     private static int         measuredFPS = 0;
+    
+    //
+    // Initializer
+    //
+
+    static {
+        if ( !System.getProperty( "gvengine.developerMode", "false" ).equalsIgnoreCase( "true" ) ) {
+            System.setProperty( "org.lwjgl.librarypath", new File( "natives" ).getAbsolutePath() );
+        }
+        
+        LIGHT_AMBIENT = BufferUtils.createFloatBuffer( 4 ).put( new float[ ] { 0.2f, 0.2f, 0.2f, 1.0f } );
+        LIGHT_DIFFUSE = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
+        LIGHT_SPECULAR = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
+        LIGHT_POSITION = BufferUtils.createFloatBuffer( 4 ).put( new float[ ] { 0.0f, 0.0f, 0.0f, 1.0f } );
+        
+        LIGHT_AMBIENT.flip();
+        LIGHT_DIFFUSE.flip();
+        LIGHT_SPECULAR.flip();
+        LIGHT_POSITION.flip();
+    }
     
     //
     // Methods
@@ -127,31 +153,16 @@ public class TestingHelper {
      * @version 14.03.30
      */
     public static void enableLighting() {
-        float[][] lightingFloats = {
-            { 0.2f, 0.2f, 0.2f, 1.0f }, // ambient
-            { 1.0f, 1.0f, 1.0f, 1.0f }, // diffuse
-            { 1.0f, 1.0f, 1.0f, 1.0f }, // specular
-            { 0.0f, 0.0f, 0.0f, 1.0f } // position
-        };
-
-        FloatBuffer[] lighting = new FloatBuffer[ 4 ];
-        
-        for ( int i = 0; i < lighting.length; i++ ) {
-            lighting[ i ] = BufferUtils.createFloatBuffer( 4 ).put( lightingFloats[ i ] );
-            lighting[ i ].flip();
-        }
-        
-        glLight( GL_LIGHT1, GL_AMBIENT, lighting[ 0 ] );
-        glLight( GL_LIGHT1, GL_DIFFUSE, lighting[ 1 ] );
-        glLight( GL_LIGHT1, GL_SPECULAR, lighting[ 2 ] );
-        glLight( GL_LIGHT1, GL_POSITION, lighting[ 3 ] );
+        glLight( GL_LIGHT1, GL_AMBIENT, LIGHT_AMBIENT );
+        glLight( GL_LIGHT1, GL_DIFFUSE, LIGHT_DIFFUSE );
+        glLight( GL_LIGHT1, GL_SPECULAR, LIGHT_SPECULAR );
+        glLight( GL_LIGHT1, GL_POSITION, LIGHT_POSITION );
         
         glEnable( GL_LIGHT1 );
         glEnable( GL_LIGHTING );
         
         glColorMaterial( GL_FRONT, GL_DIFFUSE );
         glEnable( GL_COLOR_MATERIAL );
-
     }
 
     /**
