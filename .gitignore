@@ -1,20 +1,10 @@
 *.class
-*.classpath
-*.project
+*.gven.dat
+*.dat
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# Directories #
-.settings/
-bin/
-
-# Individual Files #
-config
-
-/ant.xml
-/data
-/build.props
-/builder.ant
+gvengine.iml
+res/config
+res/models/bunny.obj
+res/models/bunny.mtl
+lib
+.idea

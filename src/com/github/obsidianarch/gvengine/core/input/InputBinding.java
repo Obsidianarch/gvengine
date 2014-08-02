@@ -5,10 +5,11 @@ package com.github.obsidianarch.gvengine.core.input;
  * The input binding. This will check to see if the current input being given will activate the actions bound to this.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.08.02
  * @since 14.03.30
  */
-public class InputBinding {
+public class InputBinding
+{
 
     //
     // Fields
@@ -55,10 +56,10 @@ public class InputBinding {
      * @param button
      *         The button which triggers this binding.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
-    protected InputBinding( InputMedium medium, InputMode mode, InputMask mask, int button ) {
+    protected InputBinding( InputMedium medium, InputMode mode, InputMask mask, int button )
+    {
         this.medium = medium;
         this.button = button;
         this.mode = mode;
@@ -72,28 +73,32 @@ public class InputBinding {
     /**
      * @return The button number being used.
      */
-    public final int getButton() {
+    public final int getButton()
+    {
         return button;
     }
 
     /**
      * @return The InputMedium the binding is using.
      */
-    public final InputMedium getMedium() {
+    public final InputMedium getMedium()
+    {
         return medium;
     }
 
     /**
      * @return The InputMode the binding is using.
      */
-    public final InputMode getMode() {
+    public final InputMode getMode()
+    {
         return mode;
     }
 
     /**
      * @return The InputMask the binding is using.
      */
-    public final InputMask getMask() {
+    public final InputMask getMask()
+    {
         return mask;
     }
 
@@ -102,15 +107,16 @@ public class InputBinding {
      *
      * @return If this InputBinding is currently active or not.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
-    public boolean isActive() {
+    public boolean isActive()
+    {
         boolean isDown = medium.isButtonDown( getButton() ); // is the key being pressed right now?
         boolean preMask = false; // would the keybinding be active without the key mask?
         boolean active = false; // is the keybinding active after the key mask?
 
-        switch ( getMode() ) {
+        switch ( getMode() )
+        {
 
             case BUTTON_DOWN:
                 preMask = isDown;
@@ -141,7 +147,8 @@ public class InputBinding {
     //
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         String s = "";
 
         s += getMedium().ordinal();
@@ -164,10 +171,10 @@ public class InputBinding {
      *
      * @return The InputBinding described by the text string.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
-    public static final InputBinding createInputBinding( String s ) {
+    public static InputBinding createInputBinding( String s )
+    {
         int[] info = new int[ 4 ]; // medium, mode, mask, button
         info[ 0 ] = Integer.parseInt( s.substring( 0, 1 ) );
         info[ 1 ] = Integer.parseInt( s.substring( 1, 2 ) );

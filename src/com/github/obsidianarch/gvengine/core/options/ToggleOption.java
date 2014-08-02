@@ -1,24 +1,20 @@
 package com.github.obsidianarch.gvengine.core.options;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Used for denoting options which have a set number of options to "toggle" through.
- * 
+ *
  * @author Austin
- * 
- * @since 14.03.30
  * @version 14.03.30
+ * @since 14.03.30
  */
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.FIELD )
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 @Documented
-public @interface ToggleOption {
-    
+public @interface ToggleOption
+{
+
     /**
      * @return The possible values for the toggle option.
      */

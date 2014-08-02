@@ -5,13 +5,13 @@ import org.lwjgl.input.Mouse;
 
 /**
  * The physical device which is bound to an action. (e.g. mouse, keyboard, controller).
- * 
+ *
  * @author Austin
- * 
+ * @version 14.08.02
  * @since 14.03.30
- * @version 14.03.30
  */
-public enum InputMedium {
+public enum InputMedium
+{
 
     /**
      * The input binding is using the keyboard.
@@ -25,27 +25,30 @@ public enum InputMedium {
      * The input binding is using a controller.
      */
     CONTROLLER;
-    
+
     /**
      * @param button
-     *            The button's number.
+     *         The button's number.
+     *
      * @return If the button is pressed for this input medium.
      */
-    public boolean isButtonDown( int button ) {
+    public boolean isButtonDown( int button )
+    {
 
-        switch ( this ) {
-        
-        case KEYBOARD:
-            return Keyboard.isKeyDown( button );
-            
-        case MOUSE:
-            return Mouse.isButtonDown( button );
-            
-        case CONTROLLER:
-            return false;
-            
-        default:
-            return false;
+        switch ( this )
+        {
+
+            case KEYBOARD:
+                return Keyboard.isKeyDown( button );
+
+            case MOUSE:
+                return Mouse.isButtonDown( button );
+
+            case CONTROLLER:
+                return false;
+
+            default:
+                return false;
 
         }
     }

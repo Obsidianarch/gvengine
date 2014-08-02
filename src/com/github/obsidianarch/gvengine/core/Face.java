@@ -2,14 +2,14 @@ package com.github.obsidianarch.gvengine.core;
 
 /**
  * One of the six faces on a voxel.
- * 
+ *
  * @author Austin
- * 
- * @since 14.03.30
  * @version 14.03.31
+ * @since 14.03.30
  */
-public enum Face {
-    
+public enum Face
+{
+
     /**
      * The left side of a voxel.
      */
@@ -34,114 +34,117 @@ public enum Face {
      * The back side of a voxel.
      */
     BACK( 5 );
-    
+
     //
     // Fields
     //
 
-    /** An integer value also representing the direction of the face. */
+    /**
+     * An integer value also representing the direction of the face.
+     */
     public int value;
-    
+
     //
     // Constructors
     //
 
     /**
      * @param i
-     *            An integer value representing the face direction (used in arrays).
-     * 
+     *         An integer value representing the face direction (used in arrays).
+     *
      * @since 14.03.30
-     * @version 14.03.30
      */
-    Face( int i ) {
+    Face( int i )
+    {
         value = i;
     }
-    
+
     //
     // Getters
     //
-    
+
     /**
      * Gets the coordinates of the voxel that is touching this face.
-     * 
+     *
      * @param x
-     *            The x coordinate of the voxel.
+     *         The x coordinate of the voxel.
      * @param y
-     *            The y coordinate of the voxel.
+     *         The y coordinate of the voxel.
      * @param z
-     *            The z coordiante of the voxel.
+     *         The z coordiante of the voxel.
+     *
      * @return The coordinates of the voxel touching a specified voxel's face.
+     *
      * @throws UnsupportedOperationException
-     *             If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT
-     *             somehow. If this ever gets thrown, that means I changed the definition
-     *             of a cube and added another face and did not update the coordinate
-     *             system for this.
-     * 
+     *         If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
+     *         cube and added another face and did not update the coordinate system for this.
+     *
      * @since 14.03.31
-     * @version 14.03.14
      */
-    public int[] getTouchingVoxel( int x, int y, int z ) throws UnsupportedOperationException {
-        
-        switch ( this ) {
-        
-        case LEFT:
-            return new int[ ] { x - 1, y, z };
-            
-        case RIGHT:
-            return new int[ ] { x + 1, y, z };
-            
-        case BOTTOM:
-            return new int[ ] { x, y - 1, z };
-            
-        case TOP:
-            return new int[ ] { x, y + 1, z };
-            
-        case BACK:
-            return new int[ ] { x, y, z + 1 };
-            
-        case FRONT:
-            return new int[ ] { x, y, z - 1 };
-            
+    public int[] getTouchingVoxel( int x, int y, int z ) throws UnsupportedOperationException
+    {
+
+        switch ( this )
+        {
+
+            case LEFT:
+                return new int[] { x - 1, y, z };
+
+            case RIGHT:
+                return new int[] { x + 1, y, z };
+
+            case BOTTOM:
+                return new int[] { x, y - 1, z };
+
+            case TOP:
+                return new int[] { x, y + 1, z };
+
+            case BACK:
+                return new int[] { x, y, z + 1 };
+
+            case FRONT:
+                return new int[] { x, y, z - 1 };
+
         }
-        
+
         throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
     }
-    
+
     /**
      * @return The face opposite to this face.
+     *
      * @throws UnsupportedOperationException
-     *             If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT
-     *             somehow. If this ever gets thrown, that means I changed the definition
-     *             of a cube and added another face and did not update the coordinate
-     *             system for this.
-     * 
+     *         If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
+     *         cube and added another face and did not update the coordinate system for this.
+     *
      * @since 14.03.31
-     * @version 14.03.31
      */
-    public Face getOpposingFace() throws UnsupportedOperationException {
+    public Face getOpposingFace() throws UnsupportedOperationException
+    {
 
-        switch ( this ) {
-        
-        case LEFT:
-            return RIGHT;
+        switch ( this )
+        {
 
-        case RIGHT:
-            return LEFT;
-            
-        case BOTTOM:
-            return TOP;
+            case LEFT:
+                return RIGHT;
 
-        case TOP:
-            return BOTTOM;
-            
-        case BACK:
-            return FRONT;
+            case RIGHT:
+                return LEFT;
 
-        case FRONT:
-            return BACK;
+            case BOTTOM:
+                return TOP;
+
+            case TOP:
+                return BOTTOM;
+
+            case BACK:
+                return FRONT;
+
+            case FRONT:
+                return BACK;
 
         }
-        
+
         throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
     }
 
