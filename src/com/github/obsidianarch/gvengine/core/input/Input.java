@@ -1,21 +1,19 @@
 package com.github.obsidianarch.gvengine.core.input;
 
 import com.github.obsidianarch.gvengine.io.Config;
+import com.github.obsidianarch.gvengine.io.Lumberjack;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The class for all input from the user.
  *
  * @author Austin
- * @version 14.08.03
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public final class Input
@@ -56,7 +54,8 @@ public final class Input
         }
         catch ( LWJGLException e )
         {
-            System.err.println( " Failed to create controllers:  " + e.getClass().getName() );
+            Lumberjack.error( "Input", "Failed to create controllers!" );
+            Lumberjack.throwable( "Input", e );
         }
     }
 

@@ -1,6 +1,7 @@
 package com.github.obsidianarch.gvengine.core.options;
 
 import com.github.obsidianarch.gvengine.io.Config;
+import com.github.obsidianarch.gvengine.io.Lumberjack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,13 +10,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Gathers and organizes all option annotations.
  *
  * @author Austin
- * @version 14.08.03
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public class OptionManager
@@ -55,17 +55,17 @@ public class OptionManager
     /**
      * Map of option descriptions and the field to which they belong.
      */
-    private static Map< String, Field > optionFields = new HashMap<>();
+    private static HashMap< String, Field > optionFields = new HashMap<>();
 
     /**
      * These methods will be fired when the modified field has been changed.
      */
-    private static Map< String, List< Method > > changeListeners = new HashMap<>();
+    private static HashMap< String, ArrayList< Method > > changeListeners = new HashMap<>();
 
     /**
      * The default values passed by commandline.
      */
-    private static Map< String, String > defaultValues = new HashMap<>();
+    private static HashMap< String, String > defaultValues = new HashMap<>();
 
     //
     // Initializer
@@ -146,7 +146,7 @@ public class OptionManager
         }
         catch ( IllegalArgumentException | IllegalAccessException | SecurityException e )
         {
-            e.printStackTrace();
+            Lumberjack.throwable( "PropGet", e );
             return null; // this will hopefully never be thrown
         }
     }
@@ -183,7 +183,7 @@ public class OptionManager
         }
         catch ( IllegalArgumentException | IllegalAccessException e )
         {
-            e.printStackTrace();
+            Lumberjack.throwable( "PropSet", e );
         }
     }
 
@@ -203,7 +203,7 @@ public class OptionManager
      */
     private static void addOptionListener( String s, Method m )
     {
-        List< Method > methods = changeListeners.get( s ); // get the pre-existing list
+        ArrayList< Method > methods = changeListeners.get( s ); // get the pre-existing list
 
         // if there is no list, create one
         if ( methods == null )
@@ -248,7 +248,7 @@ public class OptionManager
             }
             catch ( IllegalAccessException | IllegalArgumentException | InvocationTargetException e )
             {
-                e.printStackTrace();
+                Lumberjack.throwable( "PropListExec", e );
             }
         }
     }
@@ -328,26 +328,26 @@ public class OptionManager
                 continue; // options CANNOT be final
             }
 
-            System.out.println( identifier + "." + field.getName() ); // start the option discovery log
+            Lumberjack.debug( "Property", "%s.%s", identifier, field.getName() ); // start the option discovery log
 
             Option option = field.getAnnotation( Option.class ); // get the option annotation
-            System.out.println( " > " + getDescription( option ) ); // print the annotation's data
+            Lumberjack.debug( "Property", "  %s", getDescription( option ) ); // print the annotation's data
 
             if ( field.isAnnotationPresent( SliderOption.class ) )
             {
 
                 SliderOption sliderOption = field.getAnnotation( SliderOption.class );
-                System.out.println( " > " + getDescription( sliderOption ) );
+                Lumberjack.debug( "Property", "  %s", getDescription( sliderOption ) );
             }
             else if ( field.isAnnotationPresent( ToggleOption.class ) )
             {
 
                 ToggleOption toggleOption = field.getAnnotation( ToggleOption.class );
-                System.out.println( " > " + getDescription( toggleOption ) );
+                Lumberjack.debug( "Property", "  %s", getDescription( toggleOption ) );
             }
             else
             {
-                System.out.println( " > No other option annotations found, is the option annotation supposed to be here?" );
+                Lumberjack.info( "Property", "%s has no option type annotation!", field.getName() );
             }
 
             // set the default value of the field, if it was set via commandline
@@ -393,12 +393,12 @@ public class OptionManager
                         field.set( null, value );
                     }
 
-                    System.out.println( " > Set default value to \"" + value + "\"" );
+                    Lumberjack.debug( "Property", "  Set default value to \"%s\"", value );
                 }
                 catch ( IllegalArgumentException | IllegalAccessException e )
                 {
-                    System.err.println( "Failed to set default value for the field!  Is the field dynamic?" );
-                    e.printStackTrace();
+                    Lumberjack.error( "Property", "Set for %s failed! Is the field non-final?", field.getName() );
+                    Lumberjack.throwable( "Property", e );
                 }
             }
 
@@ -439,13 +439,14 @@ public class OptionManager
                 continue; // an option listener has either none or 1 parameter
             }
 
-            System.out.println( identifier + "." + method.getName() + "()" ); // start our log
+            Lumberjack.debug( "PropList", "%s.%s()", identifier, method.getName() ); // start out log
 
             OptionListener listener = method.getAnnotation( OptionListener.class ); // get the option listener class
             String[] fieldNames = listener.value(); // get the names of the fields it will be listening for a property change to
 
+            // iterate over every Option description the listener describes
             for ( String s : fieldNames )
-            { // iterate over every Option description the listener describes
+            {
                 addOptionListener( s, method ); // and attach the OptionListener to each
             }
         }

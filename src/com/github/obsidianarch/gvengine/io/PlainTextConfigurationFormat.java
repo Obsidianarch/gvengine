@@ -94,21 +94,24 @@ public class PlainTextConfigurationFormat implements ConfigurationFormat
     {
         try
         {
-            BufferedWriter bw = new BufferedWriter( new FileWriter( file ) ); // writes the data to the file
-
+            // prepare the data before writing
+            StringBuilder sb = new StringBuilder();
             for ( Map.Entry< String, HashMap< String, String > > entry : tags.entrySet() )
             {
-                bw.write( String.format( "[%s]%n", entry.getKey() ) ); // write the starting tag
 
-                // write the data
-                for ( Map.Entry< String, String > properties : entry.getValue().entrySet() )
-                {
-                    bw.write( String.format( "%s=%s%n", properties.getKey(), properties.getValue() ) ); // write the data to the line
-                }
+                // prepare yourself for some beautiful lambda statements and string formatters
+                sb.append( "[" ).append( entry.getKey() ).append( "]\n" ); // append the start tag [%TAGNAME%]\n
 
-                bw.write( String.format( "[END]%n%n" ) ); // write the ending tag
+                // append all the properties in the format %KEY%=%VALUE%\n
+                entry.getValue().entrySet().forEach(
+                        ( property ) -> sb.append( property.getKey() ).append( '=' ).append( property.getValue() ).append( '\n' ) // add line
+                );
+
+                sb.append( "[END]\n\n" ); // append the ending tag
             }
 
+            BufferedWriter bw = new BufferedWriter( new FileWriter( file ) ); // writes the data to the file
+            bw.write( sb.toString() ); // write the data
             bw.close(); // close the stream
 
             return true;

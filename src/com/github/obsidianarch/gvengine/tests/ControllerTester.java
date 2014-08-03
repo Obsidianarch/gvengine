@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests controller input.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public class ControllerTester

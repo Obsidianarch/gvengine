@@ -12,6 +12,7 @@ import com.github.obsidianarch.gvengine.core.input.InputMask;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.core.input.InputMode;
 import com.github.obsidianarch.gvengine.core.options.*;
+import com.github.obsidianarch.gvengine.io.Lumberjack;
 import com.github.obsidianarch.gvengine.io.RegionIO;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -25,7 +26,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the region and it's methods.
  *
  * @author Austin
- * @version 14.04.03
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public class RegionTester extends ChunkGenerator
@@ -64,7 +65,7 @@ public class RegionTester extends ChunkGenerator
     {
         VSyncEnabled = newValue.toString().equalsIgnoreCase( "Enabled" );
         Display.setVSyncEnabled( VSyncEnabled );
-        System.out.println( "VSync set to:  " + newValue );
+        Lumberjack.info( "Tester", "VSync set to: %s ", newValue );
     }
 
     //

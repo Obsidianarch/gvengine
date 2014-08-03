@@ -3,6 +3,7 @@
 *.dat
 *.tmp
 ~$todo.doc
+*.log
 
 gvengine.iml
 res/config

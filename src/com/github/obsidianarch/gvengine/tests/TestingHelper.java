@@ -5,6 +5,7 @@ import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.io.Config;
+import com.github.obsidianarch.gvengine.io.Lumberjack;
 import com.github.obsidianarch.gvengine.io.PlainTextConfigurationFormat;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -24,7 +25,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
  * A general class to simplify the testing cases, removing a large portion of code that's just required for setup.
  *
  * @author Austin
- * @version 14.08.03
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public class TestingHelper
@@ -90,6 +91,9 @@ public class TestingHelper
 
     static
     {
+        // open a new log file
+        Lumberjack.openLogFile( new File( "gvengine.log" ) );
+
         // must update here because devloping wouldn't have access to the LWJGL libraries yet
         lastTime = getTime();
         lastFPS = getTime();
@@ -251,7 +255,7 @@ public class TestingHelper
         }
         if ( Input.isBindingActive( "dbgc" ) )
         {
-            System.out.println( camera.toString() );
+            Lumberjack.debug( "dbgc", camera.toString() );
         }
 
         float movementSpeed = 0.01f * TestingHelper.getDelta();

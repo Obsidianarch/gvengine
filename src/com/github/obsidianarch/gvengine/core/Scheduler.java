@@ -3,6 +3,7 @@ package com.github.obsidianarch.gvengine.core;
 import com.github.obsidianarch.gvengine.core.options.Option;
 import com.github.obsidianarch.gvengine.core.options.SliderOption;
 import com.github.obsidianarch.gvengine.core.options.ToggleOption;
+import com.github.obsidianarch.gvengine.io.Lumberjack;
 import org.lwjgl.Sys;
 
 import java.lang.reflect.Method;
@@ -14,7 +15,7 @@ import java.util.List;
  * Maintains a schedule of events and when they need to be executed.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.08.03b
  * @since 14.03.30
  */
 public final class Scheduler
@@ -114,14 +115,9 @@ public final class Scheduler
             }
 
         }
-        catch ( NoSuchMethodException e )
+        catch ( SecurityException | NoSuchMethodException e )
         {
-            e.printStackTrace();
-        }
-        catch ( SecurityException e )
-        {
-            System.err.println( "Scheduler cannot get method due to SecurityException" );
-            e.printStackTrace();
+            Lumberjack.throwable( "Scheduler", e );
         }
 
         event.target = target;
@@ -170,9 +166,9 @@ public final class Scheduler
                 event.action = target.getClass().getMethod( method, paramClasses );
             }
         }
-        catch ( NoSuchMethodException | SecurityException e1 )
+        catch ( NoSuchMethodException | SecurityException e )
         {
-            e1.printStackTrace(); // hopefully will never be thrown
+            Lumberjack.throwable( "Scheduler", e );
         }
 
         event.target = target;
@@ -220,9 +216,9 @@ public final class Scheduler
                 event.action = target.getClass().getMethod( method, paramClasses );
             }
         }
-        catch ( NoSuchMethodException | SecurityException e1 )
+        catch ( NoSuchMethodException | SecurityException e )
         {
-            e1.printStackTrace(); // hopefully will never be thrown
+            Lumberjack.throwable( "Scheduler", e );
         }
 
         event.target = target; // set the event's target object
@@ -274,13 +270,13 @@ public final class Scheduler
             catch ( Exception ex )
             {
                 // something failed, tell the console
-                System.err.println( "Scheduler failed to invoke \"" + e.action.getName() + "()\"" );
-                ex.printStackTrace();
+                Lumberjack.error( "Scheduler", "Failed to invoke \"%s()\"", e.action.getName() );
+                Lumberjack.throwable( "Scheduler", ex );
             }
 
             if ( LogOutput )
             {
-                System.out.println( "> Executed recurring event \"" + e.action.getName() + "\"" ); // be verbose if we should be
+                Lumberjack.debug( "Scheduler", "Executed recurring event \"%s\"", e.action.getName() );
             }
 
             e.executionTime = TimeHelper.getDelay( e.delay ); // set the next execution time
@@ -335,13 +331,13 @@ public final class Scheduler
             }
             catch ( Exception ex )
             {
-                System.err.println( "Scheduler failed to invoke \"" + e.action.getName() + "()\"" );
-                ex.printStackTrace();
+                Lumberjack.error( "Scheduler", "Failed to invoke \"%s()\"", e.action.getName() );
+                Lumberjack.throwable( "Scheduler", ex );
             }
 
             if ( LogOutput )
             {
-                System.out.println( "> Executed timed event \"" + e.action.getName() + "\"" );
+                Lumberjack.debug( "Scheduler", "Executed timed event \"%s\"", e.action.getName() );
             }
 
             it.remove(); // remove the iterated objects
@@ -388,13 +384,13 @@ public final class Scheduler
             }
             catch ( Exception ex )
             {
-                System.err.printf( "Scheduler failed to invoke \"%s.%s()\"%n", e.target.getClass().getSimpleName(), e.action.getName() );
-                ex.printStackTrace();
+                Lumberjack.error( "Scheduler", "Failed to invoke \"%s.%s()\"", e.target.getClass().getSimpleName(), e.action.getName() );
+                Lumberjack.throwable( "Scheduler", ex );
             }
 
             if ( LogOutput )
             {
-                System.out.println( "> Executed event \"" + e.action.getName() + "\"" );
+                Lumberjack.debug( "Scheduler", "Executed event \"%s\"", e.action.getName() );
             }
 
             it.remove(); // remove the iterated object
@@ -476,19 +472,19 @@ public final class Scheduler
             {
                 if ( !scheduled )
                 {
-                    System.out.println( "> Ignored previously existing event \"" + e.action.getName() + "\"" );
+                    Lumberjack.debug( "Scheduler", "Ignoring previously existing event \"%s\"", e.action.getName() );
                 }
                 else if ( e.delay != -1 )
                 {
-                    System.out.println( "> Scheulded \"" + e.action.getName() + "\" for every " + e.delay + " milliseconds" );
+                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\" for every %d milliseconds", e.action.getName(), e.delay );
                 }
                 else if ( e.executionTime == -1 )
                 {
-                    System.out.println( "> Scheduled \"" + e.action.getName() + "\"" );
+                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\"", e.action.getName() );
                 }
                 else
                 {
-                    System.out.println( "> Scheduled \"" + e.action.getName() + "\" for " + e.executionTime );
+                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\" for %d", e.action.getName(), e.executionTime );
                 }
             }
         }
