@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
  * The first test, tests the validity of the methods of VertexBufferObject.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.08.02
  * @since 14.03.30
  */
 public class VBOTester
@@ -36,8 +36,6 @@ public class VBOTester
      */
     private static void init() throws Exception
     {
-        TestingHelper.isDeveloping(); // we just need to get the static initializer to get LWJGL linked, it's a terrible hack but it works
-
         Display.setDisplayMode( new DisplayMode( 640, 480 ) );
         Display.create();
 

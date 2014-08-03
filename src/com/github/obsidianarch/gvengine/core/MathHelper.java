@@ -70,7 +70,8 @@ public final class MathHelper
             // add the data into the buffer
             for ( int j = 0; j < size; j++ )
             {
-                buffer.put( bufferIndex + j, source.get( i++ ) );
+                float value = source.get( i++ ); // get the value to add
+                buffer.put( bufferIndex + j, value );
             }
 
             bufferIndex += size + stride; // we just added <size> items, and will skip to the next section

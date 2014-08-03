@@ -7,7 +7,7 @@ import java.util.*;
  * Reads and writes human readable configuration files.
  *
  * @author Austin
- * @version 14.08.02
+ * @version 14.08.03
  * @since 14.03.30
  */
 public class Config
@@ -25,7 +25,12 @@ public class Config
     /**
      * The tags and their data.
      */
-    private Map< String, List< String > > tags = new HashMap<>();
+    private HashMap< String, HashMap< String, String > > tags = new HashMap<>();
+
+    /**
+     * The configuration format of this Config file.
+     */
+    private final ConfigurationFormat configurationFormat;
 
     //
     // Constructors
@@ -36,16 +41,19 @@ public class Config
      *
      * @param f
      *         The file of configuration.
+     * @param configurationFormat
+     *          The ConfigurationFormat which is used to read and write this Config file.
      *
      * @since 14.03.30
      */
-    public Config( File f )
+    public Config( File f, ConfigurationFormat configurationFormat )
     {
         file = f;
+        this.configurationFormat = configurationFormat;
     }
 
     //
-    // Editing
+    // Actions
     //
 
     /**
@@ -58,7 +66,7 @@ public class Config
      */
     public void removeTag( String tagName )
     {
-        tags.remove( tagName );
+        tags.remove( tagName ); // remove it from the hashmap
     }
 
     //
@@ -66,43 +74,19 @@ public class Config
     //
 
     /**
-     * Saves the text to the file.
+     * Uses the underlying ConfigurationFormat object to write data to the underlying file.
      *
-     * @return If the save was successful or not.
+     * @return If the write was successful or not.
      *
      * @since 14.03.30
      */
-    public boolean save()
+    public boolean write()
     {
-        try
-        {
-            BufferedWriter bw = new BufferedWriter( new FileWriter( file ) ); // writes the data to the file
-
-            for ( Map.Entry< String, List< String > > entry : tags.entrySet() )
-            {
-                bw.write( String.format( "[%s]%n", entry.getKey() ) ); // write the starting tag
-
-                // write the data
-                for ( String s : entry.getValue() )
-                {
-                    bw.write( String.format( "  %s%n", s ) ); // write the data to the line
-                }
-
-                bw.write( String.format( "[END]%n%n" ) ); // write the ending tag
-            }
-
-            bw.close(); // close the stream
-
-            return true;
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
+        return configurationFormat.write( file, tags );
     }
 
     /**
-     * Reads the text from the file.
+     * Uses the underlying ConfigurationFormat object to read data from the underlying file.
      *
      * @return If the read was successful or not.
      *
@@ -110,55 +94,8 @@ public class Config
      */
     public boolean read()
     {
-        try
-        {
-            BufferedReader br = new BufferedReader( new FileReader( file ) ); // reads data from the file
-
-            Map< String, List< String > > data = new HashMap<>(); // contains all of the read data
-
-            String currentTag = null; // the name of the current property
-
-            String line; // the last read line
-            while ( ( line = br.readLine() ) != null )
-            {
-
-                line = line.trim();
-
-                // stop the reading
-                if ( line.equals( "[END]" ) )
-                {
-                    currentTag = null;
-                    continue;
-                }
-
-                if ( currentTag != null )
-                {
-
-                    List< String > props = data.get( currentTag );
-                    props.add( line );
-
-                }
-                else
-                {
-                    // beings with a '[' and ends with an ']'
-                    if ( line.startsWith( "[" ) && line.endsWith( String.format( "]" ) ) )
-                    {
-                        currentTag = line.substring( 1, line.lastIndexOf( "]" ) ); // change the current property
-                        data.put( currentTag, new ArrayList< String >() );
-                    }
-                }
-            }
-
-            br.close(); // close the stream
-
-            tags = data; // change the data
-
-            return true;
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
+        tags.clear(); // clear the tags before reading new ones
+        return configurationFormat.read( file, tags );
     }
 
     //
@@ -175,23 +112,7 @@ public class Config
      *
      * @since 14.03.30
      */
-    public void setTagData( String tagName, String... data )
-    {
-        List< String > list = Arrays.asList( data ); // convert the data to a List
-        setTagData( tagName, list );
-    }
-
-    /**
-     * Sets the tag data.
-     *
-     * @param tagName
-     *         The name of the tag.
-     * @param data
-     *         The new data for the tag.
-     *
-     * @since 14.03.30
-     */
-    public void setTagData( String tagName, List< String > data )
+    public void setTagData( String tagName, HashMap< String, String > data )
     {
         tags.put( tagName, data );
     }
@@ -208,10 +129,10 @@ public class Config
      *
      * @return An empty list if there is no tag data, otherwise the tag's data.
      */
-    public List< String > getTagData( String tagName )
+    public HashMap< String, String > getTagData( String tagName )
     {
-        List< String > data = tags.get( tagName );
-        return data == null ? new ArrayList< String >() : data; // return an empty list if there was no data for the tag
+        HashMap< String, String > data = tags.get( tagName );
+        return data == null ? new HashMap< String, String >() : data; // return an empty map if there was no data for the tag
     }
 
 }

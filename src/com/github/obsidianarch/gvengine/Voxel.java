@@ -25,6 +25,8 @@ public final class Voxel
      *         The positioning array to which the voxel's face positions will be appended.
      * @param colors
      *         The color array to which the voxel's colors will be appended.
+     * @param normals
+     *          The normal array to which the voxel's normals will be appended.
      * @param c
      *         The chunk the voxel is a part of.
      * @param x
@@ -36,7 +38,7 @@ public final class Voxel
      *
      * @since 14.03.30
      */
-    public static void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z )
+    public static void createVoxel( FloatGapList positions, FloatGapList colors, FloatGapList normals, Chunk c, int x, int y, int z )
     {
         if ( !c.isRenderable( x, y, z ) )
         {
@@ -58,12 +60,15 @@ public final class Voxel
         // cycle through all the faces
         for ( Face face : Face.values() )
         {
-
             if ( c.isVisible( face, x, y, z ) )
             {
+                RepeatingArray repeatingNormals = new RepeatingArray( face.getNormals() );
+                float[] repeatedNormals = repeatingNormals.createArray( 18 ); // create the normal array
+
                 // add the position and color data for this face
                 positions.addAll( createFace( face, gX, gY, gZ ) );
                 colors.addAll( repeatedColors );
+                normals.addAll( repeatedNormals );
             }
         }
     }

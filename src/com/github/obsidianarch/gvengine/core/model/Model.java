@@ -90,7 +90,7 @@ public class Model
         // remove previous data
         vbo.setCoordinates();
         vbo.setChannels();
-        vbo.setNormalCoordinates();
+        vbo.setNormals();
 
         // add the faces to the VertexBufferObject
         for ( Face face : faces )

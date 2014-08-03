@@ -388,7 +388,7 @@ public final class Scheduler
             }
             catch ( Exception ex )
             {
-                System.err.println( "Scheduler failed to invoke \"" + e.action.getName() + "()\"" );
+                System.err.printf( "Scheduler failed to invoke \"%s.%s()\"%n", e.target.getClass().getSimpleName(), e.action.getName() );
                 ex.printStackTrace();
             }
 

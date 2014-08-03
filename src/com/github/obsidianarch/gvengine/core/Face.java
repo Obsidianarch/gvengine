@@ -64,6 +64,42 @@ public enum Face
     //
 
     /**
+     *
+      @throws UnsupportedOperationException
+     *          If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
+     *          cube and added another face and did not update the coordinate system for this.
+     *
+     * @return The normal data for this specific face.
+     */
+    public float[] getNormals()
+    {
+        switch( this )
+        {
+
+            case LEFT:
+                return new float[] { -1f, 0f, 0f };
+
+            case RIGHT:
+                return new float[] { 1f, 0f, 0f };
+
+            case BOTTOM:
+                return new float[] { 0f, -1f, 0f };
+
+            case TOP:
+                return new float[] { 0f, 1f, 0f };
+
+            case FRONT:
+                return new float[] { 0f, 0f, -1f };
+
+            case BACK:
+                return new float[] { 0f, 0f, 1f };
+
+        }
+
+        throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
+    }
+
+    /**
      * Gets the coordinates of the voxel that is touching this face.
      *
      * @param x

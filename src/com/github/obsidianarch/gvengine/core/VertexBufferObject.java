@@ -54,7 +54,7 @@ public class VertexBufferObject
     /**
      * The array for the normal coordiantes.
      */
-    private FloatGapList normalCoordinates;
+    private FloatGapList normals;
 
     /**
      * The method OpenGL will render the vertices.
@@ -129,13 +129,13 @@ public class VertexBufferObject
      *         The initial coordinate values.
      * @param channels
      *         The initial channel values.
-     * @param normalCoordinates
+     * @param normals
      *         The initial normal values.
      *
      * @since 14.03.30
      */
     public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, FloatGapList coordinates, FloatGapList channels,
-                               FloatGapList normalCoordinates )
+                               FloatGapList normals )
     {
 
         this.ps = ps;
@@ -147,11 +147,11 @@ public class VertexBufferObject
 
         if ( ns.coordinates == 0 )
         {
-            this.normalCoordinates = new FloatGapList( 0 );
+            this.normals = new FloatGapList( 0 );
         }
         else
         {
-            this.normalCoordinates = normalCoordinates;
+            this.normals = normals;
         }
     }
 
@@ -176,24 +176,25 @@ public class VertexBufferObject
      */
     public void validate()
     {
-        FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normalCoordinates.size() );
+        FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normals.size() ); // the complete buffer that contains all the data
 
         // insert data into our buffer
-        MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0, cs.channels + ns.coordinates );
-        MathHelper.insertBuffer( channels, interleavedBuffer, cs.channels, ps.coordinates, ns.coordinates + ps.coordinates );
-        MathHelper.insertBuffer( normalCoordinates, interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels );
+        MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0,                            cs.channels    + ns.coordinates );
+        MathHelper.insertBuffer( channels,    interleavedBuffer, cs.channels,    ps.coordinates,               ns.coordinates + ps.coordinates );
+        MathHelper.insertBuffer( normals,     interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels    );
 
+        // no binding has been created for this VBO yet, create one now (saves resources if the VBO is never used)
         if ( glBinding == -1 )
         {
             glBinding = glGenBuffers();
         }
 
+        // bind and set the data for the VBO (then unbind)
         glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind the buffer to OpenGL
         glBufferData( GL_ARRAY_BUFFER, interleavedBuffer, GL_STATIC_DRAW ); // bind the buffer data
-
         glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind the buffer
 
-        dataValid = true;
+        dataValid = true; // all up to date
     }
 
     /**
@@ -203,6 +204,7 @@ public class VertexBufferObject
      */
     public void render()
     {
+        // schedule a validation if one is needed, keeps the VBO up-to-date
         if ( !dataValid )
         {
             Scheduler.enqueueEvent( "validate", this ); // schedule a validation of the data
@@ -212,11 +214,12 @@ public class VertexBufferObject
             }
         }
 
-        glPushMatrix();
+        // render the VBO
+        glPushMatrix(); // start editing out matrix
         {
             glBindBuffer( GL_ARRAY_BUFFER, glBinding ); // bind our buffer
-            provideVertexData();
-            glDrawArrays( glMode, 0, coordinates.size() + channels.size() + normalCoordinates.size() ); // draw the arrays
+            provideVertexData(); // points to the vertices, colors, and normals
+            glDrawArrays( glMode, 0, coordinates.size() + channels.size() + normals.size() ); // draw the arrays
             glBindBuffer( GL_ARRAY_BUFFER, 0 ); // unbind our buffer
         }
         glPopMatrix(); // stop editing our matrix
@@ -234,8 +237,9 @@ public class VertexBufferObject
         glVertexPointer( ps.coordinates, GL_FLOAT, stride, 0 ); // tell OpenGL where our vertices are
         glColorPointer( cs.channels, GL_FLOAT, stride, ps.coordinates * 4 ); // tell OpenGL where our colors are
 
+        // if we have normals enabled...
         if ( ns.coordinates != 0 )
-        { // if we have normals enabled...
+        {
             glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // ...tell OpenGL where our normals are
         }
     }
@@ -290,7 +294,7 @@ public class VertexBufferObject
      */
     public void addNormals( float... array )
     {
-        normalCoordinates.addAll( array );
+        normals.addAll( array );
         dataValid = false;
     }
 
@@ -300,7 +304,7 @@ public class VertexBufferObject
      */
     public void addNormals( FloatGapList array )
     {
-        normalCoordinates.addAll( array );
+        normals.addAll( array );
         dataValid = false;
     }
 
@@ -363,9 +367,9 @@ public class VertexBufferObject
      * @param array
      *         The new normal data.
      */
-    public void setNormalCoordinates( float... array )
+    public void setNormals( float... array )
     {
-        normalCoordinates = new FloatGapList( array.length );
+        normals = new FloatGapList( array.length );
         addNormals( array );
     }
 
@@ -375,7 +379,7 @@ public class VertexBufferObject
      */
     public void setNormalCoordinates( FloatGapList array )
     {
-        normalCoordinates = array;
+        normals = array;
         dataValid = false;
     }
 
@@ -410,9 +414,9 @@ public class VertexBufferObject
     /**
      * @return The normal coordinates.
      */
-    public FloatGapList getNormalCoordinates()
+    public FloatGapList getNormals()
     {
-        return normalCoordinates;
+        return normals;
     }
 
     //
@@ -458,7 +462,7 @@ public class VertexBufferObject
         {
             positions.addAll( vbo.getCoordinates() );
             colors.addAll( vbo.getChannels() );
-            normals.addAll( vbo.getNormalCoordinates() );
+            normals.addAll( vbo.getNormals() );
         }
 
         // set the data of our VBO

@@ -15,11 +15,20 @@ import java.util.Map;
  * The class for all input from the user.
  *
  * @author Austin
- * @version 14.08.02
+ * @version 14.08.03
  * @since 14.03.30
  */
 public final class Input
 {
+
+    //
+    // Constants
+    //
+
+    /**
+     * The tag for all Input bindings in a configuration file.
+     */
+    public static final String CONFIG_TAG = "INPUT";
 
     //
     // Fields
@@ -78,7 +87,7 @@ public final class Input
     //
 
     /**
-     * Adds all input bindings to the configuration object.<BR> This does not save the bindings, rather it merely adds them to the configuration object for
+     * Adds all input bindings to the configuration object.<BR> This does not write the bindings, rather it merely adds them to the configuration object for
      * later reading and writing.
      *
      * @param c
@@ -88,18 +97,17 @@ public final class Input
      */
     public static void addBindings( Config c )
     {
-        List< String > data = new ArrayList<>(); // the list of bindings
+        HashMap< String, String > data = new HashMap<>(); // the list of bindings
 
         // add the bindings to the list
-        bindings.entrySet().forEach(
-                ( entry ) -> data.add( entry.getKey() + "=" + entry.getValue().toString() )
-        );
+        bindings.entrySet().forEach( ( entry ) -> data.put( entry.getKey(), entry.getValue().toString() ) );
 
-        c.setTagData( "INPUT", data ); // set the tag data
+        c.setTagData( CONFIG_TAG, data ); // set the tag data
     }
 
     /**
-     * Loads the input bindings from the configuration object.<BR> The input bindings will be read from the configuration object's data, however any bindings
+     * Loads the input bindings from the configuration object.<BR>
+     * The input bindings will be read from the configuration object's data, however any bindings
      * that already exist will be cleared.
      *
      * @param c
@@ -111,31 +119,12 @@ public final class Input
      */
     public static int loadBindings( Config c )
     {
-        bindings.clear();
+        bindings.clear(); // clear previous bindings
 
-        List< String > data = c.getTagData( "INPUT" ); // get the input data from the config object
+        HashMap< String, String > data = c.getTagData( CONFIG_TAG ); // get the input data from the config object
+        data.forEach( ( key, value ) -> bindings.put( key, InputBinding.createInputBinding( value ) ) );
 
-        int loadedBindings = 0;
-        for ( String s : data )
-        {
-            if ( !s.contains( "=" ) )
-            {
-                continue;
-            }
-            String[] split = s.split( "=" );
-
-            try
-            {
-                // setBinding( split[ 0 ], new InputBinding( split[ 1 ] ) );
-                loadedBindings++;
-            }
-            catch ( Exception e )
-            {
-                System.out.println( "Failed to load InputBinding from string [" + s + "]" );
-            }
-        }
-
-        return loadedBindings;
+        return bindings.size();
     }
 
     //
@@ -156,7 +145,6 @@ public final class Input
      * @param button
      *         The button to be bound.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public static void setBinding( String action, InputMedium medium, InputMode mode, InputMask mask, int button )
@@ -178,7 +166,6 @@ public final class Input
      * @param button
      *         The button to be bound.
      *
-     * @version 14.03.30
      * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
      * @since 14.03.30
      */
@@ -198,7 +185,6 @@ public final class Input
      * @param button
      *         The button to be bound.
      *
-     * @version 14.03.30
      * @see #setBinding(String, InputMedium, InputMode, InputMask, int)
      * @since 14.03.30
      */
@@ -215,7 +201,6 @@ public final class Input
      * @param binding
      *         The binding which will fire the action.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public static void setBinding( String action, InputBinding binding )
@@ -235,7 +220,6 @@ public final class Input
      *
      * @return If either keyboard key mask is down, or if {@code mask} is {@code NO_MASK}, {@code true}.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public static boolean isMaskActive( InputMask mask )
@@ -268,7 +252,6 @@ public final class Input
      *
      * @return The InputBinding bound to the action.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public static InputBinding getInputBinding( String action )
@@ -284,19 +267,13 @@ public final class Input
      *
      * @return If the action has been triggered.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public static boolean isBindingActive( String action )
     {
         InputBinding binding = bindings.get( action.toLowerCase().trim() ); // get the binding from the map
 
-        if ( binding == null )
-        {
-            return false; // the action doesn't exist
-        }
-
-        return binding.isActive(); // return if the binding is active or not
+        return binding != null && binding.isActive();
     }
 
 }

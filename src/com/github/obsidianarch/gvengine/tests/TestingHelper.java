@@ -5,6 +5,7 @@ import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.io.Config;
+import com.github.obsidianarch.gvengine.io.PlainTextConfigurationFormat;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -23,7 +24,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
  * A general class to simplify the testing cases, removing a large portion of code that's just required for setup.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.08.03
  * @since 14.03.30
  */
 public class TestingHelper
@@ -34,9 +35,9 @@ public class TestingHelper
     //
 
     /**
-     * The configuration file.
+     * The configuration file, using the PlainTextConfigurationFormat.
      */
-    public static final Config CONFIG = new Config( new File( System.getProperty( "user.dir" ), "config" ) );
+    public static final Config CONFIG = new Config( new File( "config" ), new PlainTextConfigurationFormat() );
 
     /**
      * Ambient light coordinates.
@@ -57,6 +58,11 @@ public class TestingHelper
      * Position light coordiantes.
      */
     public static final FloatBuffer LIGHT_POSITION;
+
+    /**
+     * Shininess of the material.
+     */
+    public static final FloatBuffer LIGHT_SHININESS;
 
     /**
      * The last time a time measurement was taken (used for change in time).
@@ -84,16 +90,6 @@ public class TestingHelper
 
     static
     {
-        if ( System.getProperty( "gvengine.debug", "false" ).equalsIgnoreCase( "true" ) )
-        {
-            File natives = new File( System.getProperty( "gvengine.debug.natives", "" ) );
-
-            System.setProperty( "org.lwjgl.librarypath", natives.getAbsolutePath() );
-
-            System.out.printf( "org.lwjgl.librarypath=%s%n", natives.getAbsolutePath() );
-            System.out.flush();
-        }
-
         // must update here because devloping wouldn't have access to the LWJGL libraries yet
         lastTime = getTime();
         lastFPS = getTime();
@@ -101,12 +97,14 @@ public class TestingHelper
         LIGHT_AMBIENT = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 0.2f, 0.2f, 0.2f, 1.0f } );
         LIGHT_DIFFUSE = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
         LIGHT_SPECULAR = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
-        LIGHT_POSITION = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 0.0f, 0.0f, 0.0f, 1.0f } );
+        LIGHT_POSITION = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 0.0f } );
+        LIGHT_SHININESS = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 50f, 50f, 50f, 50f } );
 
         LIGHT_AMBIENT.flip();
         LIGHT_DIFFUSE.flip();
         LIGHT_SPECULAR.flip();
         LIGHT_POSITION.flip();
+        LIGHT_SHININESS.flip();
     }
 
     //
@@ -114,14 +112,13 @@ public class TestingHelper
     //
 
     /**
-     * @return {@code true} if the "gvengine.developerMode" property has been set to true.
+     * @return {@code true} if the "gvengine.debug" property has been set to true.
      *
      * @since 14.03.30
      */
     public static boolean isDeveloping()
     {
-        String options = System.getProperty( "gvengine.debug", "false" );
-        return options.equalsIgnoreCase( "true" );
+        return System.getProperty( "gvengine.debug", "false" ).equalsIgnoreCase( "true" );
     }
 
     /**
@@ -179,16 +176,20 @@ public class TestingHelper
      */
     public static void enableLighting()
     {
-        glLight( GL_LIGHT1, GL_AMBIENT, LIGHT_AMBIENT );
-        glLight( GL_LIGHT1, GL_DIFFUSE, LIGHT_DIFFUSE );
-        glLight( GL_LIGHT1, GL_SPECULAR, LIGHT_SPECULAR );
-        glLight( GL_LIGHT1, GL_POSITION, LIGHT_POSITION );
+        glMaterial( GL_FRONT, GL_SPECULAR, LIGHT_SPECULAR );
+        glMaterial( GL_FRONT, GL_SHININESS, LIGHT_SHININESS );
+        glLight( GL_LIGHT0, GL_POSITION, LIGHT_POSITION );
 
-        glEnable( GL_LIGHT1 );
+//        glLight( GL_LIGHT1, GL_AMBIENT, LIGHT_AMBIENT );
+//        glLight( GL_LIGHT1, GL_DIFFUSE, LIGHT_DIFFUSE );
+//        glLight( GL_LIGHT1, GL_SPECULAR, LIGHT_SPECULAR );
+//        glLight( GL_LIGHT1, GL_POSITION, LIGHT_POSITION );
+
         glEnable( GL_LIGHTING );
+        glEnable( GL_LIGHT0 );
 
-        glColorMaterial( GL_FRONT, GL_DIFFUSE );
-        glEnable( GL_COLOR_MATERIAL );
+//        glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+//        glEnable( GL_COLOR_MATERIAL );
     }
 
     /**
@@ -341,9 +342,13 @@ public class TestingHelper
         Display.destroy();
         Input.addBindings( CONFIG );
 
-        if ( !CONFIG.save() )
+        if ( !CONFIG.write() )
         {
-            System.err.println( "Failed to save bindings!" );
+            System.err.println( "CONFIG.write() failed!" );
+        }
+        else
+        {
+            System.out.println( "CONFIG.write() success!" );
         }
     }
 }

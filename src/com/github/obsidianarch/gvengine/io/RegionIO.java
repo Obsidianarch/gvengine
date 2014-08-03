@@ -101,7 +101,7 @@ public final class RegionIO
      * Saves the region into the given directory.
      *
      * @param region
-     *         The region to save.
+     *         The region to write.
      * @param dir
      *         The directory to write to.
      *

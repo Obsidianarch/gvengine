@@ -165,7 +165,7 @@ public class RegionTester extends ChunkGenerator
     }
 
     /**
-     * Loads the saved region from the given save directory.
+     * Loads the saved region from the given write directory.
      *
      * @param region
      *         The region to load the data into.
@@ -178,10 +178,10 @@ public class RegionTester extends ChunkGenerator
     }
 
     /**
-     * Saves teh region into the given save directory.
+     * Saves teh region into the given write directory.
      *
      * @param region
-     *         The region to save into a data file.
+     *         The region to write into a data file.
      *
      * @since 14.03.30
      */

@@ -11,7 +11,7 @@ import static com.github.obsidianarch.gvengine.core.MathHelper.inRange;
  * A container for a LENGTHxLENGTHxLENGTH selection of voxels.
  *
  * @author Austin
- * @version 14.08.02
+ * @version 14.04.12
  * @since 14.03.30
  */
 public class Chunk
@@ -151,8 +151,9 @@ public class Chunk
             vbo.delete(); // remove the previous VBO
         }
 
-        FloatGapList positions = new FloatGapList( VOLUME / 2 );
-        FloatGapList colors = new FloatGapList( VOLUME / 2 );
+        FloatGapList positions = new FloatGapList( VOLUME );
+        FloatGapList colors = new FloatGapList( VOLUME );
+        FloatGapList normals = new FloatGapList( VOLUME );
 
         for ( int i = 0; i < VOLUME; i++ )
         {
@@ -161,10 +162,10 @@ public class Chunk
             int y = MathHelper.getYPosition( i, LENGTH );
             int z = MathHelper.getZPosition( i, LENGTH );
 
-            Voxel.createVoxel( positions, colors, this, x, y, z );
+            Voxel.createVoxel( positions, colors, normals, this, x, y, z );
         }
 
-        vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
+        vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.ENABLED, positions, colors, normals );
 
         vbo.validate(); // manually validate the VBO
         rebuildScheduled = false;
@@ -448,9 +449,9 @@ public class Chunk
     public double[] getGlobalOffset()
     {
         double[] offset = new double[ 3 ];
-        offset[ 0 ] = ( x * LENGTH ) + ( region.x * Region.LENGTH );
-        offset[ 1 ] = ( y * LENGTH ) + ( region.y * Region.LENGTH );
-        offset[ 2 ] = ( z * LENGTH ) + ( region.z * Region.LENGTH );
+        offset[ 0 ] = ( x * LENGTH ) + ( region == null ? 0 : region.x * Region.LENGTH );
+        offset[ 1 ] = ( y * LENGTH ) + ( region == null ? 0 : region.y * Region.LENGTH );
+        offset[ 2 ] = ( z * LENGTH ) + ( region == null ? 0 : region.z * Region.LENGTH );
         return offset;
     }
 

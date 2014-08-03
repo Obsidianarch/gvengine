@@ -1,6 +1,8 @@
 *.class
 *.gven.dat
 *.dat
+*.tmp
+~$todo.doc
 
 gvengine.iml
 res/config

@@ -15,11 +15,20 @@ import java.util.Map;
  * Gathers and organizes all option annotations.
  *
  * @author Austin
- * @version 14.04.03
+ * @version 14.08.03
  * @since 14.03.30
  */
 public class OptionManager
 {
+
+    //
+    // Constants
+    //
+
+    /**
+     * Tag used to denote OptionManager data in a Config file.
+     */
+    public static final String CONFIG_TAG = "OPTIONS";
 
     //
     // Constructors
@@ -104,13 +113,8 @@ public class OptionManager
      */
     public static void initialize( Config c )
     {
-        List< String > data = c.getTagData( "OPTIONS" );
-
-        for ( String s : data )
-        {
-            String[] split = s.split( "=" );
-            defaultValues.put( split[ 0 ], split[ 1 ] );
-        }
+        HashMap< String, String > data = c.getTagData( CONFIG_TAG );
+        data.forEach( defaultValues::put );
     }
 
     //
