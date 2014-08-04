@@ -1,7 +1,7 @@
 package com.github.obsidianarch.gvengine.core.options;
 
-import com.github.obsidianarch.gvengine.io.Config;
-import com.github.obsidianarch.gvengine.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.io.Config;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

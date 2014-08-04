@@ -4,9 +4,9 @@ import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
-import com.github.obsidianarch.gvengine.io.Config;
-import com.github.obsidianarch.gvengine.io.Lumberjack;
-import com.github.obsidianarch.gvengine.io.PlainTextConfigurationFormat;
+import com.github.obsidianarch.gvengine.core.io.Config;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.io.PlainTextConfigurationFormat;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -116,7 +116,7 @@ public class TestingHelper
      *
      * @since 14.03.30
      */
-    public static boolean isDeveloping()
+    public static boolean isDebugging()
     {
         return System.getProperty( "gvengine.debug", "false" ).equalsIgnoreCase( "true" );
     }

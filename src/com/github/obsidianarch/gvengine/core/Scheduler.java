@@ -3,13 +3,12 @@ package com.github.obsidianarch.gvengine.core;
 import com.github.obsidianarch.gvengine.core.options.Option;
 import com.github.obsidianarch.gvengine.core.options.SliderOption;
 import com.github.obsidianarch.gvengine.core.options.ToggleOption;
-import com.github.obsidianarch.gvengine.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import org.lwjgl.Sys;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Maintains a schedule of events and when they need to be executed.

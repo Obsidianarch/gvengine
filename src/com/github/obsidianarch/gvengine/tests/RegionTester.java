@@ -12,8 +12,8 @@ import com.github.obsidianarch.gvengine.core.input.InputMask;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.core.input.InputMode;
 import com.github.obsidianarch.gvengine.core.options.*;
-import com.github.obsidianarch.gvengine.io.Lumberjack;
-import com.github.obsidianarch.gvengine.io.RegionIO;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.io.RegionIO;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 

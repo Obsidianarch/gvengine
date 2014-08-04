@@ -1,7 +1,7 @@
 package com.github.obsidianarch.gvengine.core.input;
 
-import com.github.obsidianarch.gvengine.io.Config;
-import com.github.obsidianarch.gvengine.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.io.Config;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
