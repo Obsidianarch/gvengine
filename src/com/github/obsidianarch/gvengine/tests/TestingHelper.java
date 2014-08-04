@@ -25,7 +25,7 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
  * A general class to simplify the testing cases, removing a large portion of code that's just required for setup.
  *
  * @author Austin
- * @version 14.08.03b
+ * @version 14.08.03c
  * @since 14.03.30
  */
 public class TestingHelper
@@ -68,12 +68,12 @@ public class TestingHelper
     /**
      * The last time a time measurement was taken (used for change in time).
      */
-    private static long lastTime;
+    private static long lastTime = getTime();
 
     /**
      * The last time an FPS measure was taken.
      */
-    private static long lastFPS;
+    private static long lastFPS = getTime();
 
     /**
      * The current FPS.
@@ -93,10 +93,6 @@ public class TestingHelper
     {
         // open a new log file
         Lumberjack.openLogFile( new File( "gvengine.log" ) );
-
-        // must update here because devloping wouldn't have access to the LWJGL libraries yet
-        lastTime = getTime();
-        lastFPS = getTime();
 
         LIGHT_AMBIENT = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 0.2f, 0.2f, 0.2f, 1.0f } );
         LIGHT_DIFFUSE = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
@@ -180,20 +176,25 @@ public class TestingHelper
      */
     public static void enableLighting()
     {
+        /*
         glMaterial( GL_FRONT, GL_SPECULAR, LIGHT_SPECULAR );
         glMaterial( GL_FRONT, GL_SHININESS, LIGHT_SHININESS );
         glLight( GL_LIGHT0, GL_POSITION, LIGHT_POSITION );
 
-//        glLight( GL_LIGHT1, GL_AMBIENT, LIGHT_AMBIENT );
-//        glLight( GL_LIGHT1, GL_DIFFUSE, LIGHT_DIFFUSE );
-//        glLight( GL_LIGHT1, GL_SPECULAR, LIGHT_SPECULAR );
-//        glLight( GL_LIGHT1, GL_POSITION, LIGHT_POSITION );
-
         glEnable( GL_LIGHTING );
         glEnable( GL_LIGHT0 );
+        */
 
-//        glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-//        glEnable( GL_COLOR_MATERIAL );
+        glLight( GL_LIGHT1, GL_AMBIENT, LIGHT_AMBIENT );
+        glLight( GL_LIGHT1, GL_DIFFUSE, LIGHT_DIFFUSE );
+        glLight( GL_LIGHT1, GL_SPECULAR, LIGHT_SPECULAR );
+        glLight( GL_LIGHT1, GL_POSITION, LIGHT_POSITION );
+
+        glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+        glEnable( GL_COLOR_MATERIAL );
+
+        glEnable( GL_LIGHTING );
+        glEnable( GL_LIGHT1 );
     }
 
     /**

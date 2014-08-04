@@ -15,7 +15,7 @@ import java.util.Date;
  * TODO maybe members will not be static in the future?
  *
  * @since 14.08.03b
- * @version 14.08.03b
+ * @version 14.08.03c
  */
 public class Lumberjack
 {
@@ -38,6 +38,14 @@ public class Lumberjack
      * Highest level of logging, always displayed. Used for errors and problems.
      */
     public static final int ERROR = 2;
+
+    /**
+     * Avoids a method call every time something is written.
+     * I figured "why not make it public?" And couldn't think of a reason not to,
+     * so I did. I also couldn't think of a reason to make it public, but that's
+     * not my problem.
+     */
+    public static final String LINE_SEPARATOR = System.lineSeparator();
 
     //
     // Properties
@@ -141,12 +149,13 @@ public class Lumberjack
             try
             {
                 bw.write( str ); // write the message
-                bw.write( System.lineSeparator() ); // add a line separator (I love using new JDK version!)
-                bw.flush();
+                bw.write( LINE_SEPARATOR ); // add a line separator
+                bw.flush(); // force it to write to the file (in case of a sudden crash)
             }
             catch ( IOException e )
             {
-                // not really sure what to do here, so I guess I'll use the standard error output
+                // not really sure what to do here tbh, don't want to recursively get this so I guess I'll use standard error
+                System.err.println( "LUMBERJACK: Couldn't write to file; you shouldn't see this." );
                 e.printStackTrace();
             }
         }
@@ -220,7 +229,8 @@ public class Lumberjack
      */
     public static void throwable( String tag, Throwable t )
     {
-        error( tag, "%s: %s", t.getClass().toString(), t.getMessage() ); // print the class and then it's message
+        String msg = t.getMessage(); // get the message from the Throwable
+        error( tag, "%s: %s", t.getClass().toString(), ( msg == null ? "" : msg ) ); // print the class and then it's message
 
         // print the stack trace beneath it
         for ( StackTraceElement element : t.getStackTrace() )
