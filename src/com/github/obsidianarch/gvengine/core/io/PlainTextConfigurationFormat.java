@@ -75,14 +75,10 @@ public class PlainTextConfigurationFormat implements ConfigurationFormat
 
             return true;
         }
-        catch ( FileNotFoundException e )
-        {
-            // TODO when logging is added log an error message
-            return false;
-        }
         catch ( IOException e )
         {
-            // TODO when logging is added log an error message
+            Lumberjack.error( "PTCF", "An error occurred while reading file \"%s\"!", file.getPath() );
+            Lumberjack.throwable( "PTCF", e );
             return false;
         }
     }
@@ -116,7 +112,8 @@ public class PlainTextConfigurationFormat implements ConfigurationFormat
         }
         catch ( IOException e )
         {
-            // TODO when logging is added add an error message
+            Lumberjack.error( "PTCF", "An error occurred while writing file \"%s\"!", file.getPath() );
+            Lumberjack.throwable( "PTCF", e );
             return false;
         }
     }

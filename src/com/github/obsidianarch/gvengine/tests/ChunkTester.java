@@ -1,7 +1,7 @@
 package com.github.obsidianarch.gvengine.tests;
 
-import com.github.obsidianarch.gvengine.Chunk;
-import com.github.obsidianarch.gvengine.Material;
+import com.github.obsidianarch.gvengine.core.Chunk;
+import com.github.obsidianarch.gvengine.core.Material;
 import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.Scheduler;

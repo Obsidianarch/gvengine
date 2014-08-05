@@ -1,7 +1,7 @@
 package com.github.obsidianarch.gvengine.core.io;
 
-import com.github.obsidianarch.gvengine.Chunk;
-import com.github.obsidianarch.gvengine.Region;
+import com.github.obsidianarch.gvengine.core.Chunk;
+import com.github.obsidianarch.gvengine.core.Region;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 
 import java.io.*;
