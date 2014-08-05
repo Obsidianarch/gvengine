@@ -4,8 +4,8 @@ import com.github.obsidianarch.gvengine.core.Camera;
 import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
-import com.github.obsidianarch.gvengine.core.model.Model;
-import com.github.obsidianarch.gvengine.core.model.OBJModelLoader;
+import com.github.obsidianarch.gvengine.model.Model;
+import com.github.obsidianarch.gvengine.model.OBJModelLoader;
 import com.github.obsidianarch.gvengine.core.options.OptionManager;
 import org.lwjgl.opengl.Display;
 
