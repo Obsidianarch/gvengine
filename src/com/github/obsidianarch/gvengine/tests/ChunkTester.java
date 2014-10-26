@@ -1,12 +1,11 @@
 package com.github.obsidianarch.gvengine.tests;
 
-import com.github.obsidianarch.gvengine.core.Chunk;
-import com.github.obsidianarch.gvengine.core.Material;
-import com.github.obsidianarch.gvengine.core.Camera;
-import com.github.obsidianarch.gvengine.core.Controller;
-import com.github.obsidianarch.gvengine.core.Scheduler;
+import com.github.obsidianarch.gvengine.core.*;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.options.*;
+import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGModulus;
+import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGSphere;
+import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGSphereModulus;
 import org.lwjgl.opengl.Display;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -15,7 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the Voxel and Chunk Management systems.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.10.26
  * @since 14.03.30
  */
 public class ChunkTester
@@ -73,7 +72,7 @@ public class ChunkTester
         OptionManager.initialize( TestingHelper.CONFIG );
         OptionManager.initialize( args );
 
-        OptionManager.registerClass( "Tester", ChunkTester.class );
+        OptionManager.registerClass( "Test", ChunkTester.class );
         OptionManager.registerClass( "Scheduler", Scheduler.class );
         System.out.println();
 
@@ -81,8 +80,11 @@ public class ChunkTester
         TestingHelper.setupGL();
         TestingHelper.initInput();
 
+        ChunkGenerator chunkGenerator = new CGSphereModulus();
+
         Chunk c = new Chunk( null, 0, 0, 0 ); // the chunk we're testing
-        buildChunk( c ); // build the chunk
+        chunkGenerator.generateChunk( c ); // build the chunk
+        Scheduler.enqueueEvent( "buildMesh", c );
 
         Camera camera = new Camera(); // the camera of hte player
         camera.setMinimumPitch( 15f );
@@ -94,7 +96,7 @@ public class ChunkTester
             glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear the last frame
 
             Input.poll(); // poll the input
-            processInput( camera, controller, c ); // move and orient the player
+            processInput( camera, controller, c, chunkGenerator ); // move and orient the player
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, c ); // render the scene
 
@@ -130,16 +132,19 @@ public class ChunkTester
      *         The player's controller.
      * @param c
      *         The chunk that is being tested.
+     *@param chunkGenerator
+     *         The chunk generator used to regenerate the chunk.
      *
      * @since 14.03.30
      */
-    private static void processInput( Camera camera, Controller controller, Chunk c )
+    private static void processInput( Camera camera, Controller controller, Chunk c, ChunkGenerator chunkGenerator )
     {
         TestingHelper.processInput( camera, controller );
 
         if ( Input.isBindingActive( "rebuildChunk" ) )
         {
-            buildChunk( c );
+            chunkGenerator.generateChunk( c );
+            Scheduler.enqueueEvent( "buildMesh", c );
         }
         if ( Input.isBindingActive( "removeVoxels" ) )
         {
@@ -167,29 +172,4 @@ public class ChunkTester
         }
     }
 
-    /**
-     * Changes the chunk's contents and rebuilds the chunk's mesh.
-     *
-     * @param c
-     *         The chunk.
-     *
-     * @since 14.03.30
-     */
-    private static void buildChunk( Chunk c )
-    {
-        // set every material in the chunk
-        for ( int x = 0; x < Chunk.LENGTH; x++ )
-        {
-            for ( int y = 0; y < Chunk.LENGTH; y++ )
-            {
-                for ( int z = 0; z < Chunk.LENGTH; z++ )
-                {
-                    byte materialID = ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 );
-                    c.setMaterialAt( materialID, x, y, z );
-                }
-            }
-        }
-
-        Scheduler.enqueueEvent( "buildMesh", c );
-    }
 }

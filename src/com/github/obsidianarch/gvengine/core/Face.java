@@ -4,7 +4,7 @@ package com.github.obsidianarch.gvengine.core;
  * One of the six faces on a voxel.
  *
  * @author Austin
- * @version 14.03.31
+ * @version 14.10.26
  * @since 14.03.30
  */
 public enum Face
@@ -70,29 +70,31 @@ public enum Face
      *          cube and added another face and did not update the coordinate system for this.
      *
      * @return The normal data for this specific face.
+     *
+     * @since 14.03.30
      */
-    public float[] getNormals()
+    public float[] getNormals( float x, float y, float z )
     {
         switch( this )
         {
 
             case LEFT:
-                return new float[] { -1f, 0f, 0f };
+                return new float[] { x - 1, y, z };
 
             case RIGHT:
-                return new float[] { 1f, 0f, 0f };
+                return new float[] { x + 1, y, z };
 
             case BOTTOM:
-                return new float[] { 0f, -1f, 0f };
+                return new float[] { x, y - 1, z };
 
             case TOP:
-                return new float[] { 0f, 1f, 0f };
+                return new float[] { x, y + 1, z };
 
             case FRONT:
-                return new float[] { 0f, 0f, -1f };
+                return new float[] { x, y, z - 1 };
 
             case BACK:
-                return new float[] { 0f, 0f, 1f };
+                return new float[] { x, y, z + 1 };
 
         }
 

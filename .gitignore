@@ -11,3 +11,6 @@ res/models/bunny.obj
 res/models/bunny.mtl
 lib
 .idea
+
+out/
+bin/

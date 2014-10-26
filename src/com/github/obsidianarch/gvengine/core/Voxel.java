@@ -6,7 +6,7 @@ import org.magicwerk.brownies.collections.primitive.FloatGapList;
  * Everything involved with the creation of individual voxels.
  *
  * @author Austin
- * @version 14.03.31
+ * @version 14.10.26
  * @since 14.03.30
  */
 public final class Voxel
@@ -60,7 +60,7 @@ public final class Voxel
         {
             if ( c.isVisible( face, x, y, z ) )
             {
-                RepeatingArray repeatingNormals = new RepeatingArray( face.getNormals() );
+                RepeatingArray repeatingNormals = new RepeatingArray( face.getNormals( x, y, z ) );
                 float[] repeatedNormals = repeatingNormals.createArray( 18 ); // create the normal array
 
                 // add the position and color data for this face

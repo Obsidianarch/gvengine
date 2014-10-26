@@ -14,6 +14,7 @@ import com.github.obsidianarch.gvengine.core.input.InputMode;
 import com.github.obsidianarch.gvengine.core.options.*;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import com.github.obsidianarch.gvengine.core.io.RegionIO;
+import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGModulus;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
@@ -26,10 +27,10 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the region and it's methods.
  *
  * @author Austin
- * @version 14.08.03b
+ * @version 14.10.26
  * @since 14.03.30
  */
-public class RegionTester extends ChunkGenerator
+public class RegionTester
 {
 
     //
@@ -95,10 +96,9 @@ public class RegionTester extends ChunkGenerator
 
         TestingHelper.createDisplay();
         TestingHelper.setupGL();
-        //        TestingHelper.enableLighting();
         TestingHelper.initInput();
 
-        Region region = new Region( new RegionTester(), 0, 0, 0 );
+        Region region = new Region( new CGModulus(), 0, 0, 0 );
         region.rebuild();
 
         Camera camera = new Camera(); // the camera of the player
@@ -159,7 +159,7 @@ public class RegionTester extends ChunkGenerator
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
 
-            TestingHelper.updateDisplay( "Region Tester", -1 );
+            TestingHelper.updateDisplay( "Region Tester", FPSCap );
         }
 
         TestingHelper.destroy(); // destroys everything
@@ -264,32 +264,4 @@ public class RegionTester extends ChunkGenerator
         region.render();
     }
 
-    //
-    // Override
-    //
-
-    @Override
-    public void generateChunk( Chunk c )
-    {
-        for ( int z = 0; z < Chunk.LENGTH; z++ )
-        {
-            for ( int y = 0; y < Chunk.LENGTH; y++ )
-            {
-                for ( int x = 0; x < Chunk.LENGTH; x++ )
-                {
-
-                    double xDiff = x - ( Chunk.LENGTH / 2 );
-                    double yDiff = y - ( Chunk.LENGTH / 2 );
-                    double zDiff = z - ( Chunk.LENGTH / 2 );
-                    double sqrt = Math.sqrt( ( xDiff * xDiff ) + ( yDiff * yDiff ) + ( zDiff * zDiff ) );
-
-                    if ( sqrt <= ( Chunk.LENGTH / 2 ) )
-                    {
-                        c.setMaterialAt( Material.GRASS, x, y, z );
-                    }
-
-                }
-            }
-        }
-    }
 }

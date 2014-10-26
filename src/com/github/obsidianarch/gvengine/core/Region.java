@@ -6,7 +6,7 @@ import static com.github.obsidianarch.gvengine.core.MathHelper.inRange;
  * A LENGTH x LENGTH x LENGTH container of Chunks.
  *
  * @author Austin
- * @version 14.04.12
+ * @version 14.10.26
  * @since 14.03.30
  */
 public class Region
@@ -115,10 +115,9 @@ public class Region
      */
     public void regenerate()
     {
-        for ( int i = 0; i < chunks.length; i++ )
+        for ( Chunk c : chunks )
         {
-            // rebuilding takes a longer time than rebuilding, so it fires LENGTH times less often
-            Scheduler.scheduleEvent( "generateChunk", generator, i * 100, chunks[ i ] );
+            Scheduler.enqueueEvent( "generateChunk", generator, c );
         }
     }
 
@@ -129,9 +128,9 @@ public class Region
      */
     public void rebuild()
     {
-        for ( int i = 0; i < chunks.length; i++ )
+        for ( Chunk c : chunks )
         {
-            Scheduler.scheduleEvent( "buildMesh", chunks[ i ], i * 25 ); // a chunk in this region is rebuilt every 10 milliseconds 
+            Scheduler.enqueueEvent( "buildMesh", c );
         }
     }
 
