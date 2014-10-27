@@ -1,44 +1,46 @@
 package com.github.obsidianarch.gvengine.core.options;
 
 /**
- * Represents an option which can be set by the user with minimal overhead.
+ * Represents an option which can be
  *
  * @version 14.10.26b
  * @since 14.10.26b
  */
-public class Option< T > extends Property
+public class FloatOption extends Property
 {
 
     //
     // Fields
     //
 
-    /** The value this Option is wrapping around */
-    protected T value;
+    /**
+     * The float value this FloatOption is wrapping around
+     */
+    protected float value;
 
     //
     // Constructors
     //
 
     /**
-     * Constructs a new Option with {@code null} as the initial value.
+     * Constructs a new FloatOption with {@code 0} as the initial value.
      *
      * @since 14.10.26b
      */
-    public Option()
+    public FloatOption()
     {
-        this( null );
+        this( 0 );
     }
 
     /**
      * Constructs a new option with {@code initialValue} as the initial value.
      *
      * @param initialValue
-     *          The first value of the option.
+     *         The first value of the option.
      *
      * @since 14.10.26b
      */
-    public Option( T initialValue )
+    public FloatOption( float initialValue )
     {
         super();
         value = initialValue;
@@ -53,7 +55,7 @@ public class Option< T > extends Property
      *
      * @since 14.10.26b
      */
-    public T get()
+    public float get()
     {
         return value;
     }
@@ -64,11 +66,11 @@ public class Option< T > extends Property
 
     /**
      * @param value
-     *          The new value of the option.
+     *         The new value of the option.
      *
      * @since 14.10.26b
      */
-    public void set( T value )
+    public void set( float value )
     {
         this.value = value;
         onChange();

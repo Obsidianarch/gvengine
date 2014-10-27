@@ -2,6 +2,7 @@ package com.github.obsidianarch.gvengine.tests;
 
 import com.github.obsidianarch.gvengine.core.*;
 import com.github.obsidianarch.gvengine.core.input.Input;
+import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import com.github.obsidianarch.gvengine.core.options.*;
 import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGModulus;
 import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGSphere;
@@ -14,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the Voxel and Chunk Management systems.
  *
  * @author Austin
- * @version 14.10.26
+ * @version 14.10.26b
  * @since 14.03.30
  */
 public class ChunkTester
@@ -24,32 +25,33 @@ public class ChunkTester
     // Options
     //
 
-    /**
-     * The max FPS the chunk tester will go to.
-     */
-    @Option("FPS Cap")
-    @SliderOption(minimum = 10, maximum = 120)
-    public static int FPSCap = -1;
-
-    /**
-     * If the FPS is maxed out at the max refresh rate of the monitor.
-     */
-    @Option("VSync")
-    @ToggleOption({ "false", "true" })
-    public static boolean VSyncEnabled = false;
-
-    //
-    // OptionListeners
-    //
-
-    /**
-     * Listens for when the VSync variable has been changed.
-     */
-    @OptionListener("VSync")
-    public static void onVSyncToggle()
+    /** If VSync is enabled or not */
+    private static BooleanOption VSyncEnabled = new BooleanOption()
     {
-        Display.setVSyncEnabled( VSyncEnabled );
-    }
+
+        @Override
+        public void onChange()
+        {
+            Lumberjack.info( "ChunkTester", "VSync set to: %b", value );
+            Display.setVSyncEnabled( value ); // update the property in OpenGL
+        }
+
+    };
+
+    /** The maximum number of frames per second to render at, -1 means no limit. */
+    private static IntOption FPSCap = new IntOption( -1 )
+    {
+
+        @Override
+        public void onChange()
+        {
+            if ( value <= 0 && value != -1 ) // all numbers zero and under (excluding -1) are set to -1
+            {
+                set( -1 );
+            }
+        }
+
+    };
 
     //
     // Methods
@@ -69,11 +71,6 @@ public class ChunkTester
     public static void main( String... args ) throws Exception
     {
         TestingHelper.CONFIG.read();
-        OptionManager.initialize( TestingHelper.CONFIG );
-        OptionManager.initialize( args );
-
-        OptionManager.registerClass( "Test", ChunkTester.class );
-        OptionManager.registerClass( "Scheduler", Scheduler.class );
         System.out.println();
 
         TestingHelper.createDisplay();
@@ -100,7 +97,7 @@ public class ChunkTester
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, c ); // render the scene
 
-            TestingHelper.updateDisplay( "Chunk Tester", FPSCap );
+            TestingHelper.updateDisplay( "Chunk Tester", FPSCap.get() );
         }
 
         TestingHelper.destroy(); // destroys everything

@@ -1,9 +1,8 @@
 package com.github.obsidianarch.gvengine.core;
 
-import com.github.obsidianarch.gvengine.core.options.Option;
-import com.github.obsidianarch.gvengine.core.options.SliderOption;
-import com.github.obsidianarch.gvengine.core.options.ToggleOption;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
+import com.github.obsidianarch.gvengine.core.options.BooleanOption;
+import com.github.obsidianarch.gvengine.core.options.IntOption;
 import org.lwjgl.Sys;
 
 import java.lang.reflect.Method;
@@ -24,33 +23,17 @@ public final class Scheduler
     // Options
     //
 
-    /**
-     * The maximum number of events dispatched every tick.
-     */
-    @Option("Maximum events per tick")
-    @SliderOption(minimum = 8, maximum = 4096)
-    public static int MaxEvents = 8;
+    /** The maximum number of events dispatched every tick. */
+    private static IntOption MaxEvents = new IntOption( 8 );
 
-    /**
-     * The maximum number of milliseconds that a single scheduling tick can take.
-     */
-    @Option("Max time per tick")
-    @SliderOption(minimum = 10, maximum = 1000)
-    public static int MaxTickTime = 10;
+    /** The maximum number of milliseconds that a single scheduling tick can take. */
+    private static IntOption MaxTickTime = new IntOption( 10 );
 
-    /**
-     * When true, the timed events will be restricted to the {@code MaxEvents} as well.
-     */
-    @Option("Timed events throttled")
-    @ToggleOption({ "false", "true" })
-    public static boolean TimedEventsThrottled = true;
+    /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
+    private static BooleanOption TimedEventsThrottled = new BooleanOption( true );
 
-    /**
-     * When true, all event scheduling and dispatching is logged to the console.
-     */
-    @Option("Log scheduling output messages")
-    @ToggleOption({ "false", "true" })
-    public static boolean LogOutput = false;
+    /** When true, all event scheduling and dispatching is logged to the console. */
+    private static BooleanOption LogOutput = new BooleanOption( false );
 
     //
     // Fields
@@ -249,7 +232,7 @@ public final class Scheduler
         // fire all of the recurring events
         for ( Event e : recurringEvents )
         {
-            if ( TimeHelper.isOver( startTime, MaxTickTime ) )
+            if ( TimeHelper.isOver( startTime, MaxTickTime.get() ) )
             {
                 return firedEvents; // we've run out of time for this tick, let's keep the game running
             }
@@ -261,7 +244,7 @@ public final class Scheduler
             try
             {
                 e.action.invoke( e.target, e.parameters ); // invoke the method
-                if ( TimedEventsThrottled )
+                if ( TimedEventsThrottled.get() )
                 {
                     firedEvents++; // we've fired a method
                 }
@@ -273,7 +256,7 @@ public final class Scheduler
                 Lumberjack.throwable( "Scheduler", ex );
             }
 
-            if ( LogOutput )
+            if ( LogOutput.get() )
             {
                 Lumberjack.debug( "Scheduler", "Executed recurring event \"%s\"", e.action.getName() );
             }
@@ -302,14 +285,14 @@ public final class Scheduler
         Iterator< Event > it = timedEvents.iterator(); // get the iterator for the timed events
         while ( it.hasNext() )
         {
-            if ( TimeHelper.isOver( startTime, MaxTickTime ) )
+            if ( TimeHelper.isOver( startTime, MaxTickTime.get() ) )
             {
                 return firedEvents; // we've run out of time for this tick, let's keep the game running
             }
             Event e = it.next(); // get the next event
 
             // if the timed events are throttled too, then we may have to break out of the loop
-            if ( TimedEventsThrottled && ( firedEvents >= MaxEvents ) )
+            if ( TimedEventsThrottled.get() && ( firedEvents >= MaxEvents.get() ) )
             {
                 break;
             }
@@ -323,7 +306,7 @@ public final class Scheduler
             try
             {
                 e.action.invoke( e.target, e.parameters ); // invoke the method
-                if ( TimedEventsThrottled )
+                if ( TimedEventsThrottled.get() )
                 {
                     firedEvents++;
                 }
@@ -334,7 +317,7 @@ public final class Scheduler
                 Lumberjack.throwable( "Scheduler", ex );
             }
 
-            if ( LogOutput )
+            if ( LogOutput.get() )
             {
                 Lumberjack.debug( "Scheduler", "Executed timed event \"%s\"", e.action.getName() );
             }
@@ -364,14 +347,14 @@ public final class Scheduler
 
         while ( it.hasNext() )
         {
-            if ( TimeHelper.isOver( startTime, MaxTickTime ) )
+            if ( TimeHelper.isOver( startTime, MaxTickTime.get() ) )
             {
                 return firedEvents; // we've run out of time for this tick, let's keep the game running
             }
             Event e = it.next(); // get the next event
 
             // we've reached the max number of events we can fire for now
-            if ( firedEvents >= MaxEvents )
+            if ( firedEvents >= MaxEvents.get() )
             {
                 break;
             }
@@ -387,7 +370,7 @@ public final class Scheduler
                 Lumberjack.throwable( "Scheduler", ex );
             }
 
-            if ( LogOutput )
+            if ( LogOutput.get() )
             {
                 Lumberjack.debug( "Scheduler", "Executed event \"%s\"", e.action.getName() );
             }
@@ -467,7 +450,7 @@ public final class Scheduler
         }
         finally
         {
-            if ( LogOutput )
+            if ( LogOutput.get() )
             {
                 if ( !scheduled )
                 {

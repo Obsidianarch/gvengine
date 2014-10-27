@@ -6,7 +6,6 @@ import com.github.obsidianarch.gvengine.core.Scheduler;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.model.Model;
 import com.github.obsidianarch.gvengine.model.OBJModelLoader;
-import com.github.obsidianarch.gvengine.core.options.OptionManager;
 import org.lwjgl.opengl.Display;
 
 import java.io.File;
@@ -41,10 +40,6 @@ public class ModelTest
     public static void main( String[] args ) throws Exception
     {
         TestingHelper.CONFIG.read();
-        OptionManager.initialize( TestingHelper.CONFIG );
-        OptionManager.initialize( args );
-
-        OptionManager.registerClass( "Scheduler", Scheduler.class );
         System.out.println();
 
         TestingHelper.createDisplay();

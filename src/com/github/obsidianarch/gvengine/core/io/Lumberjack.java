@@ -1,8 +1,7 @@
 package com.github.obsidianarch.gvengine.core.io;
 
-import com.github.obsidianarch.gvengine.core.options.Option;
-import com.github.obsidianarch.gvengine.core.options.OptionListener;
-import com.github.obsidianarch.gvengine.core.options.SliderOption;
+import com.github.obsidianarch.gvengine.core.options.IntOption;
+import jdk.nashorn.internal.runtime.Logging;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -48,26 +47,24 @@ public class Lumberjack
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
     //
-    // Properties
+    // Options
     //
 
     /**
      * Property for the current logging level.
      */
-    @Option("Logging Level")
-    @SliderOption(maximum = 3)
-    public static int LOGGING_LEVEL = DEBUG;
-
-    //
-    // PropertyListeners
-    //
-
-    @OptionListener( "Logging Level" )
-    public static void onLoggingLevelChange()
+    private static IntOption LoggingLevel = new IntOption( DEBUG )
     {
-        if ( LOGGING_LEVEL < DEBUG ) LOGGING_LEVEL = DEBUG;
-        if ( LOGGING_LEVEL > ERROR ) LOGGING_LEVEL = ERROR;
-    }
+
+        @Override
+        public void onChange()
+        {
+            // mutate and access the value directly, skip the methods
+            if ( value > ERROR ) value = ERROR;
+            if ( value < DEBUG ) value = DEBUG;
+        }
+
+    };
 
     //
     // Fields
@@ -174,7 +171,7 @@ public class Lumberjack
     public static void debug( String tag, String format, Object... params )
     {
         // ignore this if it's too high
-        if ( LOGGING_LEVEL > DEBUG )
+        if ( LoggingLevel.get() > DEBUG )
         {
             return;
         }
@@ -196,7 +193,7 @@ public class Lumberjack
     public static void info( String tag, String format, Object... params )
     {
         // ignore this if it's too high
-        if ( LOGGING_LEVEL > INFO )
+        if ( LoggingLevel.get() > INFO )
         {
             return;
         }

@@ -1,4 +1,4 @@
 /**
- * Property-esque values that can be listed in-game for the user to change.
+ * Options are easily-mutable variables that have overrideable listeners for value changes.
  */
 package com.github.obsidianarch.gvengine.core.options;

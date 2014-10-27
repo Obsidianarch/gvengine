@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the region and it's methods.
  *
  * @author Austin
- * @version 14.10.26
+ * @version 14.10.26b
  * @since 14.03.30
  */
 public class RegionTester
@@ -37,37 +37,33 @@ public class RegionTester
     // Options
     //
 
-    /**
-     * Enables or disables the vsync option
-     */
-    @Option( value = "VSync", autoValueChange = false )
-    @ToggleOption( { "Enabled", "Disabled" } )
-    public static boolean VSyncEnabled = false;
-
-    /**
-     * Changes the max fps OpenGL will render at.
-     */
-    @Option( "Max FPS" )
-    @SliderOption( minimum = -1, maximum = 120 )
-    public static int FPSCap = -1;
-
-    //
-    // Option Listeners
-    //
-
-    /**
-     * Listens for the VSync option to be changed.
-     *
-     * @param newValue
-     *         The new value of the option.
-     */
-    @OptionListener( { "VSync" } )
-    public static void onVSyncChange( Object newValue )
+    /** If VSync is enabled or not */
+    private static BooleanOption VSync = new BooleanOption()
     {
-        VSyncEnabled = newValue.toString().equalsIgnoreCase( "Enabled" );
-        Display.setVSyncEnabled( VSyncEnabled );
-        Lumberjack.info( "Tester", "VSync set to: %s ", newValue );
-    }
+
+        @Override
+        public void onChange()
+        {
+            Lumberjack.info( "RegionTester", "VSync set to: %b", value );
+            Display.setVSyncEnabled( value ); // update the property in OpenGL
+        }
+
+    };
+
+    /** The maximum number of frames per second to render at, -1 means no limit. */
+    private static IntOption FPSCap = new IntOption( -1 )
+    {
+
+        @Override
+        public void onChange()
+        {
+            if ( value <= 0 ) // all numbers zero and under are set to -1
+            {
+                value = -1;
+            }
+        }
+
+    };
 
     //
     // Methods
@@ -87,11 +83,6 @@ public class RegionTester
     public static void main( String[] args ) throws Exception
     {
         TestingHelper.CONFIG.read();
-        OptionManager.initialize( TestingHelper.CONFIG ); // initialize options from config file
-        OptionManager.initialize( args ); // initialize options from commandline (override the config file)
-
-        OptionManager.registerClass( "Scheduler", Scheduler.class );
-        OptionManager.registerClass( "Test", RegionTester.class );
         System.out.println();
 
         TestingHelper.createDisplay();
@@ -138,14 +129,7 @@ public class RegionTester
             }
             if ( Input.isBindingActive( "toggleVSync" ) )
             {
-                if ( VSyncEnabled )
-                {
-                    OptionManager.setValue( "VSync", "Disabled" );
-                }
-                else
-                {
-                    OptionManager.setValue( "VSync", "Enabled" );
-                }
+                VSync.set( !VSync.get() );
             }
             if ( Input.isBindingActive( "addLighting" ) )
             {
@@ -159,7 +143,7 @@ public class RegionTester
             Scheduler.doTick(); // ticks the scheduler
             renderScene( camera, region ); // render the scene
 
-            TestingHelper.updateDisplay( "Region Tester", FPSCap );
+            TestingHelper.updateDisplay( "Region Tester", FPSCap.get() );
         }
 
         TestingHelper.destroy(); // destroys everything
