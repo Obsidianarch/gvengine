@@ -3,11 +3,12 @@ package com.github.obsidianarch.gvengine.tests.chunkGenerators;
 import com.github.obsidianarch.gvengine.core.Chunk;
 import com.github.obsidianarch.gvengine.core.ChunkGenerator;
 import com.github.obsidianarch.gvengine.core.Material;
+import com.github.obsidianarch.gvengine.tests.materials.Materials;
 
 /**
  * Generates a sphere for the chunk.
  *
- * @version 14.10.26
+ * @version 14.10.30
  * @since 14.10.26
  */
 public class CGSphere extends ChunkGenerator
@@ -30,7 +31,7 @@ public class CGSphere extends ChunkGenerator
 
                     if ( sqrt <= ( Chunk.LENGTH / 2 ) )
                     {
-                        c.setMaterialAt( Material.GRASS, x, y, z );
+                        c.setMaterialAt( Materials.GRASS, x, y, z );
                     }
 
                 }

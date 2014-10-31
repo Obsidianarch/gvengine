@@ -3,7 +3,7 @@ package com.github.obsidianarch.gvengine.core.options;
 /**
  * Represents an option which can be
  *
- * @version 14.10.26b
+ * @version 14.10.28
  * @since 14.10.26b
  */
 public class BooleanOption extends Property
@@ -74,6 +74,16 @@ public class BooleanOption extends Property
     {
         this.value = value;
         onChange();
+    }
+
+    //
+    // Overrides
+    //
+
+    @Override
+    public String toString()
+    {
+        return String.valueOf( value );
     }
 
 }

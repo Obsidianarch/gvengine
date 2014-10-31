@@ -2,7 +2,6 @@ package com.github.obsidianarch.gvengine.tests.chunkGenerators;
 
 import com.github.obsidianarch.gvengine.core.Chunk;
 import com.github.obsidianarch.gvengine.core.ChunkGenerator;
-import com.github.obsidianarch.gvengine.core.Material;
 
 /**
  * The Modulus Chunk Generation method.

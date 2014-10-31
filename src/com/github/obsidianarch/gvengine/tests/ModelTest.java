@@ -34,7 +34,6 @@ public class ModelTest
      *
      * @throws Exception
      *         If there was a problem with the test.
-     *
      * @since 14.04.19
      */
     public static void main( String[] args ) throws Exception

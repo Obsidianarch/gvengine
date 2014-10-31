@@ -42,7 +42,7 @@ public class Chunk
     /**
      * The voxels in this chunk.
      */
-    private final byte[] voxels = new byte[ VOLUME ];
+    private final int[] voxels = new int[ VOLUME ];
 
     /**
      * The position of this chunk on the chunk grid.
@@ -205,29 +205,27 @@ public class Chunk
     /**
      * Sets the voxel material at the given index by the material's byte id.
      *
-     * @param b
-     *         The byte id of the material.
+     * @param id
+     *         The id of the material.
      * @param index
      *         The index in the array.
      *
      * @since 14.03.30
      */
-    public void setMaterialAt( byte b, int index )
+    public void setMaterialAt( int id, int index )
     {
-        byte prev = voxels[ index ];
+        int prev = voxels[ index ];
 
-        if ( prev == b )
+        if ( prev == id )
         {
             return;
             // no point in setting it to the same thing
             // THIS IS USEFUL (not necassarily for speed in the array setting method, though)
             // Scheduling a rebuild is completely useless and just wastes time and resources
-            // if the block at this index has not been changed, this was originally implemented
-            // in the if statement below, however implementing it here makes allows for a tiny
-            // tiny performance boost as we don't have to set an element in the array
+            // if the block at this index has not been changed.
         }
 
-        voxels[ index ] = b;
+        voxels[ index ] = id;
 
         if ( vbo == null )
         {
@@ -253,7 +251,7 @@ public class Chunk
      */
     public void setMaterialAt( Material mat, int index )
     {
-        setMaterialAt( mat.byteID, index );
+        setMaterialAt( mat.id, index );
     }
 
     /**
@@ -272,14 +270,14 @@ public class Chunk
      */
     public void setMaterialAt( Material mat, int x, int y, int z )
     {
-        setMaterialAt( mat.byteID, x, y, z );
+        setMaterialAt( mat.id, x, y, z );
     }
 
     /**
      * Sets the voxel material at the given local position by the material's byte id.
      *
-     * @param b
-     *         The byte id of the material.
+     * @param id
+     *         The id of the material.
      * @param x
      *         The local x position.
      * @param y
@@ -289,7 +287,7 @@ public class Chunk
      *
      * @since 14.03.30
      */
-    public void setMaterialAt( byte b, int x, int y, int z )
+    public void setMaterialAt( int id, int x, int y, int z )
     {
         // the voxel is out of bounds, divert the set material to the chunk containing the voxel
         if ( !inRange( x, 0, LENGTH ) || !inRange( y, 0, LENGTH ) || !inRange( z, 0, LENGTH ) )
@@ -309,11 +307,11 @@ public class Chunk
             z = ( int ) data[ 3 ];
 
             // set the material in the correct chunk
-            c.setMaterialAt( b, x, y, z );
+            c.setMaterialAt( id, x, y, z );
             return;
         }
 
-        setMaterialAt( b, x + ( y * LENGTH ) + ( z * ( AREA ) ) );
+        setMaterialAt( id, x + ( y * LENGTH ) + ( z * ( AREA ) ) );
     }
 
     //
@@ -337,13 +335,15 @@ public class Chunk
     private Object[] grabExternalVoxelData( int x, int y, int z )
     {
         Object[] data = new Object[ 5 ];
+
+        // no region, just return the default voxel
         if ( region == null )
         {
             data[ 0 ] = null;
             data[ 1 ] = Math.abs( x ) % LENGTH;
             data[ 2 ] = Math.abs( y ) % LENGTH;
             data[ 3 ] = Math.abs( z ) % LENGTH;
-            data[ 4 ] = Material.AIR;
+            data[ 4 ] = 0;
             return data;
         }
 
@@ -381,7 +381,7 @@ public class Chunk
         }
         else
         {
-            data[ 4 ] = Material.AIR;
+            data[ 4 ] = 0; // no voxel, return the default one
         }
 
         return data;
@@ -425,7 +425,7 @@ public class Chunk
         }
 
         Material mat = Material.getMaterial( voxels[ x + ( y * LENGTH ) + ( z * AREA ) ] ); // get the material
-        return mat == null ? Material.AIR : mat; // return AIR if the material could not be found, otherwise the material
+        return mat == null ? Material.getMaterial( 0 ) : mat; // return the default type if the material could not be found, otherwise the material
     }
 
     /**
@@ -435,7 +435,7 @@ public class Chunk
      *
      * @since 14.03.30
      */
-    public byte[] getVoxels()
+    public int[] getVoxels()
     {
         return voxels;
     }
@@ -580,7 +580,7 @@ public class Chunk
         sb.append( y ).append( ", " );
         sb.append( z ).append( ") = { " );
 
-        for ( byte b : voxels )
+        for ( int b : voxels )
         {
             sb.append( ( int ) b ).append( " " );
         }

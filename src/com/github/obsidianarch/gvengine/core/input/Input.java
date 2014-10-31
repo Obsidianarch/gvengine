@@ -105,8 +105,7 @@ public final class Input
     }
 
     /**
-     * Loads the input bindings from the configuration object.<BR>
-     * The input bindings will be read from the configuration object's data, however any bindings
+     * Loads the input bindings from the configuration object.<BR> The input bindings will be read from the configuration object's data, however any bindings
      * that already exist will be cleared.
      *
      * @param c

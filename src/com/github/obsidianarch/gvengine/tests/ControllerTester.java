@@ -62,7 +62,6 @@ public class ControllerTester
      *
      * @throws LWJGLException
      *         If there was a problem setting up LWJGL.
-     *
      * @since 14.03.30
      */
     public static void main( String[] args ) throws LWJGLException
@@ -238,7 +237,6 @@ public class ControllerTester
      *
      * @throws LWJGLException
      *         If the display couldn't be created.
-     *
      * @since 14.03.30
      */
     public static void setup() throws LWJGLException

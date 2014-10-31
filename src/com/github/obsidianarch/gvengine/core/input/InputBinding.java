@@ -71,6 +71,32 @@ public class InputBinding
     //
 
     /**
+     * Creates an InputBinding from a string, usually from a saved config file.
+     *
+     * @param s
+     *         The string input for an input binding.
+     *
+     * @return The InputBinding described by the text string.
+     *
+     * @since 14.03.30
+     */
+    public static InputBinding createInputBinding( String s )
+    {
+        int[] info = new int[ 4 ]; // medium, mode, mask, button
+        info[ 0 ] = Integer.parseInt( s.substring( 0, 1 ) );
+        info[ 1 ] = Integer.parseInt( s.substring( 1, 2 ) );
+        info[ 2 ] = Integer.parseInt( s.substring( 2, 3 ) );
+        info[ 3 ] = Integer.parseInt( s.substring( 3 ) );
+
+        InputMedium medium = InputMedium.values()[ info[ 0 ] ];
+        InputMode mode = InputMode.values()[ info[ 1 ] ];
+        InputMask mask = InputMask.values()[ info[ 2 ] ];
+        int button = info[ 3 ];
+
+        return new InputBinding( medium, mode, mask, button );
+    }
+
+    /**
      * @return The button number being used.
      */
     public final int getButton()
@@ -101,6 +127,10 @@ public class InputBinding
     {
         return mask;
     }
+
+    //
+    // Overrides
+    //
 
     /**
      * Checks to see if the current state of input will active this binding.
@@ -143,7 +173,7 @@ public class InputBinding
     }
 
     //
-    // Overrides
+    // Static
     //
 
     @Override
@@ -157,36 +187,6 @@ public class InputBinding
         s += getButton();
 
         return s;
-    }
-
-    //
-    // Static
-    //
-
-    /**
-     * Creates an InputBinding from a string, usually from a saved config file.
-     *
-     * @param s
-     *         The string input for an input binding.
-     *
-     * @return The InputBinding described by the text string.
-     *
-     * @since 14.03.30
-     */
-    public static InputBinding createInputBinding( String s )
-    {
-        int[] info = new int[ 4 ]; // medium, mode, mask, button
-        info[ 0 ] = Integer.parseInt( s.substring( 0, 1 ) );
-        info[ 1 ] = Integer.parseInt( s.substring( 1, 2 ) );
-        info[ 2 ] = Integer.parseInt( s.substring( 2, 3 ) );
-        info[ 3 ] = Integer.parseInt( s.substring( 3 ) );
-
-        InputMedium medium = InputMedium.values()[ info[ 0 ] ];
-        InputMode mode = InputMode.values()[ info[ 1 ] ];
-        InputMask mask = InputMask.values()[ info[ 2 ] ];
-        int button = info[ 3 ];
-
-        return new InputBinding( medium, mode, mask, button );
     }
 
 }

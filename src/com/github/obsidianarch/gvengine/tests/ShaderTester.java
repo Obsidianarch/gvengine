@@ -32,7 +32,6 @@ public class ShaderTester
      *         If the window couldn't be created.
      * @throws IOException
      *         If the shader files couldn't be read.
-     *
      * @since 14.03.30
      */
     public static void main( String[] args ) throws LWJGLException, IOException

@@ -119,7 +119,7 @@ public final class RegionIO
         Chunk[] chunks = region.getChunks();
 
         int[][] chunkCoords = new int[ chunks.length ][ 3 ];
-        byte[][] voxels = new byte[ chunks.length ][ chunks[ 0 ].getVoxels().length ];
+        int[][] voxels = new int[ chunks.length ][ chunks[ 0 ].getVoxels().length ];
 
         for ( int i = 0; i < chunks.length; i++ )
         {

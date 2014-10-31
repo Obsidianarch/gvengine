@@ -160,6 +160,46 @@ public class VertexBufferObject
     //
 
     /**
+     * Merges multiple VertexBufferObjects into one.
+     *
+     * @param pc
+     *         The positioning capacity.
+     * @param cc
+     *         The channel capacity.
+     * @param nc
+     *         The normal positioning capacity.
+     * @param vbos
+     *         The VertexBufferObjects to merge.
+     *
+     * @return The merged VertexBufferObject.
+     *
+     * @since 14.03.30
+     */
+    public static VertexBufferObject merge( int pc, int cc, int nc, VertexBufferObject... vbos )
+    {
+        VertexBufferObject merged = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED );
+
+        FloatGapList positions = new FloatGapList( pc );
+        FloatGapList colors = new FloatGapList( cc );
+        FloatGapList normals = new FloatGapList( nc );
+
+        // add data to the expanding arrays
+        for ( VertexBufferObject vbo : vbos )
+        {
+            positions.addAll( vbo.getCoordinates() );
+            colors.addAll( vbo.getChannels() );
+            normals.addAll( vbo.getNormals() );
+        }
+
+        // set the data of our VBO
+        merged.setCoordinates( positions );
+        merged.setChannels( colors );
+        merged.setNormalCoordinates( normals );
+
+        return merged;
+    }
+
+    /**
      * {@code glDeleteBuffers(binding)}
      *
      * @since 14.03.30
@@ -179,9 +219,9 @@ public class VertexBufferObject
         FloatBuffer interleavedBuffer = BufferUtils.createFloatBuffer( coordinates.size() + channels.size() + normals.size() ); // the complete buffer that contains all the data
 
         // insert data into our buffer
-        MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0,                            cs.channels    + ns.coordinates );
-        MathHelper.insertBuffer( channels,    interleavedBuffer, cs.channels,    ps.coordinates,               ns.coordinates + ps.coordinates );
-        MathHelper.insertBuffer( normals,     interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels    );
+        MathHelper.insertBuffer( coordinates, interleavedBuffer, ps.coordinates, 0, cs.channels + ns.coordinates );
+        MathHelper.insertBuffer( channels, interleavedBuffer, cs.channels, ps.coordinates, ns.coordinates + ps.coordinates );
+        MathHelper.insertBuffer( normals, interleavedBuffer, ns.coordinates, ps.coordinates + cs.channels, ps.coordinates + cs.channels );
 
         // no binding has been created for this VBO yet, create one now (saves resources if the VBO is never used)
         if ( glBinding == -1 )
@@ -225,6 +265,10 @@ public class VertexBufferObject
         glPopMatrix(); // stop editing our matrix
     }
 
+    //
+    // Adders
+    //
+
     /**
      * Provides OpenGL with the vertex data (positions, colors, and normals) for the VBO.
      *
@@ -243,10 +287,6 @@ public class VertexBufferObject
             glNormalPointer( GL_FLOAT, stride, ( ps.coordinates + cs.channels ) * 4 ); // ...tell OpenGL where our normals are
         }
     }
-
-    //
-    // Adders
-    //
 
     /**
      * @param array
@@ -298,6 +338,10 @@ public class VertexBufferObject
         dataValid = false;
     }
 
+    //
+    // Setters
+    //
+
     /**
      * @param array
      *         The expanding array containing the new normals.
@@ -307,10 +351,6 @@ public class VertexBufferObject
         normals.addAll( array );
         dataValid = false;
     }
-
-    //
-    // Setters
-    //
 
     /**
      * Changes the way OpenGL renders the vertices.
@@ -335,42 +375,12 @@ public class VertexBufferObject
 
     /**
      * @param array
-     *         The new positioning data.
-     */
-    public void setCoordinates( FloatGapList array )
-    {
-        coordinates = array;
-        dataValid = false;
-    }
-
-    /**
-     * @param array
      *         The new color data.
      */
     public void setChannels( float... array )
     {
         channels = new FloatGapList( array.length );
         addChannels( array );
-    }
-
-    /**
-     * @param array
-     *         The new color data.
-     */
-    public void setChannels( FloatGapList array )
-    {
-        channels = array;
-        dataValid = false;
-    }
-
-    /**
-     * @param array
-     *         The new normal data.
-     */
-    public void setNormals( float... array )
-    {
-        normals = new FloatGapList( array.length );
-        addNormals( array );
     }
 
     /**
@@ -382,10 +392,6 @@ public class VertexBufferObject
         normals = array;
         dataValid = false;
     }
-
-    //
-    // Getters
-    //
 
     /**
      * @return If the data OpenGL has is valid.
@@ -403,12 +409,36 @@ public class VertexBufferObject
         return coordinates;
     }
 
+    //
+    // Getters
+    //
+
+    /**
+     * @param array
+     *         The new positioning data.
+     */
+    public void setCoordinates( FloatGapList array )
+    {
+        coordinates = array;
+        dataValid = false;
+    }
+
     /**
      * @return The color channels.
      */
     public FloatGapList getChannels()
     {
         return channels;
+    }
+
+    /**
+     * @param array
+     *         The new color data.
+     */
+    public void setChannels( FloatGapList array )
+    {
+        channels = array;
+        dataValid = false;
     }
 
     /**
@@ -423,54 +453,24 @@ public class VertexBufferObject
     // Overrides
     //
 
-    @Override
-    public String toString()
+    /**
+     * @param array
+     *         The new normal data.
+     */
+    public void setNormals( float... array )
     {
-        return String.format( "core.vbo{ glBinding: %1d | vertices: %2d | valid: %3b }", glBinding, coordinates.size() / ps.coordinates, isValid() );
+        normals = new FloatGapList( array.length );
+        addNormals( array );
     }
 
     //
     // Static
     //
 
-    /**
-     * Merges multiple VertexBufferObjects into one.
-     *
-     * @param pc
-     *         The positioning capacity.
-     * @param cc
-     *         The channel capacity.
-     * @param nc
-     *         The normal positioning capacity.
-     * @param vbos
-     *         The VertexBufferObjects to merge.
-     *
-     * @return The merged VertexBufferObject.
-     *
-     * @since 14.03.30
-     */
-    public static VertexBufferObject merge( int pc, int cc, int nc, VertexBufferObject... vbos )
+    @Override
+    public String toString()
     {
-        VertexBufferObject merged = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED );
-
-        FloatGapList positions = new FloatGapList( pc );
-        FloatGapList colors = new FloatGapList( cc );
-        FloatGapList normals = new FloatGapList( nc );
-
-        // add data to the expanding arrays
-        for ( VertexBufferObject vbo : vbos )
-        {
-            positions.addAll( vbo.getCoordinates() );
-            colors.addAll( vbo.getChannels() );
-            normals.addAll( vbo.getNormals() );
-        }
-
-        // set the data of our VBO
-        merged.setCoordinates( positions );
-        merged.setChannels( colors );
-        merged.setNormalCoordinates( normals );
-
-        return merged;
+        return String.format( "core.vbo{ glBinding: %1d | vertices: %2d | valid: %3b }", glBinding, coordinates.size() / ps.coordinates, isValid() );
     }
 
 }

@@ -1,19 +1,14 @@
 package com.github.obsidianarch.gvengine.tests;
 
-import com.github.obsidianarch.gvengine.core.Chunk;
-import com.github.obsidianarch.gvengine.core.ChunkGenerator;
-import com.github.obsidianarch.gvengine.core.Material;
-import com.github.obsidianarch.gvengine.core.Region;
-import com.github.obsidianarch.gvengine.core.Camera;
-import com.github.obsidianarch.gvengine.core.Controller;
-import com.github.obsidianarch.gvengine.core.Scheduler;
+import com.github.obsidianarch.gvengine.core.*;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputMask;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.core.input.InputMode;
-import com.github.obsidianarch.gvengine.core.options.*;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import com.github.obsidianarch.gvengine.core.io.RegionIO;
+import com.github.obsidianarch.gvengine.core.options.BooleanOption;
+import com.github.obsidianarch.gvengine.core.options.IntOption;
 import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGModulus;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -37,7 +32,9 @@ public class RegionTester
     // Options
     //
 
-    /** If VSync is enabled or not */
+    /**
+     * If VSync is enabled or not
+     */
     private static BooleanOption VSync = new BooleanOption()
     {
 
@@ -50,7 +47,9 @@ public class RegionTester
 
     };
 
-    /** The maximum number of frames per second to render at, -1 means no limit. */
+    /**
+     * The maximum number of frames per second to render at, -1 means no limit.
+     */
     private static IntOption FPSCap = new IntOption( -1 )
     {
 
@@ -77,7 +76,6 @@ public class RegionTester
      *
      * @throws Exception
      *         If there was a problem in the test.
-     *
      * @since 14.03.30
      */
     public static void main( String[] args ) throws Exception

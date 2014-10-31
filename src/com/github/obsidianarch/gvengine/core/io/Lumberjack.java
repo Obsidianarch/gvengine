@@ -1,7 +1,6 @@
 package com.github.obsidianarch.gvengine.core.io;
 
 import com.github.obsidianarch.gvengine.core.options.IntOption;
-import jdk.nashorn.internal.runtime.Logging;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -10,11 +9,11 @@ import java.util.Date;
 
 /**
  * The logging utility used to display messages in the console and write to the log file.
- *
+ * <p>
  * TODO maybe members will not be static in the future?
  *
- * @since 14.08.03b
  * @version 14.08.03c
+ * @since 14.08.03b
  */
 public class Lumberjack
 {
@@ -37,19 +36,6 @@ public class Lumberjack
      * Highest level of logging, always displayed. Used for errors and problems.
      */
     public static final int ERROR = 2;
-
-    /**
-     * Avoids a method call every time something is written.
-     * I figured "why not make it public?" And couldn't think of a reason not to,
-     * so I did. I also couldn't think of a reason to make it public, but that's
-     * not my problem.
-     */
-    public static final String LINE_SEPARATOR = System.lineSeparator();
-
-    //
-    // Options
-    //
-
     /**
      * Property for the current logging level.
      */
@@ -60,16 +46,30 @@ public class Lumberjack
         public void onChange()
         {
             // mutate and access the value directly, skip the methods
-            if ( value > ERROR ) value = ERROR;
-            if ( value < DEBUG ) value = DEBUG;
+            if ( value > ERROR )
+            {
+                value = ERROR;
+            }
+            if ( value < DEBUG )
+            {
+                value = DEBUG;
+            }
         }
 
     };
 
     //
+    // Options
+    //
+    /**
+     * Avoids a method call every time something is written. I figured "why not make it public?" And couldn't think of a reason not to, so I did. I also
+     * couldn't think of a reason to make it public, but that's not my problem.
+     */
+    public static final String LINE_SEPARATOR = System.lineSeparator();
+
+    //
     // Fields
     //
-
     /**
      * The DateFormat used to format the current time in the logging messages
      */
@@ -88,7 +88,7 @@ public class Lumberjack
      * Attempts to open a new log file.
      *
      * @param f
-     *          The new log file.
+     *         The new log file.
      *
      * @return If the opening was a success or not.
      */
@@ -119,11 +119,11 @@ public class Lumberjack
      * Prints the information about the message.
      *
      * @param ps
-     *          The PrintStream to write to.
+     *         The PrintStream to write to.
      * @param level
-     *          The level (DEBUG, INFO, ERROR).
+     *         The level (DEBUG, INFO, ERROR).
      * @param tag
-     *          The tag used for debugging.
+     *         The tag used for debugging.
      */
     private static void printInfo( PrintStream ps, String level, String tag, String format, Object... params )
     {
@@ -162,11 +162,11 @@ public class Lumberjack
      * Formats the writes the debug message.
      *
      * @param tag
-     *          Short message describing the task.
+     *         Short message describing the task.
      * @param format
-     *          The formatting string.
+     *         The formatting string.
      * @param params
-     *          The parameters passed to the String formatter to match the formatting.
+     *         The parameters passed to the String formatter to match the formatting.
      */
     public static void debug( String tag, String format, Object... params )
     {
@@ -184,11 +184,11 @@ public class Lumberjack
      * Formats then writes the info message.
      *
      * @param tag
-     *          Short message describing the task.
+     *         Short message describing the task.
      * @param format
-     *          The formatting string.
+     *         The formatting string.
      * @param params
-     *          The parameters passed to the String formatter to match the formatting.
+     *         The parameters passed to the String formatter to match the formatting.
      */
     public static void info( String tag, String format, Object... params )
     {
@@ -205,11 +205,11 @@ public class Lumberjack
      * Formats then writes the error message.
      *
      * @param tag
-     *          Short message describing the task.
+     *         Short message describing the task.
      * @param format
-     *          The formatting string.
+     *         The formatting string.
      * @param params
-     *          The parameters passed to the String formatter to match the formatting.
+     *         The parameters passed to the String formatter to match the formatting.
      */
     public static void error( String tag, String format, Object... params )
     {
@@ -220,9 +220,9 @@ public class Lumberjack
      * Logs a throwable and it's stack trace.
      *
      * @param tag
-     *          The tag used for debugging.
+     *         The tag used for debugging.
      * @param t
-     *          The throwable which was encountered.
+     *         The throwable which was encountered.
      */
     public static void throwable( String tag, Throwable t )
     {

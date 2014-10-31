@@ -21,7 +21,6 @@ public class RequirementsTester
      *
      * @throws Exception
      *         If there was a problem with LWJGL.
-     *
      * @since 14.03.30
      */
     public static void main( String[] args ) throws Exception

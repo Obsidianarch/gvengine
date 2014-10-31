@@ -53,6 +53,16 @@ public class ShaderProgram
     //
 
     /**
+     * Disables all active ShaderPrograms.
+     *
+     * @since 14.03.30
+     */
+    public static void disable()
+    {
+        glUseProgramObjectARB( 0 );
+    }
+
+    /**
      * Enables the use of this ShaderProgram.
      *
      * @since 14.03.30
@@ -96,6 +106,10 @@ public class ShaderProgram
         linked = ( glGetObjectParameteriARB( programID, GL_OBJECT_LINK_STATUS_ARB ) == GL_TRUE );
     }
 
+    //
+    // Getters
+    //
+
     /**
      * Checks the validity of this ShaderProgram.
      *
@@ -107,10 +121,6 @@ public class ShaderProgram
         validated = ( glGetObjectParameteriARB( programID, GL_OBJECT_VALIDATE_STATUS_ARB ) == GL_TRUE );
     }
 
-    //
-    // Getters
-    //
-
     /**
      * @return If the ShaderProgram was successfully validated.
      */
@@ -119,26 +129,16 @@ public class ShaderProgram
         return validated;
     }
 
+    //
+    // Static
+    //
+
     /**
      * @return If the ShaderProgram was successfully linked to the Shaders.
      */
     public boolean isLinked()
     {
         return linked;
-    }
-
-    //
-    // Static
-    //
-
-    /**
-     * Disables all active ShaderPrograms.
-     *
-     * @since 14.03.30
-     */
-    public static void disable()
-    {
-        glUseProgramObjectARB( 0 );
     }
 
 }

@@ -2,14 +2,13 @@ package com.github.obsidianarch.gvengine.tests.chunkGenerators;
 
 import com.github.obsidianarch.gvengine.core.Chunk;
 import com.github.obsidianarch.gvengine.core.ChunkGenerator;
-import com.github.obsidianarch.gvengine.core.Material;
+import com.github.obsidianarch.gvengine.tests.materials.Materials;
 
 /**
- * A cross between {@code CGModulus} and {@code CGSphere} where the blocks are
- * positioned as they would in {@code CGSphere} while the material is chosen as
+ * A cross between {@code CGModulus} and {@code CGSphere} where the blocks are positioned as they would in {@code CGSphere} while the material is chosen as
  * would be in {@code CGModulus}.
  *
- * @version 14.10.26
+ * @version 14.10.30
  * @since 14.10.26
  */
 public class CGSphereModulus extends ChunkGenerator
@@ -32,7 +31,12 @@ public class CGSphereModulus extends ChunkGenerator
 
                     if ( sqrt <= ( Chunk.LENGTH / 2 ) )
                     {
-                        byte materialID = ( byte ) ( ( ( ( x % 3 ) + ( y % 3 ) + ( z % 3 ) ) % 3 ) + 1 );
+                        int materialID = // the material changes at every position in every direction
+                                ( x % Materials.MATERIAL_COUNT ) +
+                                ( y % Materials.MATERIAL_COUNT ) +
+                                ( z % Materials.MATERIAL_COUNT );
+                        materialID %= Materials.MATERIAL_COUNT; // get the last remainder
+
                         c.setMaterialAt( materialID, x, y, z );
                     }
 

@@ -31,7 +31,6 @@ public class VBOTester
      *
      * @throws Exception
      *         If something couldn't be initialized.
-     *
      * @since 14.03.30
      */
     private static void init() throws Exception
@@ -95,7 +94,6 @@ public class VBOTester
      *
      * @throws Exception
      *         If a problem happened setting up or running the test.
-     *
      * @since 14.03.30
      */
     public static void main( String[] args ) throws Exception

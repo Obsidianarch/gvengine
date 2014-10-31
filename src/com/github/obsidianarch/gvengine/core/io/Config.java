@@ -1,7 +1,7 @@
 package com.github.obsidianarch.gvengine.core.io;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.HashMap;
 
 /**
  * Reads and writes human readable configuration files.
@@ -21,16 +21,14 @@ public class Config
      * The file of this config.
      */
     private final File file;
-
-    /**
-     * The tags and their data.
-     */
-    private HashMap< String, HashMap< String, String > > tags = new HashMap<>();
-
     /**
      * The configuration format of this Config file.
      */
     private final ConfigurationFormat configurationFormat;
+    /**
+     * The tags and their data.
+     */
+    private HashMap< String, HashMap< String, String > > tags = new HashMap<>();
 
     //
     // Constructors
@@ -42,7 +40,7 @@ public class Config
      * @param f
      *         The file of configuration.
      * @param configurationFormat
-     *          The ConfigurationFormat which is used to read and write this Config file.
+     *         The ConfigurationFormat which is used to read and write this Config file.
      *
      * @since 14.03.30
      */
@@ -132,7 +130,7 @@ public class Config
     public HashMap< String, String > getTagData( String tagName )
     {
         HashMap< String, String > data = tags.get( tagName );
-        return data == null ? new HashMap< String, String >() : data; // return an empty map if there was no data for the tag
+        return data == null ? new HashMap<>() : data; // return an empty map if there was no data for the tag
     }
 
 }

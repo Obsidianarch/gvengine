@@ -3,9 +3,8 @@ package com.github.obsidianarch.gvengine.tests;
 import com.github.obsidianarch.gvengine.core.*;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
-import com.github.obsidianarch.gvengine.core.options.*;
-import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGModulus;
-import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGSphere;
+import com.github.obsidianarch.gvengine.core.options.BooleanOption;
+import com.github.obsidianarch.gvengine.core.options.IntOption;
 import com.github.obsidianarch.gvengine.tests.chunkGenerators.CGSphereModulus;
 import org.lwjgl.opengl.Display;
 
@@ -25,7 +24,9 @@ public class ChunkTester
     // Options
     //
 
-    /** If VSync is enabled or not */
+    /**
+     * If VSync is enabled or not
+     */
     private static BooleanOption VSyncEnabled = new BooleanOption()
     {
 
@@ -38,7 +39,9 @@ public class ChunkTester
 
     };
 
-    /** The maximum number of frames per second to render at, -1 means no limit. */
+    /**
+     * The maximum number of frames per second to render at, -1 means no limit.
+     */
     private static IntOption FPSCap = new IntOption( -1 )
     {
 
@@ -65,7 +68,6 @@ public class ChunkTester
      *
      * @throws Exception
      *         If something went wrong.
-     *
      * @since 14.03.30
      */
     public static void main( String... args ) throws Exception
@@ -129,7 +131,7 @@ public class ChunkTester
      *         The player's controller.
      * @param c
      *         The chunk that is being tested.
-     *@param chunkGenerator
+     * @param chunkGenerator
      *         The chunk generator used to regenerate the chunk.
      *
      * @since 14.03.30
@@ -164,7 +166,7 @@ public class ChunkTester
             // if a random number 0-9999 is less than 10 (0.1% chance)
             if ( Math.round( Math.random() * 10000 ) < 10 )
             {
-                c.setMaterialAt( Material.AIR, i );
+                c.setMaterialAt( 0, i );
             }
         }
     }

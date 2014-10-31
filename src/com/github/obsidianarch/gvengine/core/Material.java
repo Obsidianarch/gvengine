@@ -1,50 +1,30 @@
 package com.github.obsidianarch.gvengine.core;
 
-import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
+
+import java.util.ArrayList;
 
 /**
  * The properties for a type of voxel.
  *
  * @author Austin
- * @version 14.03.30
+ * @version 14.10.28
  * @since 14.03.30
  */
 public class Material
 {
 
     //
-    // Static Fields
-    //
-
-    /**
-     * An array containing all in-game materials, do not write anything to this.
-     */
-    private static final Material[] materials = new Material[ 256 ];
-
-    //
     // Constants
     //
 
-    /**
-     * Used to represent nothing, written as {@code 14.03.30000}
-     */
-    public static final Material AIR = new Material( new Color( 255, 255, 255, 0 ), false, 0 );
+    /** The maximum number of materials the ArrayList can hold */
+    private static final int MAX_MATERIALS = Short.MAX_VALUE;
 
     /**
-     * The stone material, written as {@code 14.03.3001}.
+     * An array containing all in-game materials.
      */
-    public static final Material STONE = new Material( Color.LTGREY, true, 1 );
-
-    /**
-     * The grass material, written as {@code 14.03.3010}.
-     */
-    public static final Material GRASS = new Material( Color.GREEN, true, 2 );
-
-    /**
-     * The dirt material, written as {@code 14.03.3011}.
-     */
-    public static final Material DIRT = new Material( Color.ORANGE, true, 3 );
+    private static final Material[] materials = new Material[ MAX_MATERIALS ];
 
     //
     // Final Fields
@@ -61,14 +41,9 @@ public class Material
     public final boolean active;
 
     /**
-     * The id of the voxel in the index.
+     * The index of this material in the material array.
      */
-    public final int indexID;
-
-    /**
-     * The id of the voxel as a byte. (indexID - 128)
-     */
-    public final byte byteID;
+    public final int id;
 
     //
     // Constructors
@@ -81,19 +56,30 @@ public class Material
      *         The color of a voxel with this material.
      * @param active
      *         If a voxel with this material should be rendered or not.
-     * @param byteID
-     *         The (unsigned) byte id of the material in the index array.
+     * @param id
+     *         The id of the material, doubles as the index in the material array, must not be previously assigned.
+     *         [0, 32767].
+     *
+     * @throws java.lang.IllegalArgumentException
+     *          If {@code materials[ id ] != null}.
      *
      * @since 14.03.30
      */
-    public Material( ReadableColor color, boolean active, int byteID )
+    public Material( ReadableColor color, boolean active, int id ) throws IllegalArgumentException
     {
+        // check to make sure that the slot is empty, it causes more headaches trying to figure it out
+        // if an ID is a duplicate than just choosing a new ID would be.
+        if ( materials[ id ] != null )
+        {
+            throw new IllegalArgumentException( "Material slot already filled: " + id );
+        }
+
+        // set the properties of the material
         this.color = color;
         this.active = active;
-        this.byteID = ( byte ) byteID;
-        indexID = byteID + 128;
+        this.id = id;
 
-        materials[ indexID ] = this; // add it to the materials array for lookup
+        materials[ id ] = this;
     }
 
     //
@@ -101,16 +87,16 @@ public class Material
     //
 
     /**
-     * @param b
-     *         The byte id for the material.
+     * @param id
+     *         The id of the Material.
      *
-     * @return The material for the byte id.
+     * @return The material at the given id.
      *
      * @since 14.03.30
      */
-    public static Material getMaterial( byte b )
+    public static Material getMaterial( int id )
     {
-        return materials[ b + 128 ];
+        return materials[ id ];
     }
 
 }

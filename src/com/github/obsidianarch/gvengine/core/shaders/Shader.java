@@ -80,7 +80,6 @@ public class Shader
      *
      * @throws IOException
      *         If the file couldn't be read.
-     *
      * @since 14.03.30
      */
     public void setSource( File f ) throws IOException

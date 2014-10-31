@@ -5,6 +5,7 @@ import com.github.obsidianarch.gvengine.core.options.BooleanOption;
 import com.github.obsidianarch.gvengine.core.options.IntOption;
 import org.lwjgl.Sys;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,7 +14,7 @@ import java.util.Iterator;
  * Maintains a schedule of events and when they need to be executed.
  *
  * @author Austin
- * @version 14.08.03b
+ * @version 14.10.30
  * @since 14.03.30
  */
 public final class Scheduler
@@ -23,16 +24,24 @@ public final class Scheduler
     // Options
     //
 
-    /** The maximum number of events dispatched every tick. */
+    /**
+     * The maximum number of events dispatched every tick.
+     */
     private static IntOption MaxEvents = new IntOption( 8 );
 
-    /** The maximum number of milliseconds that a single scheduling tick can take. */
+    /**
+     * The maximum number of milliseconds that a single scheduling tick can take.
+     */
     private static IntOption MaxTickTime = new IntOption( 10 );
 
-    /** When true, the timed events will be restricted to the {@code MaxEvents} as well. */
+    /**
+     * When true, the timed events will be restricted to the {@code MaxEvents} as well.
+     */
     private static BooleanOption TimedEventsThrottled = new BooleanOption( true );
 
-    /** When true, all event scheduling and dispatching is logged to the console. */
+    /**
+     * When true, all event scheduling and dispatching is logged to the console.
+     */
     private static BooleanOption LogOutput = new BooleanOption( false );
 
     //
@@ -368,6 +377,14 @@ public final class Scheduler
             {
                 Lumberjack.error( "Scheduler", "Failed to invoke \"%s.%s()\"", e.target.getClass().getSimpleName(), e.action.getName() );
                 Lumberjack.throwable( "Scheduler", ex );
+
+                // if it's an ITE, then also log the cause of the exception
+                if ( ex instanceof InvocationTargetException )
+                {
+                    InvocationTargetException ite = ( InvocationTargetException ) ex;
+                    Lumberjack.error( "Scheduler", "InvocationTargetException Cause:" );
+                    Lumberjack.throwable( "Scheduler", ite.getCause() );
+                }
             }
 
             if ( LogOutput.get() )
@@ -546,8 +563,8 @@ public final class Scheduler
             }
             Event e = ( Event ) obj;
 
-            if ( e.action.equals( action ) && ( target == e.target ) && ( delay == e.delay ) && ( executionTime == e.executionTime )
-                    && ( parameters.length == e.parameters.length ) )
+            if ( e.action.equals( action ) && ( target == e.target ) && ( delay == e.delay )
+                    && ( executionTime == e.executionTime ) && ( parameters.length == e.parameters.length ) )
             {
 
                 for ( int i = 0; i < parameters.length; i++ )

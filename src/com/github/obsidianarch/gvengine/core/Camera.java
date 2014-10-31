@@ -1,5 +1,7 @@
 package com.github.obsidianarch.gvengine.core;
 
+import com.github.obsidianarch.gvengine.core.options.FloatOption;
+
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
@@ -10,8 +12,8 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
  *
  * @author Austin
  * @version 14.03.30
- * @see Controller
  * @since 14.03.30
+ * @see Controller
  */
 public class Camera
 {
@@ -65,39 +67,6 @@ public class Camera
     //
 
     /**
-     * Sets the x coordinate of the camera.
-     *
-     * @param x
-     *         The new x position of the camera.
-     */
-    public void setX( float x )
-    {
-        this.x = x;
-    }
-
-    /**
-     * Sets the y coordinate of the camera.
-     *
-     * @param y
-     *         The new y position of the camera.
-     */
-    public void setY( float y )
-    {
-        this.y = y;
-    }
-
-    /**
-     * Sets the z coordinate of the camera.
-     *
-     * @param z
-     *         The new z position of the camera.
-     */
-    public void setZ( float z )
-    {
-        this.z = z;
-    }
-
-    /**
      * Sets the position of the camera.
      *
      * @param x
@@ -115,12 +84,133 @@ public class Camera
     }
 
     /**
+     * Sets the rotation of the camera.
+     *
+     * @param pitch
+     *         The rotation around the x axis.
+     * @param yaw
+     *         The rotation around the y axis.
+     * @param roll
+     *         The rotation around the z axis.
+     */
+    public void setRotation( float pitch, float yaw, float roll )
+    {
+        setPitch( pitch );
+        setYaw( yaw );
+        setRoll( roll );
+    }
+
+    /**
+     * Sets the maximum pitch the camera can go to, 90° is directly forward.
+     *
+     * @param max
+     *         The highest pitch the camera can go to.
+     *
+     * @since 14.03.30
+     */
+    public void setMaximumPitch( float max )
+    {
+        maxPitch = max % 360;
+        maxPitch = 90 - maxPitch;
+        if ( maxPitch < 0 )
+        {
+            maxPitch += 360;
+        }
+    }
+
+    /**
+     * Sets the minimum pitch the camera can go to, 90� is directly forward.
+     *
+     * @param min
+     *         The lowest pitch the camera can go to.
+     *
+     * @since 14.03.30
+     */
+    public void setMinimumPitch( float min )
+    {
+        minPitch = min % 360;
+        minPitch = 90 - minPitch;
+        if ( minPitch < 0 )
+        {
+            minPitch += 360;
+        }
+    }
+
+    /**
+     * @return The x position of the camera.
+     */
+    public float getX()
+    {
+        return x;
+    }
+
+    /**
+     * Sets the x coordinate of the camera.
+     *
+     * @param x
+     *         The new x position of the camera.
+     */
+    public void setX( float x )
+    {
+        this.x = x;
+    }
+
+    /**
+     * @return The y position of the camera.
+     */
+    public float getY()
+    {
+        return y;
+    }
+
+    /**
+     * Sets the y coordinate of the camera.
+     *
+     * @param y
+     *         The new y position of the camera.
+     */
+    public void setY( float y )
+    {
+        this.y = y;
+    }
+
+    /**
+     * @return The z position of the camera.
+     */
+    public float getZ()
+    {
+        return z;
+    }
+
+    /**
+     * Sets the z coordinate of the camera.
+     *
+     * @param z
+     *         The new z position of the camera.
+     */
+    public void setZ( float z )
+    {
+        this.z = z;
+    }
+
+    //
+    // Getters
+    //
+
+    /**
+     * @return The rotation around the x axis.
+     */
+    public float getPitch()
+    {
+        return pitch;
+    }
+
+    /**
      * Sets the pitch of the camera.
      *
      * @param pitch
      *         The rotation around the x axis.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public void setPitch( float pitch )
@@ -149,6 +239,14 @@ public class Camera
     }
 
     /**
+     * @return The rotation around the y axis.
+     */
+    public float getYaw()
+    {
+        return yaw;
+    }
+
+    /**
      * Sets the yaw of the camera.
      *
      * @param yaw
@@ -161,6 +259,14 @@ public class Camera
             yaw += 360;
         }
         this.yaw = yaw % 360;
+    }
+
+    /**
+     * @return The rotation around the z axis.
+     */
+    public float getRoll()
+    {
+        return roll;
     }
 
     /**
@@ -178,113 +284,6 @@ public class Camera
         this.roll = roll % 360;
     }
 
-    /**
-     * Sets the rotation of the camera.
-     *
-     * @param pitch
-     *         The rotation around the x axis.
-     * @param yaw
-     *         The rotation around the y axis.
-     * @param roll
-     *         The rotation around the z axis.
-     */
-    public void setRotation( float pitch, float yaw, float roll )
-    {
-        setPitch( pitch );
-        setYaw( yaw );
-        setRoll( roll );
-    }
-
-    /**
-     * Sets the maximum pitch the camera can go to, 90� is directly forward.
-     *
-     * @param max
-     *         The highest pitch the camera can go to.
-     *
-     * @version 14.03.30
-     * @since 14.03.30
-     */
-    public void setMaximumPitch( float max )
-    {
-        maxPitch = max % 360;
-        maxPitch = 90 - maxPitch;
-        if ( maxPitch < 0 )
-        {
-            maxPitch += 360;
-        }
-    }
-
-    /**
-     * Sets the minimum pitch the camera can go to, 90� is directly forward.
-     *
-     * @param min
-     *         The lowest pitch the camera can go to.
-     *
-     * @version 14.03.30
-     * @since 14.03.30
-     */
-    public void setMinimumPitch( float min )
-    {
-        minPitch = min % 360;
-        minPitch = 90 - minPitch;
-        if ( minPitch < 0 )
-        {
-            minPitch += 360;
-        }
-    }
-
-    //
-    // Getters
-    //
-
-    /**
-     * @return The x position of the camera.
-     */
-    public float getX()
-    {
-        return x;
-    }
-
-    /**
-     * @return The y position of the camera.
-     */
-    public float getY()
-    {
-        return y;
-    }
-
-    /**
-     * @return The z position of the camera.
-     */
-    public float getZ()
-    {
-        return z;
-    }
-
-    /**
-     * @return The rotation around the x axis.
-     */
-    public float getPitch()
-    {
-        return pitch;
-    }
-
-    /**
-     * @return The rotation around the y axis.
-     */
-    public float getYaw()
-    {
-        return yaw;
-    }
-
-    /**
-     * @return The rotation around the z axis.
-     */
-    public float getRoll()
-    {
-        return roll;
-    }
-
     //
     // Actions
     //
@@ -292,15 +291,16 @@ public class Camera
     /**
      * Rotates and translates the viewport of OpenGL to the camera's rotation and position.
      *
-     * @version 14.03.30
      * @since 14.03.30
      */
     public void lookThrough()
     {
-        glRotatef( pitch, 1, 0, 0 ); // set the pitch
-        glRotatef( yaw, 0, 1, 0 ); // set the yaw
-        glRotatef( roll, 0, 0, 1 ); // set the roll
+        //         angle, x, y, z    // rotate _______ degrees around the _ axis
+        glRotatef( pitch, 1, 0, 0 ); //        "pitch"                    x
+        glRotatef( yaw,   0, 1, 0 ); //        "yaw"                      y
+        glRotatef( roll,  0, 0, 1 ); //        "roll"                     z
 
+        // These are negative because it works like this
         glTranslatef( -x, -y, -z ); // translates the OpenGL screen to the camera's position
     }
 
@@ -311,7 +311,7 @@ public class Camera
     @Override
     public String toString()
     {
-        return "core.Camera[" + x + ", " + y + ", " + z + "; " + pitch + ", " + yaw + ", " + roll + "]";
+        return String.format( "core.Camera[ pos=(%f, %f, %f) rot=(%f, %f, %f), ]", x, y, z, pitch, yaw, roll );
     }
 
 }

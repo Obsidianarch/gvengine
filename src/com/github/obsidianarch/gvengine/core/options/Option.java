@@ -13,7 +13,9 @@ public class Option< T > extends Property
     // Fields
     //
 
-    /** The value this Option is wrapping around */
+    /**
+     * The value this Option is wrapping around
+     */
     protected T value;
 
     //
@@ -34,7 +36,7 @@ public class Option< T > extends Property
      * Constructs a new option with {@code initialValue} as the initial value.
      *
      * @param initialValue
-     *          The first value of the option.
+     *         The first value of the option.
      *
      * @since 14.10.26b
      */
@@ -64,7 +66,7 @@ public class Option< T > extends Property
 
     /**
      * @param value
-     *          The new value of the option.
+     *         The new value of the option.
      *
      * @since 14.10.26b
      */

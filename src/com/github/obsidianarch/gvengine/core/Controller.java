@@ -40,6 +40,18 @@ public class Controller
     //
 
     /**
+     * @return The camera to which the controller is currently bound.
+     */
+    public Camera getCamera()
+    {
+        return camera;
+    }
+
+    //
+    // Getters
+    //
+
+    /**
      * Binds the controller to a new camera.
      *
      * @param camera
@@ -47,7 +59,6 @@ public class Controller
      *
      * @throws NullPointerException
      *         If {@code camera} is {@code null}.
-     *
      * @since 14.03.30
      */
     public void setCamera( Camera camera ) throws NullPointerException
@@ -57,18 +68,6 @@ public class Controller
             throw new NullPointerException( "Controller cannot be bound to a null camera!" );
         }
         this.camera = camera;
-    }
-
-    //
-    // Getters
-    //
-
-    /**
-     * @return The camera to which the controller is currently bound.
-     */
-    public Camera getCamera()
-    {
-        return camera;
     }
 
     //
@@ -95,7 +94,7 @@ public class Controller
 
     /**
      * Moves the camera backward, in the opposite direction it is currently looking. This will call {@code moveForward} with the negative distance.<BR> {@code
-     * moveForward( -distance );}
+     * moveForward( -distance);}
      *
      * @param distance
      *         The distance to move backward.
@@ -129,10 +128,11 @@ public class Controller
 
     /**
      * Moves the camera to the left, relative to the direction the camera is currently looking. This will call {@code moveRight} with the negative distance.<BR>
-     * {@code moveRight( -distance );}
+     * {@code moveRight( -distance);}
      *
      * @param distance
      *         The distance to move left.
+     *
      * @version 14.03.30
      * @see #moveForward(float)
      * @see #moveBackward(float)

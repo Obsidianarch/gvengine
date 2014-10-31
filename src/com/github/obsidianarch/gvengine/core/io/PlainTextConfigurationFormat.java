@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple PlainText implementation of ConfigurationFormat where the information for tags are stored
- * between tags which fit the formatted string of "[%s]%n" and "[END]".
+ * A simple PlainText implementation of ConfigurationFormat where the information for tags are stored between tags which fit the formatted string of "[%s]%n"
+ * and "[END]".
  *
- * @since 14.08.03
  * @version 14.08.03
+ * @since 14.08.03
  */
 public class PlainTextConfigurationFormat implements ConfigurationFormat
 {

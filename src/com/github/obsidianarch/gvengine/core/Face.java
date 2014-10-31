@@ -1,10 +1,12 @@
 package com.github.obsidianarch.gvengine.core;
 
+import org.lwjgl.util.vector.Vector3f;
+
 /**
  * One of the six faces on a voxel.
  *
  * @author Austin
- * @version 14.10.26
+ * @version 14.10.28
  * @since 14.03.30
  */
 public enum Face
@@ -13,27 +15,27 @@ public enum Face
     /**
      * The left side of a voxel.
      */
-    LEFT( 0 ),
+    LEFT( 0, new Vector3f( -1, 0, 0 ) ),
     /**
      * The right side of a voxel.
      */
-    RIGHT( 1 ),
+    RIGHT( 1, new Vector3f( 1, 0, 0 ) ),
     /**
      * The bottom side of a voxel.
      */
-    BOTTOM( 2 ),
+    BOTTOM( 2, new Vector3f( 0, -1, 0 ) ),
     /**
      * The top side of a voxel.
      */
-    TOP( 3 ),
+    TOP( 3, new Vector3f( 0, 1, 0 ) ),
     /**
      * The front side of a voxel.
      */
-    FRONT( 4 ),
+    FRONT( 4, new Vector3f( 0, 0, -1 ) ),
     /**
      * The back side of a voxel.
      */
-    BACK( 5 );
+    BACK( 5, new Vector3f( 0, 0, 1 ) );
 
     //
     // Fields
@@ -44,19 +46,24 @@ public enum Face
      */
     public int value;
 
+    public Vector3f normal;
+
     //
     // Constructors
     //
 
     /**
-     * @param i
+     * @param value
      *         An integer value representing the face direction (used in arrays).
+     * @param normal
+     *          An vector perpendicular to the face.
      *
      * @since 14.03.30
      */
-    Face( int i )
+    Face( int value, Vector3f normal )
     {
-        value = i;
+        this.value = value;
+        this.normal = normal;
     }
 
     //
@@ -64,18 +71,16 @@ public enum Face
     //
 
     /**
-     *
-      @throws UnsupportedOperationException
-     *          If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
-     *          cube and added another face and did not update the coordinate system for this.
-     *
      * @return The normal data for this specific face.
      *
+     * @throws UnsupportedOperationException
+     *         If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
+     *         cube and added another face and did not update the coordinate system for this.
      * @since 14.03.30
      */
     public float[] getNormals( float x, float y, float z )
     {
-        switch( this )
+        switch ( this )
         {
 
             case LEFT:
@@ -90,15 +95,13 @@ public enum Face
             case TOP:
                 return new float[] { x, y + 1, z };
 
-            case FRONT:
-                return new float[] { x, y, z - 1 };
-
             case BACK:
                 return new float[] { x, y, z + 1 };
 
-        }
+            default: // FRONT
+                return new float[] { x, y, z - 1 };
 
-        throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
+        }
     }
 
     /**
@@ -116,7 +119,6 @@ public enum Face
      * @throws UnsupportedOperationException
      *         If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
      *         cube and added another face and did not update the coordinate system for this.
-     *
      * @since 14.03.31
      */
     public int[] getTouchingVoxel( int x, int y, int z ) throws UnsupportedOperationException
@@ -140,12 +142,10 @@ public enum Face
             case BACK:
                 return new int[] { x, y, z + 1 };
 
-            case FRONT:
+            default: // FRONT
                 return new int[] { x, y, z - 1 };
 
         }
-
-        throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
     }
 
     /**
@@ -154,7 +154,6 @@ public enum Face
      * @throws UnsupportedOperationException
      *         If the face object is not LEFT, RIGHT, BOTTOM, TOP, BACK, or FRONT somehow. If this ever gets thrown, that means I changed the definition of a
      *         cube and added another face and did not update the coordinate system for this.
-     *
      * @since 14.03.31
      */
     public Face getOpposingFace() throws UnsupportedOperationException
@@ -178,12 +177,10 @@ public enum Face
             case BACK:
                 return FRONT;
 
-            case FRONT:
+            default: // FRONT
                 return BACK;
 
         }
-
-        throw new UnsupportedOperationException( "Something's wrong about this face; index: " + value );
     }
 
 }
