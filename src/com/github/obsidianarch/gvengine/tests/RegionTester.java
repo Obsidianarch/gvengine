@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the region and it's methods.
  *
  * @author Austin
- * @version 14.10.26b
+ * @version 15.01.07
  * @since 14.03.30
  */
 public class RegionTester
@@ -41,7 +41,7 @@ public class RegionTester
         @Override
         public void onChange()
         {
-            Lumberjack.info( "RegionTester", "VSync set to: %b", value );
+            Lumberjack.getInstance().info( "VSync set to: %b", value );
             Display.setVSyncEnabled( value ); // update the property in OpenGL
         }
 

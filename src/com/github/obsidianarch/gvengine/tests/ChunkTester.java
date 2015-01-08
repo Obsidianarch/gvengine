@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Tests the Voxel and Chunk Management systems.
  *
  * @author Austin
- * @version 14.10.26b
+ * @version 15.01.07
  * @since 14.03.30
  */
 public class ChunkTester
@@ -33,7 +33,7 @@ public class ChunkTester
         @Override
         public void onChange()
         {
-            Lumberjack.info( "ChunkTester", "VSync set to: %b", value );
+            Lumberjack.getInstance().info( "ChunkTester", "VSync set to: %b", value );
             Display.setVSyncEnabled( value ); // update the property in OpenGL
         }
 

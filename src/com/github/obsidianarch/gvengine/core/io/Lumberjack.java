@@ -1,21 +1,23 @@
 package com.github.obsidianarch.gvengine.core.io;
 
 import com.github.obsidianarch.gvengine.core.options.IntOption;
+import com.github.obsidianarch.gvengine.core.options.Option;
 
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * The logging utility used to display messages in the console and write to the log file.
- * <p>
+ *
  * TODO maybe members will not be static in the future?
  *
- * @version 14.08.03c
+ * @version 15.01.07
  * @since 14.08.03b
  */
-public class Lumberjack
+public final class Lumberjack
 {
 
     //
@@ -23,216 +25,259 @@ public class Lumberjack
     //
 
     /**
-     * Lowest level of logging, messages involving variables and other stuff that isn't working.
+     * The default file to write to, unless otherwise specified.
      */
-    public static final int DEBUG = 0;
+    public static final Option< File > DefaultFile = new Option<>( new File( "gvengine.log" ) );
 
-    /**
-     * Middle level of logging, can be used for warnings, and various other things.
-     */
-    public static final int INFO = 1;
-
-    /**
-     * Highest level of logging, always displayed. Used for errors and problems.
-     */
-    public static final int ERROR = 2;
-    /**
-     * Property for the current logging level.
-     */
-    private static IntOption LoggingLevel = new IntOption( DEBUG )
-    {
-
-        @Override
-        public void onChange()
-        {
-            // mutate and access the value directly, skip the methods
-            if ( value > ERROR )
-            {
-                value = ERROR;
-            }
-            if ( value < DEBUG )
-            {
-                value = DEBUG;
-            }
-        }
-
-    };
-
-    //
-    // Options
-    //
     /**
      * Avoids a method call every time something is written. I figured "why not make it public?" And couldn't think of a reason not to, so I did. I also
      * couldn't think of a reason to make it public, but that's not my problem.
      */
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
+    private static final DateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss.SSS" );
+
+    public static final int DEBUG = 0;
+
+    public static final int INFO = 1;
+
+    public static final int WARN = 2;
+
+    public static final int ERROR = 3;
+
+    private static final IntOption LoggingLevel = new IntOption( DEBUG )
+    {
+
+        @Override
+        public void onChange()
+        {
+            if ( value > ERROR ) value = ERROR;
+            if ( value < DEBUG ) value = DEBUG;
+        }
+    };
+
     //
     // Fields
     //
-    /**
-     * The DateFormat used to format the current time in the logging messages
-     */
-    private static DateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss.SSS" );
 
-    /**
-     * Writes the log to the file.
-     */
-    private static BufferedWriter bw;
+    /** The tag prepended to each message. */
+    public final String tag;
+
+    private File file;
 
     //
-    // Initializer
+    // Constructors
     //
 
     /**
-     * Attempts to open a new log file.
+     * Constructs the Lumberjack for writing.
      *
-     * @param f
-     *         The new log file.
-     *
-     * @return If the opening was a success or not.
+     * @param tag
+     *          The tag, prepended to the message.
      */
-    public static boolean openLogFile( File f )
+    private Lumberjack( String tag, File file )
     {
-        try
-        {
-            // close the previous log
-            if ( bw != null )
-            {
-                bw.close();
-            }
-
-            bw = new BufferedWriter( new FileWriter( f ) );
-            return true;
-        }
-        catch ( IOException e )
-        {
-            return false;
-        }
+        this.tag = tag;
+        this.file = file;
     }
 
     //
-    // Logging
+    // Actions
     //
 
     /**
-     * Prints the information about the message.
+     * Writes a debug message.
      *
-     * @param ps
-     *         The PrintStream to write to.
-     * @param level
-     *         The level (DEBUG, INFO, ERROR).
-     * @param tag
-     *         The tag used for debugging.
+     * @param format
+     *          The string format.
+     * @param params
+     *          The string format parameters.
      */
-    private static void printInfo( PrintStream ps, String level, String tag, String format, Object... params )
+    public void debug( String format, Object... params )
     {
-        // prepare the message to be written
-        StringBuilder sb = new StringBuilder();
-        sb.append( dateFormat.format( new Date() ) ).append( ' ' );  // add the formatted date
-        sb.append( '[' ).append( tag ).append( "] " );               // add the task tag
-        sb.append( '<' ).append( level ).append( "> " );             // add the message level
-        sb.append( String.format( format, params ) );                // add the message
+        if ( LoggingLevel.get() > DEBUG ) return;
+        formatAndWriteString( "DEBUG", String.format( format, params ) );
+    }
 
-        String str = sb.toString(); // convert to string
+    /**
+     * Writes an info message.
+     *
+     * @param format
+     *         The string format.
+     * @param params
+     *         The string format parameters.
+     */
+    public void info( String format, Object... params )
+    {
+        if ( LoggingLevel.get() > INFO ) return;
+        formatAndWriteString( "INFO", String.format( format, params ) );
+    }
 
-        // print to console
-        ps.print( str ); // print the information
-        ps.println(); // go to the next line
+    /**
+     * Writes a warning message.
+     *
+     * @param format
+     *         The string format.
+     * @param params
+     *         The string format parameters.
+     */
+    public void warn( String format, Object... params )
+    {
+        if ( LoggingLevel.get() > WARN ) return;
+        formatAndWriteString( "WARN", String.format( format, params ) );
+    }
 
-        // write to the log
-        if ( bw != null )
+    /**
+     * Writes an error message.
+     *
+     * @param format
+     *         The string format.
+     * @param params
+     *         The string format parameters.
+     */
+    public void error( String format, Object... params )
+    {
+        formatAndWriteString( "ERROR", String.format( format, params ) );
+    }
+
+    /**
+     * Writes the stack trace of a Throwable.
+     *
+     * @param throwable
+     *          The Throwable to print.
+     */
+    public void throwable( Throwable throwable )
+    {
+        error( "%s: %s", throwable.getClass(), throwable.getMessage() );
+        for ( StackTraceElement e : throwable.getStackTrace() )
+        {
+            error( "    %s", e.toString() );
+        }
+    }
+
+    /**
+     * Formats the string
+     *
+     * @param level
+     *          The message's level.
+     * @param str
+     *          The message to log.
+     */
+    private void formatAndWriteString( String level, String str )
+    {
+        writeToFile( file, dateFormat.format( new Date() ) + " " + "[" + tag + "] <" + level + "> " + str );
+    }
+
+    //
+    // Static
+    //
+
+    /** A map of all opened BufferedWriters, linked to their file. */
+    private static final HashMap< File, BufferedWriter > fileWriterMap = new HashMap<>();
+
+    /**
+     * Writes the text to the specified file.
+     *
+     * @param f
+     *          The file to write to.
+     * @param text
+     *          The text to append text to.
+     */
+    private static void writeToFile( File f, String text )
+    {
+        try
+        {
+            // create the BufferedWriter on the spot
+            if ( !fileWriterMap.containsKey( f ) )
+            {
+                fileWriterMap.put( f, new BufferedWriter( new FileWriter( f ) ) );
+            }
+
+            BufferedWriter bw = fileWriterMap.get( f );
+            bw.write( text );
+            bw.flush();
+        }
+        catch ( IOException e )
+        {
+            // print a buffer before and after the stack trace to draw attention
+            // because it is being logged irregularly
+            System.out.println( "\n" );
+            e.printStackTrace();
+            System.out.println( "\n" );
+        }
+    }
+
+    /**
+     * Closes all the file writers.
+     */
+    public static void closeAll()
+    {
+        for ( BufferedWriter bw : fileWriterMap.values() )
         {
             try
             {
-                bw.write( str ); // write the message
-                bw.write( LINE_SEPARATOR ); // add a line separator
-                bw.flush(); // force it to write to the file (in case of a sudden crash)
+                bw.close();
             }
             catch ( IOException e )
             {
-                // not really sure what to do here tbh, don't want to recursively get this so I guess I'll use standard error
-                System.err.println( "LUMBERJACK: Couldn't write to file; you shouldn't see this." );
                 e.printStackTrace();
             }
         }
     }
 
+    //
+    // Singleton-inator-thing
+    //
+
+    /** A map of all Lumberjack instance linked to the class which created them. */
+    private static final HashMap< String, Lumberjack > instanceMap = new HashMap<>();
+
     /**
-     * Formats the writes the debug message.
+     * Returns the default Lumberjack object, writing to {@code DefaultFile.get()}.
      *
-     * @param tag
-     *         Short message describing the task.
-     * @param format
-     *         The formatting string.
-     * @param params
-     *         The parameters passed to the String formatter to match the formatting.
+     * @return The default instance of Lumberjack.
      */
-    public static void debug( String tag, String format, Object... params )
+    public static Lumberjack getInstance()
     {
-        // ignore this if it's too high
-        if ( LoggingLevel.get() > DEBUG )
+        return getInstance( null );
+    }
+
+    /**
+     * Returns the Lumberjack object for the given class, a new one will be constructed,
+     * writing to {@code DefaultFile.get()}, if one does not already exist.
+     *
+     * @param clazz
+     *          The class to get the instance of Lumberjack for.
+     *
+     * @return The instance of Lumberjack for {@code clazz}.
+     */
+    public static Lumberjack getInstance( Class< ? > clazz )
+    {
+        return getInstance( clazz, DefaultFile.get() );
+    }
+
+    /**
+     * Returns the Lumberjack object for the given class, a new one will be constructed,
+     * writing to {@code outputFile}, if one does not already exist.
+     *
+     * @param clazz
+     *          The class getting its instance of Lumberjack.
+     * @param outputFile
+     *          The file to write to (only used if an instance is being created).
+     *
+     * @return The instance of Lumberjack for {@code clazz}.
+     */
+    public static Lumberjack getInstance( Class< ? > clazz, File outputFile )
+    {
+        String className = ( clazz == null ? "default" : clazz.getSimpleName() );
+
+        if ( !instanceMap.containsKey( className ) )
         {
-            return;
+            return instanceMap.put( className, new Lumberjack( className, outputFile ) );
         }
-
-        // print the information to the console and log
-        printInfo( System.out, "DEBUG", tag, format, params );
-    }
-
-    /**
-     * Formats then writes the info message.
-     *
-     * @param tag
-     *         Short message describing the task.
-     * @param format
-     *         The formatting string.
-     * @param params
-     *         The parameters passed to the String formatter to match the formatting.
-     */
-    public static void info( String tag, String format, Object... params )
-    {
-        // ignore this if it's too high
-        if ( LoggingLevel.get() > INFO )
+        else
         {
-            return;
-        }
-
-        printInfo( System.out, "INFO", tag, format, params );
-    }
-
-    /**
-     * Formats then writes the error message.
-     *
-     * @param tag
-     *         Short message describing the task.
-     * @param format
-     *         The formatting string.
-     * @param params
-     *         The parameters passed to the String formatter to match the formatting.
-     */
-    public static void error( String tag, String format, Object... params )
-    {
-        printInfo( System.err, "ERROR", tag, format, params );
-    }
-
-    /**
-     * Logs a throwable and it's stack trace.
-     *
-     * @param tag
-     *         The tag used for debugging.
-     * @param t
-     *         The throwable which was encountered.
-     */
-    public static void throwable( String tag, Throwable t )
-    {
-        String msg = t.getMessage(); // get the message from the Throwable
-        error( tag, "%s: %s", t.getClass().toString(), ( msg == null ? "" : msg ) ); // print the class and then it's message
-
-        // print the stack trace beneath it
-        for ( StackTraceElement element : t.getStackTrace() )
-        {
-            error( tag, "  %s", element.toString() );
+            return instanceMap.get( className );
         }
     }
 

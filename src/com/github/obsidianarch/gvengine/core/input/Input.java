@@ -1,6 +1,7 @@
 package com.github.obsidianarch.gvengine.core.input;
 
 import com.github.obsidianarch.gvengine.core.io.Config;
+import com.github.obsidianarch.gvengine.core.io.Logger;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
@@ -13,10 +14,10 @@ import java.util.HashMap;
  * The class for all input from the user.
  *
  * @author Austin
- * @version 14.08.03b
+ * @version 15.01.07
  * @since 14.03.30
  */
-public final class Input
+public final class Input implements Logger
 {
 
     //
@@ -54,8 +55,8 @@ public final class Input
         }
         catch ( LWJGLException e )
         {
-            Lumberjack.error( "Input", "Failed to create controllers!" );
-            Lumberjack.throwable( "Input", e );
+            Lumberjack.getInstance( Input.class ).error( "Failed to create controllers!" );
+            Lumberjack.getInstance( Input.class ).throwable( e );
         }
     }
 

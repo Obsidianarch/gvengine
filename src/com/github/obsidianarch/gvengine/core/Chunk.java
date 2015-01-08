@@ -10,7 +10,7 @@ import static com.github.obsidianarch.gvengine.core.MathHelper.inRange;
  * A container for a LENGTHxLENGTHxLENGTH selection of voxels.
  *
  * @author Austin
- * @version 14.04.12
+ * @version 15.01.07
  * @since 14.03.30
  */
 public class Chunk
@@ -343,7 +343,7 @@ public class Chunk
             data[ 1 ] = Math.abs( x ) % LENGTH;
             data[ 2 ] = Math.abs( y ) % LENGTH;
             data[ 3 ] = Math.abs( z ) % LENGTH;
-            data[ 4 ] = 0;
+            data[ 4 ] = null;
             return data;
         }
 
@@ -381,7 +381,7 @@ public class Chunk
         }
         else
         {
-            data[ 4 ] = 0; // no voxel, return the default one
+            data[ 4 ] = null; // no voxel, return the default one
         }
 
         return data;
@@ -482,7 +482,8 @@ public class Chunk
         int tY = touchingCoords[ 1 ];
         int tZ = touchingCoords[ 2 ];
 
-        if ( getMaterialAt( tX, tY, tZ ).active )
+        Material material = getMaterialAt( tX, tY, tZ );
+        if ( material == null || material.active )
         {
             return false; // the material this face's touching is active, therefore we don't need to render this face
         }

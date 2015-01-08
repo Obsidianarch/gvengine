@@ -14,7 +14,7 @@ import java.util.Iterator;
  * Maintains a schedule of events and when they need to be executed.
  *
  * @author Austin
- * @version 14.10.30
+ * @version 15.01.07
  * @since 14.03.30
  */
 public final class Scheduler
@@ -47,6 +47,11 @@ public final class Scheduler
     //
     // Fields
     //
+
+    /**
+     * The logger for this class
+     */
+    private static Lumberjack logger = Lumberjack.getInstance( Scheduler.class );
 
     /**
      * Events that are schedule to continuously occur every so often.
@@ -108,7 +113,7 @@ public final class Scheduler
         }
         catch ( SecurityException | NoSuchMethodException e )
         {
-            Lumberjack.throwable( "Scheduler", e );
+            logger.throwable( e );
         }
 
         event.target = target;
@@ -159,7 +164,7 @@ public final class Scheduler
         }
         catch ( NoSuchMethodException | SecurityException e )
         {
-            Lumberjack.throwable( "Scheduler", e );
+            logger.throwable( e );
         }
 
         event.target = target;
@@ -209,7 +214,7 @@ public final class Scheduler
         }
         catch ( NoSuchMethodException | SecurityException e )
         {
-            Lumberjack.throwable( "Scheduler", e );
+            logger.throwable( e );
         }
 
         event.target = target; // set the event's target object
@@ -261,13 +266,13 @@ public final class Scheduler
             catch ( Exception ex )
             {
                 // something failed, tell the console
-                Lumberjack.error( "Scheduler", "Failed to invoke \"%s()\"", e.action.getName() );
-                Lumberjack.throwable( "Scheduler", ex );
+                logger.error( "Failed to invoke \"%s()\"", e.action.getName() );
+                logger.throwable( ex );
             }
 
             if ( LogOutput.get() )
             {
-                Lumberjack.debug( "Scheduler", "Executed recurring event \"%s\"", e.action.getName() );
+                logger.debug( "Executed recurring event \"%s\"", e.action.getName() );
             }
 
             e.executionTime = TimeHelper.getDelay( e.delay ); // set the next execution time
@@ -322,13 +327,13 @@ public final class Scheduler
             }
             catch ( Exception ex )
             {
-                Lumberjack.error( "Scheduler", "Failed to invoke \"%s()\"", e.action.getName() );
-                Lumberjack.throwable( "Scheduler", ex );
+                logger.error( "Failed to invoke \"%s()\"", e.action.getName() );
+                logger.throwable( ex );
             }
 
             if ( LogOutput.get() )
             {
-                Lumberjack.debug( "Scheduler", "Executed timed event \"%s\"", e.action.getName() );
+                logger.debug( "Executed timed event \"%s\"", e.action.getName() );
             }
 
             it.remove(); // remove the iterated objects
@@ -373,23 +378,20 @@ public final class Scheduler
                 e.action.invoke( e.target, e.parameters ); // invoke the method
                 firedEvents++;
             }
+            catch ( InvocationTargetException ex )
+            {
+                logger.error( "InvocationTargetException Cause:" );
+                logger.throwable( ex.getCause() );
+            }
             catch ( Exception ex )
             {
-                Lumberjack.error( "Scheduler", "Failed to invoke \"%s.%s()\"", e.target.getClass().getSimpleName(), e.action.getName() );
-                Lumberjack.throwable( "Scheduler", ex );
-
-                // if it's an ITE, then also log the cause of the exception
-                if ( ex instanceof InvocationTargetException )
-                {
-                    InvocationTargetException ite = ( InvocationTargetException ) ex;
-                    Lumberjack.error( "Scheduler", "InvocationTargetException Cause:" );
-                    Lumberjack.throwable( "Scheduler", ite.getCause() );
-                }
+                logger.error( "Failed to invoke \"%s.%s()\"", e.target.getClass().getSimpleName(), e.action.getName() );
+                logger.throwable( ex );
             }
 
             if ( LogOutput.get() )
             {
-                Lumberjack.debug( "Scheduler", "Executed event \"%s\"", e.action.getName() );
+                logger.debug( "Executed event \"%s\"", e.action.getName() );
             }
 
             it.remove(); // remove the iterated object
@@ -471,19 +473,19 @@ public final class Scheduler
             {
                 if ( !scheduled )
                 {
-                    Lumberjack.debug( "Scheduler", "Ignoring previously existing event \"%s\"", e.action.getName() );
+                    logger.debug( "Ignoring previously existing event \"%s\"", e.action.getName() );
                 }
                 else if ( e.delay != -1 )
                 {
-                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\" for every %d milliseconds", e.action.getName(), e.delay );
+                    logger.debug( "Scheduled \"%s\" for every %d milliseconds", e.action.getName(), e.delay );
                 }
                 else if ( e.executionTime == -1 )
                 {
-                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\"", e.action.getName() );
+                    logger.debug( "Scheduled \"%s\"", e.action.getName() );
                 }
                 else
                 {
-                    Lumberjack.debug( "Scheduler", "Scheduled \"%s\" for %d", e.action.getName(), e.executionTime );
+                    logger.debug( "Scheduled \"%s\" for %d", e.action.getName(), e.executionTime );
                 }
             }
         }

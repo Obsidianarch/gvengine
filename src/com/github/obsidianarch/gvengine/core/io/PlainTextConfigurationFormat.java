@@ -8,10 +8,10 @@ import java.util.Map;
  * A simple PlainText implementation of ConfigurationFormat where the information for tags are stored between tags which fit the formatted string of "[%s]%n"
  * and "[END]".
  *
- * @version 14.08.03
+ * @version 15.01.07
  * @since 14.08.03
  */
-public class PlainTextConfigurationFormat implements ConfigurationFormat
+public class PlainTextConfigurationFormat implements ConfigurationFormat, Logger
 {
 
     @Override
@@ -77,8 +77,8 @@ public class PlainTextConfigurationFormat implements ConfigurationFormat
         }
         catch ( IOException e )
         {
-            Lumberjack.error( "PTCF", "An error occurred while reading file \"%s\"!", file.getPath() );
-            Lumberjack.throwable( "PTCF", e );
+            getLogger().error( "An error occurred while reading file \"%s\"!", file.getPath() );
+            getLogger().throwable( e );
             return false;
         }
     }
@@ -112,8 +112,8 @@ public class PlainTextConfigurationFormat implements ConfigurationFormat
         }
         catch ( IOException e )
         {
-            Lumberjack.error( "PTCF", "An error occurred while writing file \"%s\"!", file.getPath() );
-            Lumberjack.throwable( "PTCF", e );
+            getLogger().error( "An error occurred while writing file \"%s\"!", file.getPath() );
+            getLogger().throwable( e );
             return false;
         }
     }

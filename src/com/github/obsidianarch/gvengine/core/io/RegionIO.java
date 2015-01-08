@@ -58,7 +58,7 @@ public final class RegionIO
         }
         catch ( Exception e )
         {
-            Lumberjack.throwable( "RegionIO", e );
+            Lumberjack.getInstance( RegionIO.class ).throwable( e );
             return false; // the file could not be created
         }
     }
@@ -93,7 +93,7 @@ public final class RegionIO
         }
         catch ( IOException e )
         {
-            Lumberjack.throwable( "ChnWrite", e );
+            Lumberjack.getInstance( RegionIO.class ).throwable( e );
         }
     }
 
@@ -148,7 +148,7 @@ public final class RegionIO
         }
         catch ( Exception e )
         {
-            Lumberjack.throwable( "RegSave", e );
+            Lumberjack.getInstance( RegionIO.class ).throwable( e );
         }
     }
 
@@ -194,7 +194,7 @@ public final class RegionIO
         }
         catch ( Exception e )
         {
-            Lumberjack.throwable( "RegLoad", e );
+            Lumberjack.getInstance( RegionIO.class ).throwable( e );
             return false;
         }
 

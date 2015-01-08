@@ -5,6 +5,7 @@ import com.github.obsidianarch.gvengine.core.Controller;
 import com.github.obsidianarch.gvengine.core.input.Input;
 import com.github.obsidianarch.gvengine.core.input.InputMedium;
 import com.github.obsidianarch.gvengine.core.io.Config;
+import com.github.obsidianarch.gvengine.core.io.Logger;
 import com.github.obsidianarch.gvengine.core.io.Lumberjack;
 import com.github.obsidianarch.gvengine.core.io.PlainTextConfigurationFormat;
 import com.github.obsidianarch.gvengine.tests.materials.Materials;
@@ -26,10 +27,10 @@ import static org.lwjgl.util.glu.GLU.gluPerspective;
  * A general class to simplify the testing cases, removing a large portion of code that's just required for setup.
  *
  * @author Austin
- * @version 14.10.30
+ * @version 15.01.07
  * @since 14.03.30
  */
-public class TestingHelper
+public class TestingHelper implements Logger
 {
 
     //
@@ -79,12 +80,12 @@ public class TestingHelper
     /**
      * The current FPS.
      */
-    private static int fps = 0;
+    private static int frameCount = 0;
 
     /**
      * The last measured FPS.
      */
-    private static int measuredFPS = 0;
+    private static int reportedFPS = 0;
 
     //
     // Initializer
@@ -93,10 +94,7 @@ public class TestingHelper
     static
     {
         // open a new log file
-        Lumberjack.openLogFile( new File( "gvengine.log" ) );
-
-        // initialize all the block values
-        Lumberjack.info( "TestingHelper", "Created %d material(s)", Materials.MATERIAL_COUNT );
+        Lumberjack.DefaultFile.set( new File( "gvengine.log" ) );
 
         LIGHT_AMBIENT = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 0.2f, 0.2f, 0.2f, 1.0f } );
         LIGHT_DIFFUSE = BufferUtils.createFloatBuffer( 4 ).put( new float[] { 1.0f, 1.0f, 1.0f, 1.0f } );
@@ -253,10 +251,6 @@ public class TestingHelper
         {
             Mouse.setGrabbed( true );
         }
-        if ( Input.isBindingActive( "dbgc" ) )
-        {
-            Lumberjack.debug( "dbgc", camera.toString() );
-        }
 
         float movementSpeed = 0.01f * TestingHelper.getDelta();
         if ( Input.isBindingActive( "sprint" ) )
@@ -327,13 +321,13 @@ public class TestingHelper
     {
         if ( ( getTime() - lastFPS ) > 1000 )
         {
-            measuredFPS = fps;
-            fps = 0;
+            reportedFPS = frameCount;
+            frameCount = 0;
             lastFPS += 1000;
         }
-        fps++;
+        frameCount++;
 
-        return measuredFPS;
+        return reportedFPS;
     }
 
     /**
