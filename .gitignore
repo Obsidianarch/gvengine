@@ -1,16 +1,1 @@
-*.class
-*.gven.dat
-*.dat
-*.tmp
-~$todo.doc
-*.log
-
-gvengine.iml
-res/config
-res/models/bunny.obj
-res/models/bunny.mtl
-lib
-.idea
-
 out/
-bin/
