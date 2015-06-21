@@ -1,4 +1,4 @@
-package com.github.donofanne.gvengine.core.scheduler;
+package com.github.donofanne.gvengine.core.scheduling;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

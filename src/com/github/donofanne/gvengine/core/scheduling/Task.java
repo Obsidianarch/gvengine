@@ -1,4 +1,4 @@
-package com.github.donofanne.gvengine.core.scheduler;
+package com.github.donofanne.gvengine.core.scheduling;
 
 /**
  * A task could be created via:

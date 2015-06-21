@@ -1,4 +1,4 @@
-package com.github.donofanne.gvengine.core.scheduler;
+package com.github.donofanne.gvengine.core.scheduling;
 
 import com.github.donofanne.gvengine.core.Delegate;
 import org.lwjgl.glfw.GLFW;
