@@ -1,4 +1,4 @@
-package com.github.donofanne.gvengine.core.scheduler;
+package com.github.donofanne.gvengine.core.scheduling;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * The scheduler which handles all of the synchronous tasks,
- * tasks which much be performed on the same thread.
+ * The scheduler which handles all of the synchronous tasks, tasks which much be performed on the same thread.
  */
 final class SyncTaskHandler
 {
@@ -29,7 +28,7 @@ final class SyncTaskHandler
      * Performs the various enqueued tasks in the prioritized orders.
      *
      * @param endTime
-     *          The time by which all the tasks must be completed.
+     *         The time by which all the tasks must be completed.
      */
     static void doTick( double endTime )
     {
@@ -40,7 +39,7 @@ final class SyncTaskHandler
      * Performs all the lowest priority tasks it can before reaching the end time.
      *
      * @param endTime
-     *          The time all events must end in order to maintain framerate.
+     *         The time all events must end in order to maintain framerate.
      */
     private static void doEnqueuedTasks( double endTime )
     {
@@ -60,7 +59,7 @@ final class SyncTaskHandler
      * Enqueues a task to be executed at a later time.
      *
      * @param task
-     *          The task to enqueue.
+     *         The task to enqueue.
      */
     protected static void enqueue( Task task )
     {

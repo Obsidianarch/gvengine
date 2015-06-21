@@ -1,4 +1,4 @@
-package com.github.donofanne.gvengine.core.scheduler;
+package com.github.donofanne.gvengine.core.scheduling;
 
 public class SchedulerTest
 {
@@ -17,11 +17,6 @@ public class SchedulerTest
         System.out.println( ( String ) params[ 0 ] );
     }
 
-    public synchronized void output( String s )
-    {
-        System.out.println( s );
-    }
-
     //
     // Tests
     //
@@ -31,7 +26,6 @@ public class SchedulerTest
     {
         Scheduler.launch( this::output );
         Scheduler.launch( this::output, "Hello World! (Consumers)" );
-        Scheduler.launch( this, "output", "Hello World! (Reflections)" );
     }
 
     @org.junit.Test
@@ -39,7 +33,6 @@ public class SchedulerTest
     {
         Scheduler.enqueue( this::output );
         Scheduler.enqueue( this::output, "Hello World! (Consumers)" );
-        Scheduler.enqueue( this, "output", "Hello World! (Reflections) " );
         Scheduler.doTick();
     }
 
