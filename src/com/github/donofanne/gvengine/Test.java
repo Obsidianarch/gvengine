@@ -1,4 +1,4 @@
-package io.github.donofanne.gvengine;
+package com.github.donofanne.gvengine;
 
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.GLFWErrorCallback;
