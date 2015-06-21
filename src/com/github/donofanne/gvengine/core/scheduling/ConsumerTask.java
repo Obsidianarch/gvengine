@@ -32,9 +32,8 @@ public class ConsumerTask extends Task
      * @param parameters
      *         The parameters to pass to the consumer.
      */
-    public ConsumerTask( double time, Consumer< Object[] > consumer, Object[] parameters )
+    public ConsumerTask( Consumer< Object[] > consumer, Object[] parameters )
     {
-        super( time );
         this.consumer = consumer;
         this.parameters = parameters;
     }

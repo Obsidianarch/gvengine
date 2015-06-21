@@ -45,7 +45,7 @@ public final class Scheduler
      */
     public static void launch( Delegate delegate )
     {
-        AsyncTaskHandler.launch( getTask( -1, delegate ) );
+        AsyncTaskHandler.launch( getTask( delegate ) );
     }
 
     /**
@@ -58,7 +58,7 @@ public final class Scheduler
      */
     public static void launch( Consumer< Object[] > consumer, Object... parameters )
     {
-        AsyncTaskHandler.launch( getTask( -1, consumer, parameters ) );
+        AsyncTaskHandler.launch( getTask( consumer, parameters ) );
     }
 
     //
@@ -73,34 +73,34 @@ public final class Scheduler
      */
     public static void enqueue( Delegate delegate )
     {
-        SyncTaskHandler.enqueue( getTask( -1, delegate ) );
+        SyncTaskHandler.enqueue( getTask( delegate ) );
     }
 
     /**
      * Enqueues a consumer method to be executed at a later time synchronously.
      *
      * @param consumer
-     *          The consumer method to enqueue, a void return type and an Object[] for parameters.
+     *         The consumer method to enqueue, a void return type and an Object[] for parameters.
      * @param parameters
-     *          the parameters to pass to the consumer.
+     *         the parameters to pass to the consumer.
      */
     public static void enqueue( Consumer< Object[] > consumer, Object... parameters )
     {
-        SyncTaskHandler.enqueue( getTask( -1, consumer, parameters ) );
+        SyncTaskHandler.enqueue( getTask( consumer, parameters ) );
     }
 
     //
     // Getters
     //
 
-    private static Task getTask( double time, Delegate delegate )
+    private static Task getTask( Delegate delegate )
     {
-        return new DelegateTask( time, delegate );
+        return new DelegateTask( delegate );
     }
 
-    private static Task getTask( double time, Consumer< Object[] > consumer, Object[] parameters )
+    private static Task getTask( Consumer< Object[] > consumer, Object[] parameters )
     {
-        return new ConsumerTask( time, consumer, parameters );
+        return new ConsumerTask( consumer, parameters );
     }
 
 }

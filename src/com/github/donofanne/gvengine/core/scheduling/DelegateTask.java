@@ -25,9 +25,8 @@ public class DelegateTask extends Task
      * @param delegate
      *          The delegate method to invoke when the Task is executed.
      */
-    public DelegateTask( double time, Delegate delegate )
+    public DelegateTask( Delegate delegate )
     {
-        super( time );
         this.delegate = delegate;
     }
 
