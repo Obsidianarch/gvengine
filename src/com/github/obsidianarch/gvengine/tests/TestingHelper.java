@@ -214,18 +214,18 @@ public class TestingHelper
         // load the input bindings, and if it doesn't work, add the defaults
         Input.loadBindings( CONFIG );
 
-        Input.setBinding( "forward", InputMedium.KEYBOARD, Keyboard.KEY_W );
-        Input.setBinding( "left", InputMedium.KEYBOARD, Keyboard.KEY_A );
-        Input.setBinding( "backward", InputMedium.KEYBOARD, Keyboard.KEY_S );
-        Input.setBinding( "right", InputMedium.KEYBOARD, Keyboard.KEY_D );
-        Input.setBinding( "sprint", InputMedium.KEYBOARD, Keyboard.KEY_LSHIFT );
+        Input.setBinding( "forward",        InputMedium.KEYBOARD, Keyboard.KEY_W );
+        Input.setBinding( "left",           InputMedium.KEYBOARD, Keyboard.KEY_A );
+        Input.setBinding( "backward",       InputMedium.KEYBOARD, Keyboard.KEY_S );
+        Input.setBinding( "right",          InputMedium.KEYBOARD, Keyboard.KEY_D );
+        Input.setBinding( "sprint",         InputMedium.KEYBOARD, Keyboard.KEY_LSHIFT );
 
-        Input.setBinding( "rebuildChunk", InputMedium.KEYBOARD, Keyboard.KEY_R );
-        Input.setBinding( "removeVoxels", InputMedium.KEYBOARD, Keyboard.KEY_E );
+        Input.setBinding( "rebuildChunk",   InputMedium.KEYBOARD, Keyboard.KEY_R );
+        Input.setBinding( "removeVoxels",   InputMedium.KEYBOARD, Keyboard.KEY_E );
 
-        Input.setBinding( "unbindMouse", InputMedium.MOUSE, 0 );
-        Input.setBinding( "bindMouse", InputMedium.MOUSE, 1 );
-        Input.setBinding( "dbgc", InputMedium.MOUSE, 2 );
+        Input.setBinding( "unbindMouse",    InputMedium.MOUSE, 0 );
+        Input.setBinding( "bindMouse",      InputMedium.MOUSE, 1 );
+        Input.setBinding( "dbgc",           InputMedium.MOUSE, 2 );
     }
 
     /**

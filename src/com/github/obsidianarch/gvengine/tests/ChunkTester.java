@@ -190,6 +190,7 @@ public class ChunkTester
             }
         }
 
-        Scheduler.enqueueEvent( "buildMesh", c );
+        c.buildMesh();
+        // Scheduler.enqueueEvent( "buildMesh", c );
     }
 }

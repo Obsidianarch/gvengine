@@ -447,10 +447,14 @@ public class Chunk
      */
     public double[] getGlobalOffset()
     {
+        double roffX = region == null ? 0 : region.x;
+        double roffY = region == null ? 0 : region.y;
+        double roffZ = region == null ? 0 : region.z;
+
         double[] offset = new double[ 3 ];
-        offset[ 0 ] = ( x * LENGTH ) + ( region.x * Region.LENGTH );
-        offset[ 1 ] = ( y * LENGTH ) + ( region.y * Region.LENGTH );
-        offset[ 2 ] = ( z * LENGTH ) + ( region.z * Region.LENGTH );
+        offset[ 0 ] = ( x * LENGTH ) + ( roffX * Region.LENGTH );
+        offset[ 1 ] = ( y * LENGTH ) + ( roffY * Region.LENGTH );
+        offset[ 2 ] = ( z * LENGTH ) + ( roffZ * Region.LENGTH );
         return offset;
     }
 
