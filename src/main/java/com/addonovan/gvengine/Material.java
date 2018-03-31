@@ -1,7 +1,6 @@
 package com.addonovan.gvengine;
 
-import org.lwjgl.util.Color;
-import org.lwjgl.util.ReadableColor;
+import org.joml.Vector3f;
 
 /**
  * The properties for a type of voxel.
@@ -29,22 +28,22 @@ public class Material
     /**
      * Used to represent nothing, written as {@code 14.03.30000}
      */
-    public static final Material AIR = new Material( new Color( 255, 255, 255, 0 ), false, 0 );
+    public static final Material AIR = new Material( new Vector3f( 1.0f, 1.0f, 1.0f ), false, 0 );
 
     /**
      * The stone material, written as {@code 14.03.3001}.
      */
-    public static final Material STONE = new Material( Color.LTGREY, true, 1 );
+    public static final Material STONE = new Material( new Vector3f( 0.6f, 0.6f, 0.6f ), true, 1 );
 
     /**
      * The grass material, written as {@code 14.03.3010}.
      */
-    public static final Material GRASS = new Material( Color.GREEN, true, 2 );
+    public static final Material GRASS = new Material( new Vector3f( 0.0f, 1.0f, 0.0f ), true, 2 );
 
     /**
      * The dirt material, written as {@code 14.03.3011}.
      */
-    public static final Material DIRT = new Material( Color.ORANGE, true, 3 );
+    public static final Material DIRT = new Material( new Vector3f( 1.0f, 0.5f, 0.25f ), true, 3 );
 
     //
     // Final Fields
@@ -53,7 +52,7 @@ public class Material
     /**
      * The color of the material.
      */
-    public final ReadableColor color;
+    public final Vector3f color;
 
     /**
      * {@code false} if a voxel with this material should not be rendered.
@@ -86,7 +85,7 @@ public class Material
      *
      * @since 14.03.30
      */
-    public Material( ReadableColor color, boolean active, int byteID )
+    public Material( Vector3f color, boolean active, int byteID )
     {
         this.color = color;
         this.active = active;

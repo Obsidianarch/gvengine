@@ -1,6 +1,6 @@
 package com.addonovan.gvengine.core.model;
 
-import org.lwjgl.util.vector.Vector3f;
+import org.joml.Vector3f;
 
 /**
  * A face on a model.

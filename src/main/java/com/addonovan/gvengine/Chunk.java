@@ -1,10 +1,9 @@
 package com.addonovan.gvengine;
 
 import com.addonovan.gvengine.core.*;
-import com.github.obsidianarch.gvengine.core.*;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.magicwerk.brownies.collections.primitive.FloatGapList;
+
+import java.util.ArrayList;
 
 import static com.addonovan.gvengine.core.MathHelper.inRange;
 
@@ -152,8 +151,8 @@ public class Chunk
             vbo.delete(); // remove the previous VBO
         }
 
-        FloatGapList positions = new FloatGapList( VOLUME / 2 );
-        FloatGapList colors = new FloatGapList( VOLUME / 2 );
+        ArrayList< Float > positions = new ArrayList<>( VOLUME / 2 );
+        ArrayList< Float > colors = new ArrayList<>( VOLUME / 2 );
 
         for ( int i = 0; i < VOLUME; i++ )
         {
@@ -165,7 +164,14 @@ public class Chunk
             Voxel.createVoxel( positions, colors, this, x, y, z );
         }
 
-        vbo = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED, positions, colors, null );
+        vbo = new VertexBufferObject(
+                PositionSystem.XYZ,
+                ColorSystem.RGB,
+                NormalSystem.DISABLED,
+                positions,
+                colors,
+                null
+        );
 
         vbo.validate(); // manually validate the VBO
         rebuildScheduled = false;
@@ -183,18 +189,19 @@ public class Chunk
             return; // let's not get errors
         }
 
-        if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) )
-        {
-            vbo.setGLMode( GL11.GL_POINTS );
-        }
-        else if ( Keyboard.isKeyDown( Keyboard.KEY_2 ) )
-        {
-            vbo.setGLMode( GL11.GL_LINES );
-        }
-        else
-        {
-            vbo.setGLMode( GL11.GL_TRIANGLES );
-        }
+        // TODO update with GLFW input things
+//        if ( Keyboard.isKeyDown( Keyboard.KEY_1 ) )
+//        {
+//            vbo.setGLMode( GL11.GL_POINTS );
+//        }
+//        else if ( Keyboard.isKeyDown( Keyboard.KEY_2 ) )
+//        {
+//            vbo.setGLMode( GL11.GL_LINES );
+//        }
+//        else
+//        {
+//            vbo.setGLMode( GL11.GL_TRIANGLES );
+//        }
 
         vbo.render();
     }

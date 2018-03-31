@@ -2,7 +2,9 @@ package com.addonovan.gvengine;
 
 import com.addonovan.gvengine.core.Face;
 import com.addonovan.gvengine.core.RepeatingArray;
-import org.magicwerk.brownies.collections.primitive.FloatGapList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Everything involved with the creation of individual voxels.
@@ -36,7 +38,7 @@ public final class Voxel
      *
      * @since 14.03.30
      */
-    public static void createVoxel( FloatGapList positions, FloatGapList colors, Chunk c, int x, int y, int z )
+    public static void createVoxel( ArrayList< Float > positions, ArrayList< Float > colors, Chunk c, int x, int y, int z )
     {
         if ( !c.isRenderable( x, y, z ) )
         {
@@ -45,7 +47,7 @@ public final class Voxel
 
         Material material = c.getMaterialAt( x, y, z ); // the material of this voxel
 
-        float[] colorSource = { material.color.getRed() / 255f, material.color.getGreen() / 255f, material.color.getBlue() / 255f };
+        float[] colorSource = { material.color.x, material.color.y, material.color.z };
         RepeatingArray repeatingColors = new RepeatingArray( colorSource );
         float[] repeatedColors = repeatingColors.createArray( 18 ); // this will be added for every face, for the voxel's color
 
@@ -62,8 +64,15 @@ public final class Voxel
             if ( c.isVisible( face, x, y, z ) )
             {
                 // add the position and color data for this face
-                positions.addAll( createFace( face, gX, gY, gZ ) );
-                colors.addAll( repeatedColors );
+                for ( float pos : createFace( face, gX, gY, gZ ) )
+                {
+                    positions.add( pos );
+                }
+
+                for ( float col : repeatedColors )
+                {
+                    colors.add( col );
+                }
             }
         }
     }
@@ -84,7 +93,7 @@ public final class Voxel
      *
      * @since 14.03.30
      */
-    public static float[] createFace( Face direction, float x, float y, float z )
+    private static float[] createFace( Face direction, float x, float y, float z )
     {
         float[] points = null; // the point's we'll send back
 

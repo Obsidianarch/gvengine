@@ -1,7 +1,7 @@
 package com.addonovan.gvengine.core;
 
 import org.lwjgl.BufferUtils;
-import org.magicwerk.brownies.collections.primitive.FloatGapList;
+import java.util.ArrayList;
 
 import java.nio.FloatBuffer;
 
@@ -44,17 +44,17 @@ public class VertexBufferObject
     /**
      * The array for the position coordinates.
      */
-    private FloatGapList coordinates;
+    private ArrayList< Float > coordinates;
 
     /**
      * The array for the color channels.
      */
-    private FloatGapList channels;
+    private ArrayList< Float > channels;
 
     /**
      * The array for the normal coordiantes.
      */
-    private FloatGapList normalCoordinates;
+    private ArrayList< Float > normalCoordinates;
 
     /**
      * The method OpenGL will render the vertices.
@@ -93,7 +93,7 @@ public class VertexBufferObject
     }
 
     /**
-     * Creates a new VertexBufferObject for rendering objects with OpenGL, also sets an initial capacity for the {@code FloatGapList}s containing the
+     * Creates a new VertexBufferObject for rendering objects with OpenGL, also sets an initial capacity for the {@code ArrayList< Float >}s containing the
      * coordinate, color, and normal data.
      *
      * @param ps
@@ -113,7 +113,7 @@ public class VertexBufferObject
      */
     public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, int pcap, int ccap, int ncap )
     {
-        this( ps, cs, ns, new FloatGapList( pcap ), new FloatGapList( ccap ), new FloatGapList( ncap ) );
+        this( ps, cs, ns, new ArrayList< Float >( pcap ), new ArrayList< Float >( ccap ), new ArrayList< Float >( ncap ) );
     }
 
     /**
@@ -134,8 +134,8 @@ public class VertexBufferObject
      *
      * @since 14.03.30
      */
-    public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, FloatGapList coordinates, FloatGapList channels,
-                               FloatGapList normalCoordinates )
+    public VertexBufferObject( PositionSystem ps, ColorSystem cs, NormalSystem ns, ArrayList< Float > coordinates, ArrayList< Float > channels,
+                               ArrayList< Float > normalCoordinates )
     {
 
         this.ps = ps;
@@ -147,7 +147,7 @@ public class VertexBufferObject
 
         if ( ns.coordinates == 0 )
         {
-            this.normalCoordinates = new FloatGapList( 0 );
+            this.normalCoordinates = new ArrayList< Float >( 0 );
         }
         else
         {
@@ -250,7 +250,10 @@ public class VertexBufferObject
      */
     public void addCoordinates( float... array )
     {
-        coordinates.addAll( array );
+        for ( float f : array )
+        {
+            coordinates.add( f );
+        }
         dataValid = false;
     }
 
@@ -258,7 +261,7 @@ public class VertexBufferObject
      * @param array
      *         The expanding array containing the new coordinates.
      */
-    public void addCoordinates( FloatGapList array )
+    public void addCoordinates( ArrayList< Float > array )
     {
         coordinates.addAll( array );
         dataValid = false;
@@ -270,7 +273,10 @@ public class VertexBufferObject
      */
     public void addChannels( float... array )
     {
-        channels.addAll( array );
+        for ( float f : array )
+        {
+            channels.add( f );
+        }
         dataValid = false;
     }
 
@@ -278,7 +284,7 @@ public class VertexBufferObject
      * @param array
      *         The expanding array containing the new channels.
      */
-    public void addChannels( FloatGapList array )
+    public void addChannels( ArrayList< Float > array )
     {
         channels.addAll( array );
         dataValid = false;
@@ -290,7 +296,10 @@ public class VertexBufferObject
      */
     public void addNormals( float... array )
     {
-        normalCoordinates.addAll( array );
+        for ( float f : array )
+        {
+            normalCoordinates.add( f );
+        }
         dataValid = false;
     }
 
@@ -298,7 +307,7 @@ public class VertexBufferObject
      * @param array
      *         The expanding array containing the new normals.
      */
-    public void addNormals( FloatGapList array )
+    public void addNormals( ArrayList< Float > array )
     {
         normalCoordinates.addAll( array );
         dataValid = false;
@@ -325,7 +334,7 @@ public class VertexBufferObject
      */
     public void setCoordinates( float... array )
     {
-        coordinates = new FloatGapList( array.length );
+        coordinates = new ArrayList< Float >( array.length );
         addCoordinates( array );
     }
 
@@ -333,7 +342,7 @@ public class VertexBufferObject
      * @param array
      *         The new positioning data.
      */
-    public void setCoordinates( FloatGapList array )
+    public void setCoordinates( ArrayList< Float > array )
     {
         coordinates = array;
         dataValid = false;
@@ -345,7 +354,7 @@ public class VertexBufferObject
      */
     public void setChannels( float... array )
     {
-        channels = new FloatGapList( array.length );
+        channels = new ArrayList< Float >( array.length );
         addChannels( array );
     }
 
@@ -353,7 +362,7 @@ public class VertexBufferObject
      * @param array
      *         The new color data.
      */
-    public void setChannels( FloatGapList array )
+    public void setChannels( ArrayList< Float > array )
     {
         channels = array;
         dataValid = false;
@@ -365,7 +374,7 @@ public class VertexBufferObject
      */
     public void setNormalCoordinates( float... array )
     {
-        normalCoordinates = new FloatGapList( array.length );
+        normalCoordinates = new ArrayList< Float >( array.length );
         addNormals( array );
     }
 
@@ -373,7 +382,7 @@ public class VertexBufferObject
      * @param array
      *         The new normal data.
      */
-    public void setNormalCoordinates( FloatGapList array )
+    public void setNormalCoordinates( ArrayList< Float > array )
     {
         normalCoordinates = array;
         dataValid = false;
@@ -394,7 +403,7 @@ public class VertexBufferObject
     /**
      * @return The coordinates.
      */
-    public FloatGapList getCoordinates()
+    public ArrayList< Float > getCoordinates()
     {
         return coordinates;
     }
@@ -402,7 +411,7 @@ public class VertexBufferObject
     /**
      * @return The color channels.
      */
-    public FloatGapList getChannels()
+    public ArrayList< Float > getChannels()
     {
         return channels;
     }
@@ -410,7 +419,7 @@ public class VertexBufferObject
     /**
      * @return The normal coordinates.
      */
-    public FloatGapList getNormalCoordinates()
+    public ArrayList< Float > getNormalCoordinates()
     {
         return normalCoordinates;
     }
@@ -449,9 +458,9 @@ public class VertexBufferObject
     {
         VertexBufferObject merged = new VertexBufferObject( PositionSystem.XYZ, ColorSystem.RGB, NormalSystem.DISABLED );
 
-        FloatGapList positions = new FloatGapList( pc );
-        FloatGapList colors = new FloatGapList( cc );
-        FloatGapList normals = new FloatGapList( nc );
+        ArrayList< Float > positions = new ArrayList< Float >( pc );
+        ArrayList< Float > colors = new ArrayList< Float >( cc );
+        ArrayList< Float > normals = new ArrayList< Float >( nc );
 
         // add data to the expanding arrays
         for ( VertexBufferObject vbo : vbos )

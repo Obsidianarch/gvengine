@@ -1,9 +1,9 @@
 package com.addonovan.gvengine.core;
 
-import org.lwjgl.util.vector.Vector3f;
-import org.magicwerk.brownies.collections.primitive.FloatGapList;
+import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;
+import java.util.List;
 
 /**
  * A general class for helping with common mathematical calculations.
@@ -39,7 +39,7 @@ public final class MathHelper
     }
 
     /**
-     * Adds teh data from teh source {@code FloatGapList} into the {@code FloatBuffer}.
+     * Adds teh data from teh source {@code List< Float >} into the {@code FloatBuffer}.
      *
      * @param source
      *         The source of information.
@@ -54,7 +54,7 @@ public final class MathHelper
      *
      * @since 14.03.30
      */
-    public static void insertBuffer( FloatGapList source, FloatBuffer buffer, int size, int offset, int stride )
+    public static void insertBuffer( List< Float > source, FloatBuffer buffer, int size, int offset, int stride )
     {
         if ( size == 0 )
         {

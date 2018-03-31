@@ -4,7 +4,7 @@ import com.addonovan.gvengine.core.ColorSystem;
 import com.addonovan.gvengine.core.NormalSystem;
 import com.addonovan.gvengine.core.PositionSystem;
 import com.addonovan.gvengine.core.VertexBufferObject;
-import org.lwjgl.util.vector.Vector3f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;

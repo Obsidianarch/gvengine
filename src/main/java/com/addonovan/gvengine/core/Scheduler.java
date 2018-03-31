@@ -3,7 +3,6 @@ package com.addonovan.gvengine.core;
 import com.addonovan.gvengine.core.options.Option;
 import com.addonovan.gvengine.core.options.SliderOption;
 import com.addonovan.gvengine.core.options.ToggleOption;
-import org.lwjgl.Sys;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -125,7 +124,8 @@ public final class Scheduler
 
         event.target = target;
         event.delay = delay;
-        event.executionTime = TimeHelper.toTicks( Sys.getTime() ) + delay;
+        // TODO replace with system time
+        event.executionTime = TimeHelper.toTicks( 0 ) + delay;
         event.parameters = parameters;
 
         recurringEvents.add( event );
@@ -175,7 +175,8 @@ public final class Scheduler
         }
 
         event.target = target;
-        event.executionTime = Sys.getTime() + TimeHelper.toTicks( time );
+        // TODO schedule time better
+        event.executionTime = 0 + TimeHelper.toTicks( time );
         event.parameters = parameters;
 
         addEvent( event ); // add the event to the list
@@ -257,7 +258,7 @@ public final class Scheduler
             {
                 return firedEvents; // we've run out of time for this tick, let's keep the game running
             }
-            if ( Sys.getTime() < e.executionTime )
+            if ( 0 < e.executionTime ) // TODO actually check time
             {
                 continue; // the event hasn't been scheduled to run again yet
             }
@@ -319,7 +320,7 @@ public final class Scheduler
             }
 
             // everything past this point will have a higher execution time than this one as well, and we haven't gotten to this time yet
-            if ( e.executionTime > Sys.getTime() )
+            if ( e.executionTime > 0 ) // TODO actually check time
             {
                 break;
             }

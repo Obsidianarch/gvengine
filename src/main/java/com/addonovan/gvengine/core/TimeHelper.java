@@ -1,7 +1,5 @@
 package com.addonovan.gvengine.core;
 
-import org.lwjgl.Sys;
-
 /**
  * A general help class for anything relating to time.
  *
@@ -56,7 +54,7 @@ public final class TimeHelper
      */
     public static long toTicks( long milliseconds )
     {
-        return ( milliseconds * Sys.getTimerResolution() ) / 1000;
+        return ( milliseconds ) / 1000;
     }
 
     /**
@@ -68,7 +66,7 @@ public final class TimeHelper
      */
     public static long getTime()
     {
-        return ( Sys.getTime() * 1000 ) / Sys.getTimerResolution();
+        return System.nanoTime() / 10000000;
     }
 
 }

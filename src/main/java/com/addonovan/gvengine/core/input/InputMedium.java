@@ -1,8 +1,5 @@
 package com.addonovan.gvengine.core.input;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 /**
  * The physical device which is bound to an action. (e.g. mouse, keyboard, controller).
  *
@@ -35,14 +32,17 @@ public enum InputMedium
     public boolean isButtonDown( int button )
     {
 
+        // TODO update with GLFW input handling
         switch ( this )
         {
 
             case KEYBOARD:
-                return Keyboard.isKeyDown( button );
+                return false;
+//                return Keyboard.isKeyDown( button );
 
             case MOUSE:
-                return Mouse.isButtonDown( button );
+                return false;
+//                return Mouse.isButtonDown( button );
 
             case CONTROLLER:
                 return false;

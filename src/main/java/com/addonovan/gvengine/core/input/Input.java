@@ -1,10 +1,6 @@
 package com.addonovan.gvengine.core.input;
 
 import com.addonovan.gvengine.io.Config;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Controllers;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,14 +36,14 @@ public final class Input
      */
     public static void initialize()
     {
-        try
-        {
-            Controllers.create();
-        }
-        catch ( LWJGLException e )
-        {
-            System.err.println( " Failed to create controllers:  " + e.getClass().getName() );
-        }
+//        try
+//        {
+//            Controllers.create();
+//        }
+//        catch ( LWJGLException e )
+//        {
+//            System.err.println( " Failed to create controllers:  " + e.getClass().getName() );
+//        }
     }
 
     /**
@@ -57,9 +53,9 @@ public final class Input
      */
     public static void poll()
     {
-        Keyboard.poll();
-        Mouse.poll();
-        Controllers.poll();
+//        Keyboard.poll();
+//        Mouse.poll();
+//        Controllers.poll();
     }
 
     /**
@@ -244,13 +240,16 @@ public final class Input
         {
 
             case CONTROL_MASK:
-                return Keyboard.isKeyDown( Keyboard.KEY_LCONTROL ) || Keyboard.isKeyDown( Keyboard.KEY_RCONTROL );
+//                return Keyboard.isKeyDown( Keyboard.KEY_LCONTROL ) || Keyboard.isKeyDown( Keyboard.KEY_RCONTROL );
+                return false;
 
             case MENU_MASK:
-                return Keyboard.isKeyDown( Keyboard.KEY_LMENU ) || Keyboard.isKeyDown( Keyboard.KEY_RMENU );
+//                return Keyboard.isKeyDown( Keyboard.KEY_LMENU ) || Keyboard.isKeyDown( Keyboard.KEY_RMENU );
+                return false;
 
             case META_MASK:
-                return Keyboard.isKeyDown( Keyboard.KEY_LMETA ) || Keyboard.isKeyDown( Keyboard.KEY_RMETA );
+//                return Keyboard.isKeyDown( Keyboard.KEY_LMETA ) || Keyboard.isKeyDown( Keyboard.KEY_RMETA );
+                return false;
 
             default:
                 return !( isMaskActive( InputMask.CONTROL_MASK ) || isMaskActive( InputMask.MENU_MASK ) || isMaskActive( InputMask.META_MASK ) );
